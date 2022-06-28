@@ -11,7 +11,7 @@ on:
 env:
   BIN_NAME: shellclear
   PROJECT_NAME: shellclear
-  REPO_NAME: kaplanelad/shellclear
+  REPO_NAME: rusty-ferris-club/shellclear
   BREW_TAP: kaplanelad/homebrew-tap
 
 jobs:
@@ -196,23 +196,4 @@ jobs:
           commit-message: updating formula for ${{ env.PROJECT_NAME }}
         env:
           COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
-
-
-
-
-        #
-        # you can use this initial file in your homebrew-tap if you don't have an initial formula:
-        # <projectname>.rb
-        #
-        # class <Projectname capitalized> < Formula
-        #   desc "A test formula"
-        #   homepage "http://www.example.com"
-        #   url "-----"
-        #   version "-----"
-        #   sha256 "-----"
-
-        #   def install
-        #     bin.install "<bin-name>"
-        #   end
-        # end
 
