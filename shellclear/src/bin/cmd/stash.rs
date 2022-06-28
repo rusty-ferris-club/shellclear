@@ -13,9 +13,9 @@ pub fn run(
     shell_context: &ShellContext,
 ) -> Result<shellclear::CmdExit> {
     match subcommand_matches.subcommand() {
-        None => run_stash(&shell_context),
+        None => run_stash(shell_context),
         Some(tup) => match tup {
-            ("pop", _subcommand_matches) => run_pop(&shell_context),
+            ("pop", _subcommand_matches) => run_pop(shell_context),
             _ => unreachable!(),
         },
     }

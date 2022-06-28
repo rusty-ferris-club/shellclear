@@ -47,7 +47,7 @@ fn main() {
     let res = match matches.subcommand() {
         None => Err(anyhow!("command not found")),
         Some(tup) => match tup {
-            ("find", subcommand_matches) => cmd::find::run(&subcommand_matches, &shells_context),
+            ("find", subcommand_matches) => cmd::find::run(subcommand_matches, &shells_context),
             ("restore", _subcommand_matches) => cmd::restore::run(select_shell(&shells_context)),
             ("stash", subcommand_matches) => {
                 cmd::stash::run(subcommand_matches, select_shell(&shells_context))

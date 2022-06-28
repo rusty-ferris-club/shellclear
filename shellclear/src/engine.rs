@@ -59,7 +59,7 @@ fn find_by_lines(
                 .map(|f| f.clone())
                 .collect::<Vec<_>>();
 
-            if findings.len() == 0 {
+            if findings.is_empty() {
                 let _ = writeln!(&mut clear_history_content, "{}", line);
                 return false;
             }
@@ -70,7 +70,6 @@ fn find_by_lines(
             });
             true
         })
-        .map(|line| line)
         .collect::<Vec<_>>();
 
     debug!(
@@ -103,15 +102,15 @@ fn find_fish(
 
     let findings_results = history
         .iter()
-        .map(|h| {
+        .filter_map(|h| {
             let findings = sensitive_commands
                 .par_iter()
                 .filter(|v| Regex::new(&v.test).unwrap().is_match(&h.cmd))
                 .map(|f| f.clone())
                 .collect::<Vec<_>>();
 
-            if findings.len() == 0 {
-                clear_history_content.push(h.clone().clone());
+            if findings.is_empty() {
+                clear_history_content.push(h.clone());
                 return None;
             }
             Some(FindingSensitiveCommands {
@@ -120,8 +119,7 @@ fn find_fish(
                 command: h.cmd.to_string(),
             })
         })
-        .filter(|f| f.is_some())
-        .map(|f| f.unwrap())
+        // .flatten()
         .collect::<Vec<_>>();
 
     if clear {

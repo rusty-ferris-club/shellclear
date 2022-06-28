@@ -63,6 +63,6 @@ pub fn run(
 
     Ok(shellclear::CmdExit {
         code: exitcode::OK,
-        message: message,
+        message,
     })
 }

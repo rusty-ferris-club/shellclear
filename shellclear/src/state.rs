@@ -58,7 +58,7 @@ pub fn init() -> Result<Vec<ShellContext>> {
 impl ShellContext {
     /// backup history shell file to backup folder
     pub fn backup(&self) -> Result<String> {
-        let datetime: DateTime<Local> = Local::now().into();
+        let datetime: DateTime<Local> = Local::now();
 
         let copy_to = Path::new(&self.get_backup_folder())
             .join(format!(
@@ -168,13 +168,7 @@ impl ShellContext {
         let paths = fs::read_dir(&stash_folder)?;
         let count = paths
             .filter(|path| {
-                path.as_ref()
-                    .unwrap()
-                    .file_name()
-                    .to_str()
-                    .unwrap()
-                    .to_string()
-                    == self.history.file_name
+                path.as_ref().unwrap().file_name().to_str().unwrap() == self.history.file_name
             })
             .count();
         debug!("found {} stash files in {}", &stash_folder, &count);

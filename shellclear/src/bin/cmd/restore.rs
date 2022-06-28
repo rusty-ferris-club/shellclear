@@ -29,7 +29,7 @@ pub fn run(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
         }
     };
 
-    if let Some(e) = shell_context.restore(&restore_from_path).err() {
+    if let Some(e) = shell_context.restore(restore_from_path).err() {
         return Ok(shellclear::CmdExit {
             code: 1,
             message: Some(format!("restore failed: {:?}", e)),
