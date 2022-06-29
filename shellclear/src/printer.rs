@@ -39,6 +39,7 @@ mod state_context {
     use super::*;
     use crate::data::SensitiveCommands;
     use crate::shell::Shell;
+    use std::str;
 
     #[test]
     fn can_print_table() {
