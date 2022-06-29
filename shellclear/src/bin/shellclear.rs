@@ -74,16 +74,6 @@ fn main() {
         }
     };
     exit(exit_with)
-
-    // match res {
-    //     Ok(ok) => {
-    //         exit(if ok { 0 } else { 1 });
-    //     }
-    //     Err(err) => {
-    //         eprintln!("error: {}", err);
-    //         exit(1)
-    //     }
-    // }
 }
 
 fn select_shell(shell_contexts: &Vec<ShellContext>) -> &ShellContext {
