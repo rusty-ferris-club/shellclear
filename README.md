@@ -20,10 +20,9 @@ Or download the binary file from [releases](https://github.com/rusty-ferris-club
 ## :eyes: Find And Clear Sensitive History Commands
 Sensetive data can be stored in your history file when export a token of something or running a script with token. for example:
 ```sh
-...
-export GITHUB_TOKEN=...
-export AWS_ACCESS_KEY=...
-./myscript.sh ghp_XXX...
+export GITHUB_TOKEN=<TOKEN>
+export AWS_ACCESS_KEY=<KEY>
+./myscript.sh ghp_<>
 ```
 
 In this case `shellcler` detect those commands:
