@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use shellclear::{engine, printer, FindingSensitiveCommands, ShellContext};
+use std::str;
 
 pub fn command() -> Command<'static> {
     Command::new("find")
@@ -53,7 +54,9 @@ pub fn run(
     let message = if findings.is_empty() {
         Some("sensitive commands not found".to_string())
     } else {
-        printer::show_sensitive_findings(findings);
+        let mut out = Vec::new();
+        printer::show_sensitive_findings(&mut out, findings)?;
+        println!("{}", str::from_utf8(&out)?);
         if matches.is_present("clear") {
             Some("sensitive commands was cleared".to_string())
         } else {
