@@ -70,6 +70,9 @@ mod state_context {
 | Zshrc | test name,test name2 | test command |
 +-------+----------------------+--------------+
 "#;
-        assert_eq!(str::from_utf8(&out).unwrap(), expected);
+        assert_eq!(
+            format!("{}", str::from_utf8(&out).unwrap()),
+            format!("{}", expected)
+        );
     }
 }
