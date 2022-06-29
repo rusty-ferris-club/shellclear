@@ -63,13 +63,13 @@ mod state_context {
 
         assert!(resp.is_ok());
 
-        // let expected = "+-------+----------------------+--------------+\n| Shell | Name                 | Command      |\n+-------+----------------------+--------------+\n| Zshrc | test name,test name2 | test command |\n+-------+----------------------+--------------+\n";
-        let expected = r#"+-------+----------------------+--------------+
-| Shell | Name                 | Command      |
-+-------+----------------------+--------------+
-| Zshrc | test name,test name2 | test command |
-+-------+----------------------+--------------+
-"#;
-        assert_eq!(str::from_utf8(&out).unwrap(), expected);
+        #[cfg(target_os = "windows")]
+        let expected = "+-------+----------------------+--------------+\r\n| Shell | Name                 | Command      |\r\n+-------+----------------------+--------------+\r\n| Zshrc | test name,test name2 | test command |\r\n+-------+----------------------+--------------+\r\n";
+        #[cfg(not(target_os = "windows"))]
+        let expected = "+-------+----------------------+--------------+\n| Shell | Name                 | Command      |\n+-------+----------------------+--------------+\n| Zshrc | test name,test name2 | test command |\n+-------+----------------------+--------------+\n";
+        assert_eq!(
+            format!("{}", str::from_utf8(&out).unwrap()),
+            format!("{}", expected)
+        );
     }
 }
