@@ -62,7 +62,14 @@ mod state_context {
         let resp = show_sensitive_findings(&mut out, findings);
 
         assert!(resp.is_ok());
-        let expected = "+-------+----------------------+--------------+\n| Shell | Name                 | Command      |\n+-------+----------------------+--------------+\n| Zshrc | test name,test name2 | test command |\n+-------+----------------------+--------------+\n";
+
+        // let expected = "+-------+----------------------+--------------+\n| Shell | Name                 | Command      |\n+-------+----------------------+--------------+\n| Zshrc | test name,test name2 | test command |\n+-------+----------------------+--------------+\n";
+        let expected = r#"+-------+----------------------+--------------+
+| Shell | Name                 | Command      |
++-------+----------------------+--------------+
+| Zshrc | test name,test name2 | test command |
++-------+----------------------+--------------+
+"#;
         assert_eq!(str::from_utf8(&out).unwrap(), expected);
     }
 }
