@@ -1,7 +1,6 @@
 use crate::data::FindingSensitiveCommands;
 use anyhow::Result;
 use prettytable::{Cell, Row, Table};
-use std::str;
 
 pub fn show_sensitive_findings(
     out: &mut Vec<u8>,

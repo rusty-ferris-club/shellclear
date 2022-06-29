@@ -23,7 +23,7 @@ pub fn run(
 
 fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     // todo:: check if file exists and remove the unwrap
-    if shell_context.is_stash_file_exists().unwrap() {
+    if shell_context.is_stash_file_exists()? {
         if let Err(e) = confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
             log::debug!("{:?}", e);
             return Ok(shellclear::CmdExit {
@@ -46,7 +46,7 @@ fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
 }
 
 fn run_pop(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
-    if !shell_context.is_stash_file_exists().unwrap() {
+    if !shell_context.is_stash_file_exists()? {
         return Ok(shellclear::CmdExit {
             code: 1,
             message: Some("Stash file not found".to_string()),
