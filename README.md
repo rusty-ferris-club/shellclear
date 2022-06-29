@@ -39,7 +39,7 @@ shellclear stash
 ```
 now your history shell is clear, to bring back your history run the command:
 ```sh
-shellclear stash
+shellclear pop
 ```
 
 ## Supported Shells
