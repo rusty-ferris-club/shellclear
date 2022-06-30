@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use anyhow::Result;
+use std::fmt;
 use std::path::Path;
 use strum::IntoEnumIterator; // 0.17.1
 use strum_macros::EnumIter; // 0.17.1
@@ -11,6 +12,17 @@ pub enum Shell {
     Zshrc,
     Fish,
 }
+
+impl fmt::Display for Shell {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Shell::Bash => write!(f, "bash"),
+            Shell::Zshrc => write!(f, "zshrc"),
+            Shell::Fish => write!(f, "fish"),
+        }
+    }
+}
+
 /// Zsh history file name
 const ZSH_HISTORY_FILE_PATH: &str = ".zsh_history";
 /// Bash history file name
