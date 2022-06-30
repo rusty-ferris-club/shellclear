@@ -11,7 +11,7 @@ use std::fs::{write, File};
 use std::io::{prelude::*, BufReader};
 use std::time::Instant;
 
-pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-envs.yaml");
+pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 struct FishHistory {
