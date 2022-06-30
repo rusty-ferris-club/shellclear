@@ -19,6 +19,7 @@ pub fn run(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
         backup_files.push(file);
     }
 
+    backup_files.sort_by(|a, b| b.cmp(a));
     let restore_from_path = match promter::select("select backup file", &backup_files) {
         Ok(selection) => &backup_files[selection],
         Err(_e) => {
