@@ -2,15 +2,13 @@ use anyhow::anyhow;
 use anyhow::Result;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 
-pub fn select(message: &str, items: &[String]) -> Result<usize> {
-    let mut items = items.to_vec();
-    items.sort_by(|a, b| b.cmp(a));
+pub fn select(message: &str, items: &Vec<String>) -> Result<usize> {
     let selection = match items.len() {
         1 => 0,
         _ => match Select::with_theme(&ColorfulTheme::default())
             .with_prompt(message)
             .default(0)
-            .items(items.as_ref())
+            .items(items)
             .interact()
         {
             Ok(s) => s,
