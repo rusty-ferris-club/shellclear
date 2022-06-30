@@ -15,8 +15,6 @@ brew tap kaplanelad/tap && brew install shellclear
 Or download the binary file from [releases](https://github.com/rusty-ferris-club/shellclear/releases) page.
 
 
-## How it work
-
 ## :eyes: Find And Clear Sensitive History Commands
 Sensetive data can be stored in your history file when export a token of something or running a script with token. for example:
 ```sh
