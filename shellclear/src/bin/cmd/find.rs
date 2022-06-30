@@ -43,12 +43,10 @@ pub fn run(
             }
         }
 
-        let shell_findings =
-            match engine::find_history_commands(shell_context, matches.is_present("clear")) {
-                Ok(f) => f,
-                Err(_e) => continue,
-            };
-        findings.extend(shell_findings);
+        findings.extend(engine::find_history_commands(
+            shell_context,
+            matches.is_present("clear"),
+        )?);
     }
 
     let message = if findings.is_empty() {

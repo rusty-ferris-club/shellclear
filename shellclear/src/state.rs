@@ -20,7 +20,7 @@ const STASH_FOLDER: &str = "stash";
 /// describe the shell context which contain the app folder path and the shell history details
 #[derive(Clone, Debug)]
 pub struct ShellContext {
-    app_folder_path: String,
+    pub app_folder_path: String,
     pub history: shell::HistoryShell,
 }
 
