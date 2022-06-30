@@ -78,7 +78,7 @@ mod test_printer {
         assert!(resp.is_ok());
 
         #[cfg(target_os = "windows")]
-        let expected = "+---+-------+----------------------+--------------+\r\n| # | Shell | Name                 | Command      |\r\n+---+-------+----------------------+--------------+\r\n| 1 | shrc | test name,test name2 | test command |\r\n+---+-------+----------------------+--------------+\r\n";
+        let expected = "+---+-------+----------------------+--------------+\r\n| # | Shell | Name                 | Command      |\r\n+---+-------+----------------------+--------------+\r\n| 1 | Zshrc | test name,test name2 | test command |\r\n+---+-------+----------------------+--------------+\r\n";
         #[cfg(not(target_os = "windows"))]
         let expected = "+---+-------+----------------------+--------------+\n| # | Shell | Name                 | Command      |\n+---+-------+----------------------+--------------+\n| 1 | Zshrc | test name,test name2 | test command |\n+---+-------+----------------------+--------------+\n";
         assert_eq!(
