@@ -118,7 +118,7 @@ impl ShellContext {
         debug!("stash file: {} to: {}", &self.history.path, copy_to);
         fs::copy(&self.history.path, &copy_to)?;
         debug!("remove file: {}", self.history.path);
-        fs::remove_file(&self.history.path)?;
+        fs::File::create(&self.history.path)?;
         debug!("remove successfully file: {}", self.history.path);
         Ok(copy_to)
     }
@@ -179,6 +179,7 @@ impl ShellContext {
     fn get_backup_folder(&self) -> String {
         Path::new(&self.app_folder_path)
             .join(BACKUP_FOLDER)
+            .join(self.history.shell.to_string())
             .display()
             .to_string()
     }
@@ -280,9 +281,9 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        assert!(Path::new(&context.history.path).exists());
+        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
         assert!(context.stash().is_ok());
-        assert!(!Path::new(&context.history.path).exists());
+        assert!(Path::new(&context.history.path).metadata().unwrap().len() == 0);
         assert_eq!(fs::read_dir(context.get_stash_folder()).unwrap().count(), 1);
         temp_dir.close().unwrap();
     }
@@ -306,10 +307,11 @@ export GITHUB_TOKEN=token
             fs::read_to_string(&context.history.path).unwrap(),
             TEMP_HISTORY_CONTENT
         );
+        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
         assert!(context.stash().is_ok());
-        assert!(!Path::new(&context.history.path).exists());
+        assert!(fs::metadata(&context.history.path).unwrap().len() == 0);
         assert!(context.pop().is_ok());
-        assert!(Path::new(&context.history.path).exists());
+        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
         assert_eq!(
             fs::read_to_string(&context.history.path).unwrap(),
             TEMP_HISTORY_CONTENT
