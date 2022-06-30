@@ -14,6 +14,6 @@ pub struct SensitiveCommands {
 #[derive(Debug)]
 pub struct FindingSensitiveCommands {
     pub shell_type: Shell,
-    pub finding: Vec<SensitiveCommands>,
+    pub sensitive_findings: Vec<SensitiveCommands>,
     pub command: String,
 }
