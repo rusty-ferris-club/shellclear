@@ -77,6 +77,6 @@ mod test_printer {
         let resp = show_sensitive_findings(&mut out, findings);
 
         assert_debug_snapshot!(resp);
-        assert_debug_snapshot!(str::from_utf8(&out));
+        assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n", "\n"));
     }
 }
