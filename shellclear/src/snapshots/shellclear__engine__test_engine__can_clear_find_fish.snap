@@ -1,0 +1,38 @@
+---
+source: shellclear/src/engine.rs
+expression: result
+---
+Ok(
+    [
+        FindingSensitiveCommands {
+            shell_type: Bash,
+            sensitive_findings: [],
+            command: "---\ncmd: history\nwhen: \"1656438759\"\n",
+        },
+        FindingSensitiveCommands {
+            shell_type: Bash,
+            sensitive_findings: [],
+            command: "---\ncmd: ls\nwhen: \"1656438760\"\n",
+        },
+        FindingSensitiveCommands {
+            shell_type: Bash,
+            sensitive_findings: [],
+            command: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
+        },
+        FindingSensitiveCommands {
+            shell_type: Bash,
+            sensitive_findings: [],
+            command: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
+        },
+        FindingSensitiveCommands {
+            shell_type: Bash,
+            sensitive_findings: [
+                SensitiveCommands {
+                    test: "DELETE_ME",
+                    name: "test",
+                },
+            ],
+            command: "---\ncmd: export DELETE_ME=token\nwhen: \"1656438760\"\n",
+        },
+    ],
+)

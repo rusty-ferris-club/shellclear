@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: "fs::read_dir(context.get_stash_folder()).unwrap().count()"
+---
+1

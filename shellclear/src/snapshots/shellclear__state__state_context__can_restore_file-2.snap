@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: "fs::read_to_string(&context.history.path).unwrap()"
+---
+"backup-history_file"

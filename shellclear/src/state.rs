@@ -197,6 +197,7 @@ impl ShellContext {
 mod state_context {
     use super::*;
     use crate::shell::Shell;
+    use insta::assert_debug_snapshot;
     use std::fs::File;
     use std::io::Write;
     use tempdir::TempDir;
@@ -240,6 +241,7 @@ export GITHUB_TOKEN=token
             fs::read_to_string(backup_folder[0].clone()).unwrap(),
             TEMP_HISTORY_CONTENT
         );
+
         temp_dir.close().unwrap();
     }
 
@@ -253,11 +255,8 @@ export GITHUB_TOKEN=token
         f.write_all("backup-history_file".as_bytes()).unwrap();
         f.sync_all().unwrap();
 
-        assert!(context.restore(&restore_file.display().to_string()).is_ok());
-        assert_eq!(
-            fs::read_to_string(&context.history.path).unwrap(),
-            "backup-history_file"
-        );
+        assert_debug_snapshot!(&context.restore(&restore_file.display().to_string()));
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path).unwrap());
         temp_dir.close().unwrap();
     }
 
@@ -266,13 +265,8 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        // save_history_content
-
-        assert!(context.save_history_content("new commands").is_ok());
-        assert_eq!(
-            fs::read_to_string(&context.history.path).unwrap(),
-            "new commands"
-        );
+        assert_debug_snapshot!(context.save_history_content("new commands"));
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
         temp_dir.close().unwrap();
     }
 
@@ -281,10 +275,10 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
-        assert!(context.stash().is_ok());
-        assert!(Path::new(&context.history.path).metadata().unwrap().len() == 0);
-        assert_eq!(fs::read_dir(context.get_stash_folder()).unwrap().count(), 1);
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+        assert_debug_snapshot!(context.stash().is_ok());
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+        assert_debug_snapshot!(fs::read_dir(context.get_stash_folder()).unwrap().count());
         temp_dir.close().unwrap();
     }
 
@@ -293,8 +287,8 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        assert!(context.stash().is_ok());
-        assert!(context.is_stash_file_exists().unwrap());
+        assert_debug_snapshot!(context.stash().is_ok());
+        assert_debug_snapshot!(context.is_stash_file_exists());
         temp_dir.close().unwrap();
     }
 
@@ -303,20 +297,11 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        assert_eq!(
-            fs::read_to_string(&context.history.path).unwrap(),
-            TEMP_HISTORY_CONTENT
-        );
-        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
-        assert!(context.stash().is_ok());
-        assert!(fs::metadata(&context.history.path).unwrap().len() == 0);
-        assert!(context.pop().is_ok());
-        assert!(Path::new(&context.history.path).metadata().unwrap().len() != 0);
-        assert_eq!(
-            fs::read_to_string(&context.history.path).unwrap(),
-            TEMP_HISTORY_CONTENT
-        );
-
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+        assert_debug_snapshot!(context.stash().is_ok());
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+        assert_debug_snapshot!(context.pop().is_ok());
+        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
         temp_dir.close().unwrap();
     }
 
@@ -330,7 +315,7 @@ export GITHUB_TOKEN=token
         context.backup().unwrap();
 
         let backup_folder = context.get_backup_files().unwrap();
-        assert_eq!(backup_folder.len(), 3);
+        assert_debug_snapshot!(backup_folder.len());
         temp_dir.close().unwrap();
     }
 
@@ -339,7 +324,7 @@ export GITHUB_TOKEN=token
         let temp_dir = TempDir::new("terminal").unwrap();
         let context = create_mock_state(&temp_dir);
 
-        assert!(&context.stash().is_ok());
+        assert_debug_snapshot!(&context.stash().is_ok());
         assert_eq!(
             Path::new(&context.get_stash_folder())
                 .join(&context.history.file_name)

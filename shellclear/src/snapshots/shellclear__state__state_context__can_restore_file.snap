@@ -1,0 +1,7 @@
+---
+source: shellclear/src/state.rs
+expression: "&context.restore(&restore_file.display().to_string())"
+---
+Ok(
+    (),
+)

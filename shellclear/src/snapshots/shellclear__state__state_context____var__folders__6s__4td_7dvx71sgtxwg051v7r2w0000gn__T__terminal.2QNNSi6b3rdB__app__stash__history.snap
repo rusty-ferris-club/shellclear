@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: context.get_stash_file().unwrap()
+---
+"/var/folders/6s/4td_7dvx71sgtxwg051v7r2w0000gn/T/terminal.2QNNSi6b3rdB/app/stash/history"

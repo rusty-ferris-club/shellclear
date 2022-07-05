@@ -53,6 +53,7 @@ mod test_printer {
     use super::*;
     use crate::data::SensitiveCommands;
     use crate::shell::Shell;
+    use insta::assert_debug_snapshot;
     use std::str;
 
     #[test]
@@ -75,15 +76,7 @@ mod test_printer {
         }];
         let resp = show_sensitive_findings(&mut out, findings);
 
-        assert!(resp.is_ok());
-
-        #[cfg(target_os = "windows")]
-        let expected = "+---+-------+----------------------+--------------+\r\n| # | Shell | Name                 | Command      |\r\n+---+-------+----------------------+--------------+\r\n| 1 | Zshrc | test name,test name2 | test command |\r\n+---+-------+----------------------+--------------+\r\n";
-        #[cfg(not(target_os = "windows"))]
-        let expected = "+---+-------+----------------------+--------------+\n| # | Shell | Name                 | Command      |\n+---+-------+----------------------+--------------+\n| 1 | Zshrc | test name,test name2 | test command |\n+---+-------+----------------------+--------------+\n";
-        assert_eq!(
-            format!("{}", str::from_utf8(&out).unwrap()),
-            format!("{}", expected)
-        );
+        assert_debug_snapshot!(resp);
+        assert_debug_snapshot!(str::from_utf8(&out));
     }
 }

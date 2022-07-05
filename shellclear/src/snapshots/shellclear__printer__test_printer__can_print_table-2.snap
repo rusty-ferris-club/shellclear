@@ -1,0 +1,7 @@
+---
+source: shellclear/src/printer.rs
+expression: "str::from_utf8(&out)"
+---
+Ok(
+    "+---+-------+----------------------+--------------+\n| # | Shell | Name                 | Command      |\n+---+-------+----------------------+--------------+\n| 1 | Zshrc | test name,test name2 | test command |\n+---+-------+----------------------+--------------+\n",
+)

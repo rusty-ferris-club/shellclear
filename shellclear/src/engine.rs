@@ -156,8 +156,9 @@ fn find_fish(
 }
 
 #[cfg(test)]
-mod test_printer {
+mod test_engine {
     use super::*;
+    use insta::assert_debug_snapshot;
     use std::fs;
     use std::fs::File;
     use std::io::Write;
@@ -214,18 +215,8 @@ export DELETE_ME=token
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT);
         let result = find_by_lines(&state_context, search_sensitive_commands, true);
 
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap().len(), 5);
-        let expected_history_file = r#"history
-ls
-echo 'hello you'
-rm -f ./file.txt
-"#;
-
-        assert_eq!(
-            fs::read_to_string(state_context.history.path).unwrap(),
-            expected_history_file
-        );
+        assert_debug_snapshot!(result);
+        assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
     }
 
     #[test]
@@ -239,22 +230,7 @@ rm -f ./file.txt
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH);
         let result = find_fish(&state_context, search_sensitive_commands, true);
 
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap().len(), 5);
-        let expected_history_file = r#"---
-- cmd: history
-  when: "1656438759"
-- cmd: ls
-  when: "1656438760"
-- cmd: "echo 'hello you'"
-  when: "1656438760"
-- cmd: rm -f ./file.txt
-  when: "1656438760"
-"#;
-
-        assert_eq!(
-            fs::read_to_string(state_context.history.path).unwrap(),
-            expected_history_file
-        );
+        assert_debug_snapshot!(result);
+        assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
     }
 }

@@ -1,0 +1,7 @@
+---
+source: shellclear/src/state.rs
+expression: "context.save_history_content(\"new commands\")"
+---
+Ok(
+    (),
+)

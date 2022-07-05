@@ -1,0 +1,7 @@
+---
+source: shellclear/src/state.rs
+expression: context.is_stash_file_exists()
+---
+Ok(
+    true,
+)

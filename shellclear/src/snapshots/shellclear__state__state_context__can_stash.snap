@@ -1,0 +1,7 @@
+---
+source: shellclear/src/state.rs
+expression: "fs::read_to_string(&context.history.path)"
+---
+Ok(
+    "history\nls\necho 'hello you'\nrm -f ./file.txt\nexport GITHUB_TOKEN=token\n",
+)

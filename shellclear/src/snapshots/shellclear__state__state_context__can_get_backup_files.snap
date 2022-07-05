@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: backup_folder.len()
+---
+3

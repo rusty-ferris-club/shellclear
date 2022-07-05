@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: context.stash().is_ok()
+---
+true

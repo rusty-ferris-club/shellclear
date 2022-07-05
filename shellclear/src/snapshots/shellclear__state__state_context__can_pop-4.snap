@@ -1,0 +1,5 @@
+---
+source: shellclear/src/state.rs
+expression: context.pop().is_ok()
+---
+true

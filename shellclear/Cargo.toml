@@ -21,7 +21,6 @@ home = "0.5.3"
 rayon = "1.5"
 regex = "1"
 chrono = "0.4"
-tempdir = "0.3"
 strum = "0.24"
 strum_macros = "0.24"
 prettytable-rs = "^0.8"
@@ -29,6 +28,9 @@ dialoguer = "0.10.1"
 ctrlc = "3.2.2"
 exitcode = "^1.1.2"
 
+[dev-dependencies]
+insta = { version = "1", features = ["backtrace"] }
+tempdir = "0.3"
 
 [build-dependencies]
 vergen = "7"
