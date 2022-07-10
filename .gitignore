@@ -3,6 +3,7 @@
 # will have compiled files and executables
 debug/
 target/
+coverage/
 
 # Add Cargo.lock to gitignore if creating a library
 # More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html

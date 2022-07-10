@@ -1,2 +1,2 @@
 [workspace]
-members = ["shellclear"]
+members = ["shellclear", "xtask"]
