@@ -20,7 +20,7 @@
 </p>
 
 # Shellclear
-The idea behind `shellclear` is to provide a simple and fast way to manage your local shell history file
+The idea behind `shellclear` is to provide a simple and fast way to secure you shell commands history
 ## Installation
 ```bash
 brew tap rusty-ferris-club/tapp && brew install shellclear
