@@ -67,7 +67,7 @@ export AWS_ACCESS_KEY=<KEY>
 $ shellclear find
 ```
 
-### :broom Clear findings command run:
+### :broom: Clear findings command run:
 ```sh
 $ shellclear find --clear
 ```
