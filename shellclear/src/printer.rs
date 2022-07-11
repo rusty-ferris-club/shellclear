@@ -29,7 +29,7 @@ pub fn show_sensitive_findings(
                         .iter()
                         .map(|f| f.name.to_owned())
                         .collect::<Vec<_>>()
-                        .join(",")
+                        .join("\r\n")
                         .as_ref(),
                 ),
                 Cell::new(&f.command.to_string()),

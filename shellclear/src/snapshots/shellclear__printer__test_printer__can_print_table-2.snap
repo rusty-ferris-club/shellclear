@@ -2,4 +2,4 @@
 source: shellclear/src/printer.rs
 expression: "str::from_utf8(&out).unwrap().replace(\"\\r\\n\", \"\\n\")"
 ---
-"+---+-------+----------------------+--------------+\n| # | Shell | Name                 | Command      |\n+---+-------+----------------------+--------------+\n| 1 | Zshrc | test name,test name2 | test command |\n+---+-------+----------------------+--------------+\n"
+"+---+-------+------------+--------------+\n| # | Shell | Name       | Command      |\n+---+-------+------------+--------------+\n| 1 | Zshrc | test name  | test command |\n|   |       | test name2 |              |\n+---+-------+------------+--------------+\n"
