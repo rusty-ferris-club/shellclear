@@ -12,7 +12,7 @@ env:
   BIN_NAME: shellclear
   PROJECT_NAME: shellclear
   REPO_NAME: rusty-ferris-club/shellclear
-  BREW_TAP: kaplanelad/homebrew-tap
+  BREW_TAP: rusty-ferris-club/homebrew-tap
 
 jobs:
   dist:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false # don't fail other jobs if one fails
       matrix:
-        build: [x86_64-linux, x86_64-macos, x86_64-windows] #, x86_64-win-gnu, win32-msvc aarch64-linux, 
+        build: [x86_64-linux, x86_64-macos, aarch64-macos, x86_64-windows] #, x86_64-win-gnu, win32-msvc aarch64-linux, 
         include:
         - build: x86_64-linux
           os: ubuntu-20.04
@@ -45,10 +45,10 @@ jobs:
           rust: stable
           target: x86_64-pc-windows-msvc
           cross: false
-        # - build: aarch64-macos
-        #   os: macos-latest
-        #   rust: stable
-        #   target: aarch64-apple-darwin
+        - build: aarch64-macos
+          os: macos-latest
+          rust: stable
+          target: aarch64-apple-darwin
         # - build: x86_64-win-gnu
         #   os: windows-2019
         #   rust: stable-x86_64-gnu
@@ -77,6 +77,7 @@ jobs:
         run: sudo apt-get install libssl-dev pkg-config
 
       - name: Run cargo test
+        if: matrix.build != 'aarch64-macos'
         uses: actions-rs/cargo@v1
         with:
           use-cross: ${{ matrix.cross }}
@@ -102,7 +103,6 @@ jobs:
             rustembedded/cross:${{ matrix.target }} \
             aarch64-linux-gnu-strip \
             /target/${{ matrix.target }}/release/$BIN_NAME
-
       - name: Build archive
         shell: bash
         run: |
@@ -112,7 +112,6 @@ jobs:
           else
             cp "target/${{ matrix.target }}/release/$BIN_NAME" "dist/"
           fi
-
       - uses: actions/upload-artifact@v2.2.4
         with:
           name: bins-${{ matrix.build }}
@@ -148,11 +147,9 @@ jobs:
         shell: bash
         run: |
           set -ex
-
           rm -rf tmp
           mkdir tmp
           mkdir dist
-
           for dir in bins-* ; do
               platform=${dir#"bins-"}
               if [[ $platform =~ "windows" ]]; then
@@ -163,14 +160,12 @@ jobs:
               # cp LICENSE README.md tmp/$pkgname
               mv bins-$platform/$BIN_NAME$exe tmp/$pkgname
               chmod +x tmp/$pkgname/$BIN_NAME$exe
-
               if [ "$exe" = "" ]; then
                   tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
               else
                   (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
               fi
           done
-
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -187,7 +182,6 @@ jobs:
         id: extract-version
         run: |
           printf "::set-output name=%s::%s\n" tag-name "${GITHUB_REF#refs/tags/}"
-
       - uses: mislav/bump-homebrew-formula-action@v1
         with:
           formula-path: ${{env.PROJECT_NAME}}.rb
