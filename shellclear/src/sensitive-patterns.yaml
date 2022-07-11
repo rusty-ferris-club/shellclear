@@ -50,3 +50,21 @@
   test: https://hooks.slack.com/services/[A-Za-z0-9+/]{44,46}
 - name: Twilio API Key
   test: SK[0-9a-fA-F]{32}
+- name: GCP API key
+  test: (?i)\b(AIza[0-9A-Za-z\\-_]{35})(?:['|"|\n|\r|\s|\x60]|$)
+- name: SendGrid API Key
+  test: SG\.[0-9A-Za-z\-_]{22}\.[0-9A-Za-z\-_]{43}
+- name: Teams Webhook
+  test: (https\\://outlook\\.office.com/webhook/[0-9a-f-]{36}\\@)
+- name: NuGet API Key
+  test: oy2[a-z0-9]{43}
+- name: Twitter Secret Key
+  test: (?i)(.{0,20})?[''"][0-9a-z]{35,44}[''"]
+- name: Twitter Client ID
+  test: (?i)(.{0,20})?[''"][0-9a-z]{18,25}[''"]
+- name: LinkedIn Secret Key
+  test: (?i)(.{0,20})?[''"][0-9a-z]{16}[''"]
+- name: Facebook access token
+  test: EAACEdEose0cBA[0-9A-Za-z]+
+- name: Google OAuth Access Token
+  test: ya29\\.[0-9A-Za-z\\-_]+
