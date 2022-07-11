@@ -35,6 +35,13 @@ fn main() {
         );
     }
 
+    if let Err(e) = ctrlc::set_handler(move || {
+        let term = console::Term::stdout();
+        let _ = term.show_cursor();
+    }) {
+        log::debug!("{:?}", e);
+    }
+
     // create app config to store state data
     let shells_context = match init() {
         Ok(s) => s,
