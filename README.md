@@ -89,7 +89,7 @@ $ shellclear pop
 
 ## :luggage: Restore shell history
 ```sh
-$ shellclear backup
+$ shellclear restore
 ```
 
 # Thanks
