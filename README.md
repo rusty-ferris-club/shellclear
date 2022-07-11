@@ -1,4 +1,3 @@
-[![Release](https://github.com/rusty-ferris-club/shellclear/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/rusty-ferris-club/shellclear/actions/workflows/release.yml)
 [![Build](https://github.com/rusty-ferris-club/shellclear/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/rusty-ferris-club/shellclear/actions/workflows/build.yml)
 
 <p align="center">
