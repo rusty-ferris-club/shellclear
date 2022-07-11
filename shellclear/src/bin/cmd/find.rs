@@ -5,7 +5,7 @@ use std::str;
 
 pub fn command() -> Command<'static> {
     Command::new("find")
-        .about("find sensitive commands")
+        .about("Find sensitive commands")
         .arg(
             Arg::new("clear")
                 .short('c')

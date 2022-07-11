@@ -6,7 +6,7 @@ pub fn command() -> Command<'static> {
         .version(env!("VERGEN_GIT_SEMVER"))
         .version(crate_version!())
         .setting(AppSettings::ArgRequiredElseHelp)
-        .about("ClI tool for history management")
+        .about("Secure shell commands")
         .arg(
             Arg::new("no_banner")
                 .long("no-banner")

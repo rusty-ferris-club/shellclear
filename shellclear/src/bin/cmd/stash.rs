@@ -4,7 +4,7 @@ use shellclear::{promter::confirm, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("stash")
-        .about("Stash history changes and stash the commands")
+        .about("Stash history file")
         .subcommand(Command::new("pop").about("Pop stash history commands"))
 }
 
