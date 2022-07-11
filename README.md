@@ -87,17 +87,6 @@ now your history shell is clear, to bring back your history run the command:
 $ shellclear pop
 ```
 
-
-## :see_no_evil: Stash/Pop 
-You can stash your history shell by running the command:
-```sh
-$ shellclear stash
-```
-now your history shell is clear, to bring back your history run the command:
-```sh
-$ shellclear pop
-```
-
 ## :luggage: Restore shell history
 ```sh
 $ shellclear backup
