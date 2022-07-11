@@ -14,7 +14,7 @@
 <br/>
 <b>:see_no_evil: Stash your history command before presentations OR screen sharing</b>
 <br/>
-<b>:triangular_flag_on_post: Create a profile history file for specific use cases.</b>
+<b>:triangular_flag_on_post: Create a profile history file</b>
 <br/>
 <hr/>
 </p>
