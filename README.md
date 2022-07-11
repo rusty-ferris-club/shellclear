@@ -23,7 +23,7 @@
 The idea behind `shellclear` is to provide a simple and fast way to secure you shell commands history
 ## Installation
 ```bash
-brew tap rusty-ferris-club/tapp && brew install shellclear
+brew tap rusty-ferris-club/tap && brew install shellclear
 ```
 Or download the binary file from [releases](https://github.com/rusty-ferris-club/shellclear/releases) page.
 
