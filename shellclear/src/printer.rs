@@ -54,6 +54,7 @@ mod test_printer {
     use crate::data::SensitiveCommands;
     use crate::shell::Shell;
     use insta::assert_debug_snapshot;
+    use regex::Regex;
     use std::str;
 
     #[test]
@@ -64,11 +65,11 @@ mod test_printer {
             shell_type: Shell::Zshrc,
             sensitive_findings: vec![
                 SensitiveCommands {
-                    test: "test".to_string(),
+                    test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
                 },
                 SensitiveCommands {
-                    test: "test2".to_string(),
+                    test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
                 },
             ],

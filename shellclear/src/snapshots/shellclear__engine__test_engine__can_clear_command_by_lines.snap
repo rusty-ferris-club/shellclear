@@ -28,7 +28,7 @@ Ok(
             shell_type: Bash,
             sensitive_findings: [
                 SensitiveCommands {
-                    test: "DELETE_ME",
+                    test: DELETE_ME,
                     name: "test",
                 },
             ],

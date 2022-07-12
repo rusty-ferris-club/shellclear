@@ -8,7 +8,8 @@ pub struct CmdExit {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct SensitiveCommands {
-    pub test: String,
+    #[serde(with = "serde_regex")]
+    pub test: regex::Regex,
     pub name: String,
 }
 #[derive(Debug)]

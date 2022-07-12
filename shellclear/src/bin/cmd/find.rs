@@ -26,6 +26,7 @@ pub fn run(
     shells_context: &Vec<ShellContext>,
 ) -> Result<shellclear::CmdExit> {
     let mut findings: Vec<FindingSensitiveCommands> = Vec::new();
+    let en = engine::PatternsEngine::default();
 
     for shell_context in shells_context {
         if matches.is_present("backup") {
@@ -43,10 +44,7 @@ pub fn run(
             }
         }
 
-        findings.extend(engine::find_history_commands(
-            shell_context,
-            matches.is_present("clear"),
-        )?);
+        findings.extend(en.find_history_commands(shell_context, matches.is_present("clear"))?);
     }
 
     let message = if findings.is_empty() {
