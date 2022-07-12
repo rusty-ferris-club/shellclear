@@ -41,7 +41,7 @@ fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     }
     Ok(shellclear::CmdExit {
         code: 0,
-        message: Some(format!("Shell {:?} stash successfully when opening a new tab. Run `{} stash pop` to return your history commands",shell_context.history.shell, crate_name!() )),
+        message: Some(format!("Shell {:?} stash successfully when open a new tab. Run `{} stash pop` to return your history commands",shell_context.history.shell, crate_name!() )),
     })
 }
 

@@ -37,9 +37,8 @@ pub fn run(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
         });
     }
 
-    println!("history file restored successfully");
     Ok(shellclear::CmdExit {
         code: exitcode::OK,
-        message: None,
+        message: Some("History file restored successfully".to_string()),
     })
 }

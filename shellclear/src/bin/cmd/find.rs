@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
+use console::style;
 use shellclear::{engine, printer, FindingSensitiveCommands, ShellContext};
 use std::str;
 
@@ -48,15 +49,29 @@ pub fn run(
     }
 
     let message = if findings.is_empty() {
-        Some("sensitive commands not found".to_string())
+        Some("history commands not found".to_string())
     } else {
         let mut out = Vec::new();
-        printer::show_sensitive_findings(&mut out, findings)?;
-        println!("{}", str::from_utf8(&out)?);
-        if matches.is_present("clear") {
-            Some("sensitive commands was cleared".to_string())
+        let count_sensitive_commands = findings
+            .iter()
+            .filter(|f| !f.sensitive_findings.is_empty())
+            .count();
+
+        if count_sensitive_commands == 0 {
+            Some(" 🎉 Your shells is clean! ".to_string())
         } else {
-            None
+            let mut message = format!(" 👀 found {} sensitive commands", count_sensitive_commands);
+            if !matches.is_present("clear") {
+                message = format!("{}. {}", message, "Use --clear flag to clean them");
+            }
+            println!("\n\r{}\n\r", style(message).yellow());
+            printer::show_sensitive_findings(&mut out, findings)?;
+            print!("{}", str::from_utf8(&out)?);
+            if matches.is_present("clear") {
+                Some(" 🎉 Sensitive commands was cleared".to_string())
+            } else {
+                None
+            }
         }
     };
 

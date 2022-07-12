@@ -71,7 +71,7 @@ fn main() {
                 } else {
                     Style::new().red()
                 };
-                eprintln!("{}", style.apply_to(message));
+                eprintln!("\n\r{}\n\r", style.apply_to(message));
             }
             cmd.code
         }
