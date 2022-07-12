@@ -32,7 +32,7 @@ pub fn show_sensitive_findings(
                         .join("\r\n")
                         .as_ref(),
                 ),
-                Cell::new(&f.command.to_string()),
+                Cell::new(&chunk(&f.command, 150)),
             ]
         })
         .collect::<Vec<_>>();
@@ -46,6 +46,15 @@ pub fn show_sensitive_findings(
         table.print(out)?;
     }
     Ok(())
+}
+
+fn chunk(text: &str, size: usize) -> String {
+    text.chars()
+        .collect::<Vec<char>>()
+        .chunks(size)
+        .map(|c| c.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join("\r\n")
 }
 
 #[cfg(test)]

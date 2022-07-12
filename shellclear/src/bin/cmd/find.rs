@@ -64,7 +64,7 @@ pub fn run(
             if !matches.is_present("clear") {
                 message = format!("{}. {}", message, "Use --clear flag to clean them");
             }
-            println!("\n\r{}\n\r", style(message).yellow());
+            println!("\r\n{}\r\n", style(message).yellow());
             printer::show_sensitive_findings(&mut out, findings)?;
             print!("{}", str::from_utf8(&out)?);
             if matches.is_present("clear") {
