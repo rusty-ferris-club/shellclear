@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::Result as AnyResult;
 use clap::Command;
 use shellclear::{promter, ShellContext};
 
@@ -6,8 +6,8 @@ pub fn command() -> Command<'static> {
     Command::new("restore").about("Restore backup history file")
 }
 
-pub fn run(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
-    let mut backup_files = shell_context.get_backup_files().unwrap();
+pub fn run(shell_context: &ShellContext) -> AnyResult<shellclear::CmdExit> {
+    let mut backup_files = shell_context.get_backup_files()?;
     if backup_files.is_empty() {
         return Ok(shellclear::CmdExit {
             code: exitcode::OK,

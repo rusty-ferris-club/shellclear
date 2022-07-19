@@ -26,12 +26,7 @@ Ok(
         },
         FindingSensitiveCommands {
             shell_type: Fish,
-            sensitive_findings: [
-                SensitiveCommands {
-                    test: DELETE_ME,
-                    name: "test",
-                },
-            ],
+            sensitive_findings: [],
             command: "---\ncmd: export DELETE_ME=token\nwhen: \"1656438760\"\n",
         },
     ],

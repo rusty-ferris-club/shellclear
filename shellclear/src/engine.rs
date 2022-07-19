@@ -31,6 +31,11 @@ impl Default for PatternsEngine {
 }
 
 impl PatternsEngine {
+    /// Search sensitive command patterns  
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if history file not exists/ could't open
     pub fn find_history_commands(
         &self,
         state_context: &ShellContext,
@@ -60,8 +65,8 @@ impl PatternsEngine {
 
         let lines = reader
             .lines()
-            .filter(|line| line.is_ok())
-            .map(|line| line.unwrap())
+            .filter(std::result::Result::is_ok)
+            .map(std::result::Result::unwrap)
             .collect::<Vec<_>>();
 
         debug!(
@@ -77,7 +82,7 @@ impl PatternsEngine {
                 let sensitive_findings = sensitive_commands
                     .par_iter()
                     .filter(|v| v.test.is_match(command))
-                    .map(|f| f.clone())
+                    .map(std::clone::Clone::clone)
                     .collect::<Vec<_>>();
 
                 FindingSensitiveCommands {
@@ -130,7 +135,7 @@ impl PatternsEngine {
                 let sensitive_findings = sensitive_commands
                     .par_iter()
                     .filter(|v| v.test.is_match(&h.cmd))
-                    .map(|f| f.clone())
+                    .map(std::clone::Clone::clone)
                     .collect::<Vec<_>>();
 
                 FindingSensitiveCommands {
@@ -152,7 +157,7 @@ impl PatternsEngine {
 
             for command_line in &results {
                 if command_line.sensitive_findings.is_empty() {
-                    cleared_history.push(serde_yaml::from_str(&command_line.command).unwrap())
+                    cleared_history.push(serde_yaml::from_str(&command_line.command)?);
                 }
             }
             if !cleared_history.is_empty() {
@@ -200,7 +205,11 @@ export DELETE_ME=token
   when: "1656438760"
 "#;
 
-    fn create_mock_state(temp_dir: &TempDir, content: &str) -> ShellContext {
+    fn create_mock_state(
+        temp_dir: &TempDir,
+        content: &str,
+        shell_type: shell::Shell,
+    ) -> ShellContext {
         let app_folder = temp_dir.path().join("app");
         let history_file_name = "history";
         let history_file_path = app_folder.join(history_file_name);
@@ -212,12 +221,25 @@ export DELETE_ME=token
 
         ShellContext {
             app_folder_path: app_folder.display().to_string(),
-            history: shell::HistoryShell {
-                shell: shell::Shell::Bash,
+            history: shell::History {
+                shell: shell_type,
                 path: history_file_path.display().to_string(),
                 file_name: history_file_name.to_string(),
             },
         }
+    }
+
+    #[test]
+    fn can_find_history_commands_line() {
+        let temp_dir = TempDir::new("engine").unwrap();
+
+        let en = PatternsEngine::default();
+        let state_context =
+            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+
+        let result = en.find_history_commands(&state_context, false);
+
+        assert_debug_snapshot!(result);
     }
 
     #[test]
@@ -229,7 +251,9 @@ export DELETE_ME=token
         }];
 
         let en = PatternsEngine::default();
-        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT);
+        let state_context =
+            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+
         let result = en.find_by_lines(&state_context, &search_sensitive_commands, true);
 
         assert_debug_snapshot!(result);
@@ -245,10 +269,22 @@ export DELETE_ME=token
         }];
 
         let en = PatternsEngine::default();
-        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH);
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
         let result = en.find_fish(&state_context, &search_sensitive_commands, true);
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
+    }
+
+    #[test]
+    fn can_find_history_commands_fish() {
+        let temp_dir = TempDir::new("engine").unwrap();
+
+        let en = PatternsEngine::default();
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
+
+        let result = en.find_history_commands(&state_context, false);
+
+        assert_debug_snapshot!(result);
     }
 }

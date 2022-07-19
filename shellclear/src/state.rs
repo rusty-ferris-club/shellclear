@@ -21,10 +21,14 @@ const STASH_FOLDER: &str = "stash";
 #[derive(Clone, Debug)]
 pub struct ShellContext {
     pub app_folder_path: String,
-    pub history: shell::HistoryShell,
+    pub history: shell::History,
 }
 
 /// Init crates state folder for storing history data and detect all history shell files
+///
+/// # Errors
+///
+/// Will return `Err` when has en create a dir problem
 pub fn init() -> Result<Vec<ShellContext>> {
     let homedir = match home::home_dir() {
         Some(h) => h.display().to_string(),
@@ -57,6 +61,10 @@ pub fn init() -> Result<Vec<ShellContext>> {
 
 impl ShellContext {
     /// backup history shell file to backup folder
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when copy history file is fails
     pub fn backup(&self) -> Result<String> {
         let datetime: DateTime<Local> = Local::now();
 
@@ -81,6 +89,10 @@ impl ShellContext {
     }
 
     /// restore the given history file path
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when copy history file is fails
     pub fn restore(&self, file_path: &str) -> Result<()> {
         debug!("restore file: {} to: {}", file_path, &self.history.path);
         fs::copy(file_path, &self.history.path)?;
@@ -92,6 +104,10 @@ impl ShellContext {
     }
 
     /// override history content with new content
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when save history content
     pub fn save_history_content(&self, content: &str) -> Result<()> {
         debug!("save history content in path: {:}", &self.history.path);
         write(&self.history.path, content)?;
@@ -103,6 +119,10 @@ impl ShellContext {
     }
 
     /// save history file in stash folder clear current history shell file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when crate dir fails or crating a new file
     pub fn stash(&self) -> Result<String> {
         let copy_to = Path::new(&self.get_stash_folder())
             .join(&self.history.file_name)
@@ -124,6 +144,10 @@ impl ShellContext {
     }
 
     /// move stash history file to current shell history file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when copy/remove file was fails
     pub fn pop(&self) -> Result<String> {
         let copy_from = Path::new(&self.get_stash_folder())
             .join(&self.history.file_name)
@@ -138,14 +162,24 @@ impl ShellContext {
     }
 
     /// return all backup files
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when copy/remove file was fails
     pub fn get_backup_files(&self) -> Result<Vec<String>> {
         let backup_folder = self.get_backup_folder();
         if !Path::new(&backup_folder).is_dir() {
             return Ok(vec![]);
         }
         let paths = fs::read_dir(backup_folder)?;
+
         Ok(paths
-            .map(|path| path.unwrap().path().display().to_string())
+            .map(|path| match path {
+                Ok(p) => Some(p.path().display().to_string()),
+                Err(_e) => None,
+            })
+            .filter(std::option::Option::is_some)
+            .flatten()
             .collect::<Vec<_>>())
     }
 
@@ -160,6 +194,10 @@ impl ShellContext {
     }
 
     /// check if stash file exists
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when copy/remove file was fails
     pub fn is_stash_file_exists(&self) -> Result<bool> {
         let stash_folder = self.get_stash_folder();
         if !Path::new(&stash_folder).is_dir() {
@@ -168,7 +206,14 @@ impl ShellContext {
         let paths = fs::read_dir(&stash_folder)?;
         let count = paths
             .filter(|path| {
-                path.as_ref().unwrap().file_name().to_str().unwrap() == self.history.file_name
+                let p = match path.as_ref() {
+                    Ok(p) => p,
+                    Err(_e) => return false,
+                };
+                match p.file_name().to_str() {
+                    Some(p) => p == self.history.file_name,
+                    None => false,
+                }
             })
             .count();
         debug!("found {} stash files in {}", &stash_folder, &count);
@@ -195,7 +240,7 @@ impl ShellContext {
 
 #[cfg(test)]
 mod state_context {
-    use super::*;
+    use super::{fs, shell, Path, ShellContext};
     use crate::shell::Shell;
     use insta::assert_debug_snapshot;
     use std::fs::File;
@@ -221,7 +266,7 @@ export GITHUB_TOKEN=token
 
         ShellContext {
             app_folder_path: app_folder.display().to_string(),
-            history: shell::HistoryShell {
+            history: shell::History {
                 shell: Shell::Bash,
                 path: history_file_path.display().to_string(),
                 file_name: history_file_name.to_string(),
@@ -252,7 +297,7 @@ export GITHUB_TOKEN=token
         let context = create_mock_state(&temp_dir);
 
         let mut f = File::create(&restore_file).unwrap();
-        f.write_all("backup-history_file".as_bytes()).unwrap();
+        f.write_all(b"backup-history_file").unwrap();
         f.sync_all().unwrap();
 
         assert_debug_snapshot!(&context.restore(&restore_file.display().to_string()));

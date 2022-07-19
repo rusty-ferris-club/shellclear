@@ -2,9 +2,14 @@ use crate::data::FindingSensitiveCommands;
 use anyhow::Result;
 use prettytable::{Cell, Row, Table};
 
+/// write sensitive command findings to the given out
+///
+/// # Errors
+///
+/// Will return `Err` when couldn't write table result to out file
 pub fn show_sensitive_findings(
     out: &mut Vec<u8>,
-    findings: Vec<FindingSensitiveCommands>,
+    findings: &[FindingSensitiveCommands],
 ) -> Result<()> {
     let mut table = Table::new();
 
@@ -27,7 +32,7 @@ pub fn show_sensitive_findings(
                 Cell::new(
                     f.sensitive_findings
                         .iter()
-                        .map(|f| f.name.to_owned())
+                        .map(|f| f.name.clone())
                         .collect::<Vec<_>>()
                         .join("\r\n")
                         .as_ref(),
@@ -84,7 +89,7 @@ mod test_printer {
             ],
             command: "test command".to_string(),
         }];
-        let resp = show_sensitive_findings(&mut out, findings);
+        let resp = show_sensitive_findings(&mut out, &findings);
 
         assert_debug_snapshot!(resp);
         assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n", "\n"));

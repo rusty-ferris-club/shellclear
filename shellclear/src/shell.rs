@@ -31,7 +31,7 @@ const FISH_HISTORY_FILE_PATH: &str = ".local/share/fish/fish_history";
 
 /// History shell details
 #[derive(Clone, Debug)]
-pub struct HistoryShell {
+pub struct History {
     /// shell type
     pub shell: Shell,
     /// history file path
@@ -41,7 +41,7 @@ pub struct HistoryShell {
 }
 
 /// return list of all existing history files
-pub fn get_all_history_files() -> Result<Vec<HistoryShell>> {
+pub fn get_all_history_files() -> Result<Vec<History>> {
     let homedir = match home::home_dir() {
         Some(h) => h.display().to_string(),
         None => return Err(anyhow!("could not get directory path")),
@@ -50,7 +50,7 @@ pub fn get_all_history_files() -> Result<Vec<HistoryShell>> {
     // return list of existing shells
     Ok(Shell::iter()
         .map(|shell| {
-            let shell_history_path = get_shell_history_path(shell.clone(), &homedir);
+            let shell_history_path = get_shell_history_path(&shell, &homedir);
             if !Path::new(&shell_history_path).exists() {
                 log::debug!("shell {:?} not found", shell);
                 return Err(anyhow!("could not get directory path"));
@@ -61,19 +61,19 @@ pub fn get_all_history_files() -> Result<Vec<HistoryShell>> {
                 .to_str()
                 .unwrap()
                 .to_string();
-            Ok(HistoryShell {
+            Ok(History {
                 shell,
                 path: shell_history_path,
                 file_name,
             })
         })
-        .filter(|r| r.is_ok())
-        .map(|f| f.unwrap())
+        .filter(std::result::Result::is_ok)
+        .map(std::result::Result::unwrap)
         .collect::<Vec<_>>())
 }
 
 // returns all supported shells types
-fn get_shell_history_path(shell_type: Shell, homedir: &str) -> String {
+fn get_shell_history_path(shell_type: &Shell, homedir: &str) -> String {
     match shell_type {
         Shell::Bash => Path::new(homedir)
             .join(BASH_HISTORY_FILE_PATH)
