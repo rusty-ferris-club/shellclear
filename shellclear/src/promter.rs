@@ -2,6 +2,11 @@ use anyhow::anyhow;
 use anyhow::Result;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 
+/// prompt select option
+///
+/// # Errors
+///
+/// Will return `Err` when interact error
 pub fn select(message: &str, items: &Vec<String>) -> Result<usize> {
     let selection = match items.len() {
         1 => 0,
@@ -19,6 +24,11 @@ pub fn select(message: &str, items: &Vec<String>) -> Result<usize> {
     Ok(selection)
 }
 
+/// prompt confirm message
+///
+/// # Errors
+///
+/// Will return `Err` when interact error
 pub fn confirm(message: &str) -> Result<()> {
     match Confirm::with_theme(&ColorfulTheme::default())
         .with_prompt(message)

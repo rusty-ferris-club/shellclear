@@ -19,7 +19,7 @@ fn main() {
         .subcommand(cmd::restore::command())
         .subcommand(cmd::stash::command());
 
-    let matches = app.to_owned().get_matches();
+    let matches = app.clone().get_matches();
 
     let env = env_logger::Env::default().filter_or(
         "LOG",

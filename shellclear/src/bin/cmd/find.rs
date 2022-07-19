@@ -65,7 +65,7 @@ pub fn run(
                 message = format!("{}. {}", message, "Use --clear flag to clean them");
             }
             println!("\r\n{}\r\n", style(message).yellow());
-            printer::show_sensitive_findings(&mut out, findings)?;
+            printer::show_sensitive_findings(&mut out, &findings)?;
             print!("{}", str::from_utf8(&out)?);
             if matches.is_present("clear") {
                 Some(" 🎉 Sensitive commands was cleared".to_string())

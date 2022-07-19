@@ -12,6 +12,7 @@ pub struct SensitiveCommands {
     pub test: regex::Regex,
     pub name: String,
 }
+
 #[derive(Debug)]
 pub struct FindingSensitiveCommands {
     pub shell_type: Shell,
