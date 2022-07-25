@@ -1,8 +1,15 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
+use shellclear::Emojis;
 use shellclear::{engine, printer, FindingSensitiveCommands, ShellContext};
 use std::str;
+
+#[derive(PartialEq)]
+enum Format {
+    Summary,
+    Table,
+}
 
 pub fn command() -> Command<'static> {
     Command::new("find")
@@ -19,6 +26,15 @@ pub fn command() -> Command<'static> {
                 .long("backup")
                 .help("Backup history file before delete commands")
                 .takes_value(false),
+        )
+        .arg(
+            Arg::new("format")
+                .long("format")
+                .help("Finding output format")
+                .possible_values(vec!["summary", "table"])
+                .ignore_case(true)
+                .default_value("table")
+                .takes_value(true),
         )
 }
 
@@ -48,19 +64,37 @@ pub fn run(
         findings.extend(en.find_history_commands(shell_context, matches.is_present("clear"))?);
     }
 
-    let message = if findings.is_empty() {
-        Some("history commands not found".to_string())
-    } else {
-        let mut out = Vec::new();
-        let count_sensitive_commands = findings
-            .iter()
-            .filter(|f| !f.sensitive_findings.is_empty())
-            .count();
+    let format = match matches.value_of("format") {
+        Some("summary") => Format::Summary,
+        _ => Format::Table,
+    };
+    let mut out = Vec::new();
 
-        if count_sensitive_commands == 0 {
-            Some(" 🎉 Your shells is clean! ".to_string())
-        } else {
-            let mut message = format!(" 👀 found {} sensitive commands", count_sensitive_commands);
+    let count_sensitive_commands = findings
+        .iter()
+        .filter(|f| !f.sensitive_findings.is_empty())
+        .count();
+
+    let emojis = Emojis::default();
+
+    if count_sensitive_commands == 0 {
+        return Ok(shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some(format!(
+                "{} Your shells is clean from sensitive data!",
+                emojis.confetti
+            )),
+        });
+    };
+
+    let message = match format {
+        Format::Summary => Some(format!(
+            "{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information",
+            emojis.alarm,
+            style(count_sensitive_commands).red()
+        )),
+        Format::Table => {
+            let mut message = format!(" {} found {} sensitive commands", emojis.alarm,count_sensitive_commands);
             if !matches.is_present("clear") {
                 message = format!("{}. {}", message, "Use --clear flag to clean them");
             }
@@ -68,13 +102,15 @@ pub fn run(
             printer::show_sensitive_findings(&mut out, &findings)?;
             print!("{}", str::from_utf8(&out)?);
             if matches.is_present("clear") {
-                Some(" 🎉 Sensitive commands was cleared".to_string())
+                Some(format!(
+                    "\r\n {} Sensitive commands was cleared\r\n",
+                    emojis.confetti
+                ))
             } else {
                 None
             }
         }
     };
-
     Ok(shellclear::CmdExit {
         code: exitcode::OK,
         message,

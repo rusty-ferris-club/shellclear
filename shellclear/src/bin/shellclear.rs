@@ -1,6 +1,6 @@
 mod cmd;
 use anyhow::anyhow;
-use console::{style, Style};
+use console::style;
 use shellclear::{init, promter, ShellContext};
 use std::process::exit;
 
@@ -66,12 +66,7 @@ fn main() {
     let exit_with = match res {
         Ok(cmd) => {
             if let Some(message) = cmd.message {
-                let style = if exitcode::is_success(cmd.code) {
-                    Style::new().green()
-                } else {
-                    Style::new().red()
-                };
-                eprintln!("\r\n{}\r\n", style.apply_to(message));
+                eprintln!("{}", message);
             }
             cmd.code
         }
