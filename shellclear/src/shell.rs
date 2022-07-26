@@ -2,8 +2,7 @@ use anyhow::anyhow;
 use anyhow::Result;
 use std::fmt;
 use std::path::Path;
-use strum::IntoEnumIterator; // 0.17.1
-use strum_macros::EnumIter; // 0.17.1
+use strum::{EnumIter, IntoEnumIterator};
 
 /// List of all supported shells
 #[derive(Debug, EnumIter, Clone)]

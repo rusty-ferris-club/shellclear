@@ -1,7 +1,7 @@
 mod cmd;
 use anyhow::anyhow;
 use console::{style, Style};
-use shellclear::{init, promter, ShellContext};
+use shellclear::{engine, init, promter, Emojis, ShellContext};
 use std::process::exit;
 
 const DEFAULT_ERR_EXIT_CODE: i32 = 1;
@@ -27,6 +27,32 @@ fn main() {
     );
     env_logger::init_from_env(env);
 
+    // create app config to store state data
+    let shells_context = match init() {
+        Ok(s) => s,
+        Err(e) => {
+            log::error!("{}", e);
+            exit(1)
+        }
+    };
+
+    if matches.is_present("init-shell") {
+        let en = engine::PatternsEngine::default();
+        let emojis = Emojis::default();
+        if let Ok(findings) = en.find_history_commands_from_shall_list(&shells_context, false) {
+            let sensitive_commands = findings.get_sensitive_commands();
+            if sensitive_commands.is_empty() {
+                eprintln!(
+                    "{} Your shells is clean from sensitive data!",
+                    emojis.confetti
+                );
+            } else {
+                eprintln!("{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information", emojis.alarm,style(sensitive_commands.len()).red());
+            }
+        }
+        exit(0)
+    }
+
     if !matches.is_present("no_banner") {
         println!(
             "{}{}",
@@ -41,15 +67,6 @@ fn main() {
     }) {
         log::debug!("{:?}", e);
     }
-
-    // create app config to store state data
-    let shells_context = match init() {
-        Ok(s) => s,
-        Err(e) => {
-            log::error!("{}", e);
-            exit(1)
-        }
-    };
 
     let res = match matches.subcommand() {
         None => Err(anyhow!("command not found")),

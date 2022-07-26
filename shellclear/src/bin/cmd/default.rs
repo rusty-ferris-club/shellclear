@@ -30,4 +30,10 @@ pub fn command() -> Command<'static> {
                 .ignore_case(true)
                 .takes_value(true),
         )
+        .arg(
+            Arg::new("init-shell")
+                .long("init-shell")
+                .help("Show sensitive findings summary for MOTD")
+                .takes_value(false),
+        )
 }

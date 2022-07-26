@@ -22,6 +22,11 @@ pub struct PatternsEngine {
     sensitive_commands: Vec<SensitiveCommands>,
 }
 
+#[derive(Default)]
+pub struct Findings {
+    pub patterns: Vec<FindingSensitiveCommands>,
+}
+
 impl Default for PatternsEngine {
     fn default() -> Self {
         Self {
@@ -30,8 +35,43 @@ impl Default for PatternsEngine {
     }
 }
 
+impl Findings {
+    #[must_use]
+    // add list of finding
+    pub fn add_findings(mut self, finding: Vec<FindingSensitiveCommands>) -> Self {
+        self.patterns.extend(finding);
+        self
+    }
+
+    #[must_use]
+    // return list of sensitive findings commands
+    pub fn get_sensitive_commands(&self) -> Vec<&FindingSensitiveCommands> {
+        self.patterns
+            .iter()
+            .filter(|&f| !f.sensitive_findings.is_empty())
+            .collect::<Vec<_>>()
+    }
+}
+
 impl PatternsEngine {
-    /// Search sensitive command patterns  
+    /// Search sensitive command patterns from the given sehll list
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when has an error when find sensitive patters in a specific shell
+    pub fn find_history_commands_from_shall_list(
+        &self,
+        shells_context: &Vec<ShellContext>,
+        clear: bool,
+    ) -> Result<Findings> {
+        let mut findings = Findings::default();
+
+        for shell_context in shells_context {
+            findings = findings.add_findings(self.find_history_commands(shell_context, clear)?);
+        }
+        Ok(findings)
+    }
+    /// Search sensitive command patterns
     ///
     /// # Errors
     ///
