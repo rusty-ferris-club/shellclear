@@ -9,11 +9,12 @@
 <br/>
 </p>
 <p align="center">
+<br/>
+<b>:triangular_flag_on_post: Show sensitive command summary when open a new terminal</b>
+<br/>
 <b>:eyes: Clear sensitive commands from shell history</b>
 <br/>
 <b>:see_no_evil: Stash your history command before presentations OR screen sharing</b>
-<br/>
-<b>:triangular_flag_on_post: Create a profile history file</b>
 <br/>
 <hr/>
 </p>
@@ -25,6 +26,14 @@ The idea behind `shellclear` is to provide a simple and fast way to secure you s
 brew tap rusty-ferris-club/tap && brew install shellclear
 ```
 Or download the binary file from [releases](https://github.com/rusty-ferris-club/shellclear/releases) page.
+
+## Add Summary 
+Add in shell profile (~/.zshrc / .bash_profile / .bashrc)
+```
+eval $(shellclear --init-shell)
+```
+![motd](./media/motd.png)
+
 
 ## Using
 ```
@@ -61,6 +70,7 @@ export GITHUB_TOKEN=<TOKEN>
 export AWS_ACCESS_KEY=<KEY>
 ./myscript.sh ghp_<>
 ```
+![find](./media/find.png)
 
 ### Run `shellcler find` command:
 ```sh

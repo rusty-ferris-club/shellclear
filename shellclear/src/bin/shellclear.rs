@@ -42,12 +42,12 @@ fn main() {
         if let Ok(findings) = en.find_history_commands_from_shall_list(&shells_context, false) {
             let sensitive_commands = findings.get_sensitive_commands();
             if sensitive_commands.is_empty() {
-                println!(
+                eprintln!(
                     "{} Your shells is clean from sensitive data!",
                     emojis.confetti
                 );
             } else {
-                println!("{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information", emojis.alarm,style(sensitive_commands.len()).red());
+                eprintln!("{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information", emojis.alarm,style(sensitive_commands.len()).red());
             }
         }
         exit(0)
