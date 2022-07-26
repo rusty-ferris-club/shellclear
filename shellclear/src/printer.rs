@@ -9,7 +9,7 @@ use prettytable::{Cell, Row, Table};
 /// Will return `Err` when couldn't write table result to out file
 pub fn show_sensitive_findings(
     out: &mut Vec<u8>,
-    findings: &[FindingSensitiveCommands],
+    findings: &[&FindingSensitiveCommands],
 ) -> Result<()> {
     let mut table = Table::new();
 
@@ -23,7 +23,6 @@ pub fn show_sensitive_findings(
     let mut count = 0;
     let rows = findings
         .iter()
-        .filter(|f| !f.sensitive_findings.is_empty())
         .map(|f| {
             count += 1;
             vec![
@@ -75,7 +74,7 @@ mod test_printer {
     fn can_print_table() {
         let mut out = Vec::new();
 
-        let findings = vec![FindingSensitiveCommands {
+        let shell_finding = FindingSensitiveCommands {
             shell_type: Shell::Zshrc,
             sensitive_findings: vec![
                 SensitiveCommands {
@@ -88,7 +87,8 @@ mod test_printer {
                 },
             ],
             command: "test command".to_string(),
-        }];
+        };
+        let findings = vec![&shell_finding];
         let resp = show_sensitive_findings(&mut out, &findings);
 
         assert_debug_snapshot!(resp);

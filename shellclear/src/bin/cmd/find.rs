@@ -2,14 +2,8 @@ use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
 use shellclear::Emojis;
-use shellclear::{engine, printer, FindingSensitiveCommands, ShellContext};
+use shellclear::{engine, printer, ShellContext};
 use std::str;
-
-#[derive(PartialEq)]
-enum Format {
-    Summary,
-    Table,
-}
 
 pub fn command() -> Command<'static> {
     Command::new("find")
@@ -27,23 +21,16 @@ pub fn command() -> Command<'static> {
                 .help("Backup history file before delete commands")
                 .takes_value(false),
         )
-        .arg(
-            Arg::new("format")
-                .long("format")
-                .help("Finding output format")
-                .possible_values(vec!["summary", "table"])
-                .ignore_case(true)
-                .default_value("table")
-                .takes_value(true),
-        )
 }
 
 pub fn run(
     matches: &ArgMatches,
     shells_context: &Vec<ShellContext>,
 ) -> Result<shellclear::CmdExit> {
-    let mut findings: Vec<FindingSensitiveCommands> = Vec::new();
     let en = engine::PatternsEngine::default();
+
+    let findings =
+        en.find_history_commands_from_shall_list(shells_context, matches.is_present("clear"))?;
 
     for shell_context in shells_context {
         if matches.is_present("backup") {
@@ -60,24 +47,12 @@ pub fn run(
                 }
             }
         }
-
-        findings.extend(en.find_history_commands(shell_context, matches.is_present("clear"))?);
     }
 
-    let format = match matches.value_of("format") {
-        Some("summary") => Format::Summary,
-        _ => Format::Table,
-    };
-    let mut out = Vec::new();
-
-    let count_sensitive_commands = findings
-        .iter()
-        .filter(|f| !f.sensitive_findings.is_empty())
-        .count();
-
+    let sensitive_commands = findings.get_sensitive_commands();
     let emojis = Emojis::default();
 
-    if count_sensitive_commands == 0 {
+    if sensitive_commands.is_empty() {
         return Ok(shellclear::CmdExit {
             code: exitcode::OK,
             message: Some(format!(
@@ -87,28 +62,26 @@ pub fn run(
         });
     };
 
-    let message = match format {
-        Format::Summary => Some(format!(
-            "{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information",
+    let message = {
+        let mut out = Vec::new();
+        let mut message = format!(
+            " {} found {} sensitive commands",
             emojis.alarm,
-            style(count_sensitive_commands).red()
-        )),
-        Format::Table => {
-            let mut message = format!(" {} found {} sensitive commands", emojis.alarm,count_sensitive_commands);
-            if !matches.is_present("clear") {
-                message = format!("{}. {}", message, "Use --clear flag to clean them");
-            }
-            println!("\r\n{}\r\n", style(message).yellow());
-            printer::show_sensitive_findings(&mut out, &findings)?;
-            print!("{}", str::from_utf8(&out)?);
-            if matches.is_present("clear") {
-                Some(format!(
-                    "\r\n {} Sensitive commands was cleared\r\n",
-                    emojis.confetti
-                ))
-            } else {
-                None
-            }
+            sensitive_commands.len()
+        );
+        if !matches.is_present("clear") {
+            message = format!("{}. {}", message, "Use --clear flag to clean them");
+        }
+        println!("\r\n{}\r\n", style(message).yellow());
+        printer::show_sensitive_findings(&mut out, &sensitive_commands)?;
+        print!("{}", str::from_utf8(&out)?);
+        if matches.is_present("clear") {
+            Some(format!(
+                " {} Sensitive commands was cleared",
+                emojis.confetti
+            ))
+        } else {
+            None
         }
     };
     Ok(shellclear::CmdExit {
