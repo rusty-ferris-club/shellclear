@@ -1,3 +1,4 @@
+use crate::config::Config;
 use crate::data::{FindingSensitiveCommands, SensitiveCommands};
 use crate::shell;
 use crate::state::ShellContext;
@@ -29,8 +30,17 @@ pub struct Findings {
 
 impl Default for PatternsEngine {
     fn default() -> Self {
+        let sensitive_patterns = {
+            let mut patterns: Vec<SensitiveCommands> =
+                serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap();
+            match Config::load_patterns_from_default_path() {
+                Ok(p) => patterns.extend(p),
+                Err(e) => log::debug!("{:?}", e),
+            };
+            patterns
+        };
         Self {
-            sensitive_commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
+            sensitive_commands: sensitive_patterns,
         }
     }
 }

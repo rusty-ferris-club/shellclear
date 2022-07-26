@@ -15,6 +15,7 @@ pub const BANNER: &str = r#"
 
 fn main() {
     let app = cmd::default::command()
+        .subcommand(cmd::config::command())
         .subcommand(cmd::find::command())
         .subcommand(cmd::restore::command())
         .subcommand(cmd::stash::command());
@@ -71,6 +72,7 @@ fn main() {
     let res = match matches.subcommand() {
         None => Err(anyhow!("command not found")),
         Some(tup) => match tup {
+            ("config", subcommand_matches) => cmd::config::run(subcommand_matches),
             ("find", subcommand_matches) => cmd::find::run(subcommand_matches, &shells_context),
             ("restore", _subcommand_matches) => cmd::restore::run(select_shell(&shells_context)),
             ("stash", subcommand_matches) => {
