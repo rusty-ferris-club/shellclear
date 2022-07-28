@@ -18,7 +18,6 @@ fn main() {
         .subcommand(cmd::config::command())
         .subcommand(cmd::find::command())
         .subcommand(cmd::clear::command())
-        .subcommand(cmd::restore::command())
         .subcommand(cmd::stash::command());
 
     let matches = app.clone().get_matches();
@@ -90,7 +89,6 @@ fn main() {
             ("clear", subcommand_matches) => {
                 cmd::clear::run(subcommand_matches, &shells_context, &config)
             }
-            ("restore", _subcommand_matches) => cmd::restore::run(select_shell(&shells_context)),
             ("stash", subcommand_matches) => {
                 cmd::stash::run(subcommand_matches, select_shell(&shells_context))
             }
