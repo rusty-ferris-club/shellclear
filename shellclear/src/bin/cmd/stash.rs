@@ -1,11 +1,12 @@
 use anyhow::Result;
 use clap::{crate_name, ArgMatches, Command};
-use shellclear::{promter::confirm, ShellContext};
+use shellclear::{promter, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("stash")
         .about("Stash history file")
         .subcommand(Command::new("pop").about("Pop stash history commands"))
+        .subcommand(Command::new("restore").about("Restore backup history file"))
 }
 
 pub fn run(
@@ -15,6 +16,7 @@ pub fn run(
     match subcommand_matches.subcommand() {
         None => run_stash(shell_context),
         Some(tup) => match tup {
+            ("restore", _subcommand_matches) => run_restore(shell_context),
             ("pop", _subcommand_matches) => run_pop(shell_context),
             _ => unreachable!(),
         },
@@ -24,7 +26,7 @@ pub fn run(
 fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     // todo:: check if file exists and remove the unwrap
     if shell_context.is_stash_file_exists()? {
-        if let Err(e) = confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
+        if let Err(e) = promter::confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
             log::debug!("{:?}", e);
             return Ok(shellclear::CmdExit {
                 code: exitcode::OK,
@@ -65,5 +67,42 @@ fn run_pop(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
             "Shell {:?} history pop successfully when open a new tab. ",
             shell_context.history.shell
         )),
+    })
+}
+
+pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
+    let mut backup_files = shell_context.get_backup_files()?;
+    if backup_files.is_empty() {
+        return Ok(shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some("backup files not found".to_string()),
+        });
+    }
+
+    if let Some(file) = shell_context.get_stash_file() {
+        backup_files.push(file);
+    }
+
+    backup_files.sort_by(|a, b| b.cmp(a));
+    let restore_from_path = match promter::select("select backup file", &backup_files) {
+        Ok(selection) => &backup_files[selection],
+        Err(_e) => {
+            return Ok(shellclear::CmdExit {
+                code: 0,
+                message: None,
+            });
+        }
+    };
+
+    if let Some(e) = shell_context.restore(restore_from_path).err() {
+        return Ok(shellclear::CmdExit {
+            code: 1,
+            message: Some(format!("restore failed: {:?}", e)),
+        });
+    }
+
+    Ok(shellclear::CmdExit {
+        code: exitcode::OK,
+        message: Some("History file restored successfully".to_string()),
     })
 }

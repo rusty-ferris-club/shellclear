@@ -85,14 +85,19 @@ $ shellclear clear
 $ shellclear clear --backup
 ```
 
-## :see_no_evil: Stash/Pop 
+## :see_no_evil: Stash/Pop/Restore
 You can stash your history shell by running the command:
 ```sh
 $ shellclear stash
 ```
-now your history shell is clear, to bring back your history run the command:
+Now your history shell is clear, to bring back your history run the command:
 ```sh
-$ shellclear pop
+$ shellclear stash pop
+```
+
+You can also restore your history backup file by running the command:
+```sh
+$ shellclear stash restore
 ```
 
 ## :pencil2: Custom Sensitive Patterns
@@ -108,10 +113,7 @@ Validate syntax file
 $ shellclear config --validate
 ```
 
-## :luggage: Restore shell history
-```sh
-$ shellclear restore
-```
+
 
 # Thanks
 To all [Contributors](https://github.com/rusty-ferris-club/shellclear/graphs/contributors) - you make this happen, thanks!
