@@ -38,7 +38,7 @@ eval $(shellclear --init-shell)
 ## Using
 ```
 $ shellclear --help
-shellclear 0.1.1
+
 Secure shell commands
 
 USAGE:
@@ -46,12 +46,14 @@ USAGE:
 
 OPTIONS:
     -h, --help           Print help information
+        --init-shell     Show sensitive findings summary for MOTD
         --log <LEVEL>    Set logging level [default: INFO] [possible values: OFF, TRACE, DEBUG,
                          INFO, WARN, ERROR]
         --no-banner      Don't show the banner
     -V, --version        Print version information
 
 SUBCOMMANDS:
+    config     Create custom configuration
     find       Find sensitive commands
     help       Print this message or the help of the given subcommand(s)
     restore    Restore backup history file
@@ -95,6 +97,19 @@ $ shellclear stash
 now your history shell is clear, to bring back your history run the command:
 ```sh
 $ shellclear pop
+```
+
+## :pencil2: Custom Sensitive Patterns
+To create a custom sensitive patters you can run
+```sh
+$ shellclear config
+```
+Config command will create a file that you can add your custom patters that `shellclear` automatically.
+
+### Validate Config File
+Validate syntax file
+```sh
+$ shellclear config --validate
 ```
 
 ## :luggage: Restore shell history

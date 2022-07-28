@@ -41,7 +41,7 @@ pub struct History {
 
 /// return list of all existing history files
 pub fn get_all_history_files() -> Result<Vec<History>> {
-    let homedir = match home::home_dir() {
+    let homedir = match dirs::home_dir() {
         Some(h) => h.display().to_string(),
         None => return Err(anyhow!("could not get directory path")),
     };

@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: "fs::read_to_string(path.unwrap()).unwrap() == SENSITIVE_PATTERN_TEMPLATE"
+---
+true

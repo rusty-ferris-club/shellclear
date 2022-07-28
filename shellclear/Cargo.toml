@@ -18,7 +18,6 @@ env_logger = "^0.9.0"
 log = "^0.4.17"
 anyhow = "1"
 console = "^0.15.0"
-home = "0.5.3"
 rayon = "1.5"
 regex = "1"
 chrono = "0.4"
@@ -27,6 +26,7 @@ prettytable-rs = "^0.8"
 dialoguer = "^0.10.1"
 ctrlc = "3.2.2"
 exitcode = "^1.1.2"
+dirs = "4.0"
 
 [dev-dependencies]
 insta = { version = "1", features = ["backtrace"] }

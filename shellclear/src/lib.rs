@@ -3,6 +3,7 @@ mod emoji;
 mod shell;
 mod state;
 
+pub mod config;
 pub mod engine;
 pub mod printer;
 pub mod promter;

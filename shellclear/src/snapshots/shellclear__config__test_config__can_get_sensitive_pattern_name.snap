@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: "config.get_sensitive_pattern_name().replace(&temp_dir.path().to_str().unwrap(),\n    \"\")"
+---
+"/app/.shellclear/sensitive-patterns.yaml"

@@ -1,6 +1,8 @@
 use crate::shell::Shell;
 use serde_derive::Deserialize;
 
+pub const ROOT_APP_FOLDER: &str = env!("CARGO_PKG_NAME");
+
 pub struct CmdExit {
     pub code: exitcode::ExitCode,
     pub message: Option<String>,
