@@ -104,8 +104,13 @@ To create a custom sensitive patters you can run
 ```sh
 $ shellclear config
 ```
-Config command will create a file that you can add your custom patters that `shellclear` automatically 
+Config command will create a file that you can add your custom patters that `shellclear` automatically.
 
+### Validate Config File
+Validate syntax file
+```sh
+$ shellclear config --validate
+```
 
 ## :luggage: Restore shell history
 ```sh
