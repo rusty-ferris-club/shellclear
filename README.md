@@ -65,28 +65,24 @@ SUBCOMMANDS:
 - zshrc
 - fish
 
-## :eyes: Find And Clear Sensitive History Commands
-Sensetive data can be stored in your history file when export a token of something or running a script with token. for example:
-```sh
-export GITHUB_TOKEN=<TOKEN>
-export AWS_ACCESS_KEY=<KEY>
-./myscript.sh ghp_<>
-```
-![find](./media/find.png)
-
-### Run `shellcler find` command:
+## :eyes: Find Sensitive Commands
+Sensetive data can be stored in your history file when export a token of something or running a script with token. 
 ```sh
 $ shellclear find
 ```
+![find](./media/find.png)
 
-### :broom: Clear findings command run:
+
+
+
+### :broom: Clear findings :
 ```sh
-$ shellclear find --clear
+$ shellclear clear
 ```
 
 ## :luggage: Backup shell history before clear
 ```sh
-$ shellclear stash --clear --backup
+$ shellclear clear --backup
 ```
 
 ## :see_no_evil: Stash/Pop 
