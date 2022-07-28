@@ -131,7 +131,8 @@ mod test_config {
         let config = new_config(&temp_dir);
         assert_debug_snapshot!(config
             .get_sensitive_pattern_name()
-            .replace(&temp_dir.path().to_str().unwrap(), ""));
+            .replace(&temp_dir.path().to_str().unwrap(), "")
+            .replace('\\', "/"));
         temp_dir.close().unwrap();
     }
 
