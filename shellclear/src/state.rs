@@ -30,7 +30,7 @@ pub struct ShellContext {
 ///
 /// Will return `Err` when has en create a dir problem
 pub fn init() -> Result<Vec<ShellContext>> {
-    let homedir = match home::home_dir() {
+    let homedir = match dirs::home_dir() {
         Some(h) => h.display().to_string(),
         None => return Err(anyhow!("could not get directory path")),
     };

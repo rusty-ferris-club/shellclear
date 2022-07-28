@@ -15,11 +15,11 @@ pub fn command() -> Command<'static> {
         )
 }
 
-pub fn run(matches: &ArgMatches) -> Result<shellclear::CmdExit> {
-    let file_path = Config::get_sensitive_pattern_name()?;
+pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit> {
+    let file_path = config.get_sensitive_pattern_name();
 
     let (message, exit_code) = if matches.is_present("validate") {
-        if let Err(e) = Config::load_patterns_from_default_path() {
+        if let Err(e) = config.load_patterns_from_default_path() {
             (
                 format!("Config file is invalid. error: `{}`.", e),
                 exitcode::CONFIG,
@@ -31,7 +31,7 @@ pub fn run(matches: &ArgMatches) -> Result<shellclear::CmdExit> {
             )
         }
     } else {
-        if Config::is_sensitive_pattern_file_exists()? {
+        if config.is_sensitive_pattern_file_exists() {
             let confirm_message = format!(
                 "file {} already exists. do you want to override the existing file?",
                 file_path,
@@ -44,7 +44,7 @@ pub fn run(matches: &ArgMatches) -> Result<shellclear::CmdExit> {
                 });
             }
         }
-        Config::init()?;
+        config.init()?;
         (
             format!("Config file created successfully in path: {}", file_path),
             exitcode::OK,

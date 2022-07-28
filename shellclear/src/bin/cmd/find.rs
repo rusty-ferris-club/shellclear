@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
+use shellclear::config::Config;
 use shellclear::Emojis;
 use shellclear::{engine, printer, ShellContext};
 use std::str;
@@ -26,8 +27,9 @@ pub fn command() -> Command<'static> {
 pub fn run(
     matches: &ArgMatches,
     shells_context: &Vec<ShellContext>,
+    config: &Config,
 ) -> Result<shellclear::CmdExit> {
-    let en = engine::PatternsEngine::default();
+    let en = engine::PatternsEngine::with_config(config)?;
 
     let findings =
         en.find_history_commands_from_shall_list(shells_context, matches.is_present("clear"))?;

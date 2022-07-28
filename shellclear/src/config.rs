@@ -1,10 +1,8 @@
-use crate::data::SensitiveCommands;
-use anyhow::anyhow;
+use crate::data::{SensitiveCommands, ROOT_APP_FOLDER};
 use anyhow::Result;
 use std::fs;
 use std::path::PathBuf;
 
-const CONFIG_FOLDER: &str = env!("CARGO_PKG_NAME");
 const CONFIG_SENSITIVE_PATTERNS: &str = "sensitive-patterns.yaml";
 const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patters file allows you you add a custom patterns to shellclear
 
@@ -12,18 +10,33 @@ const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patters file 
   test: <PATTERN REGEX>
 "###;
 
-#[derive(Default, Clone, Debug)]
-pub struct Config {}
+#[derive(Clone, Debug)]
+pub struct Config {
+    sensitive_commands_path: PathBuf,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            sensitive_commands_path: Config::get_sensitive_pattern_file(&dirs::home_dir().unwrap()),
+        }
+    }
+}
 
 impl Config {
+    fn with_custom_path(root: &PathBuf) -> Self {
+        Self {
+            sensitive_commands_path: Self::get_sensitive_pattern_file(root),
+        }
+    }
     /// Init external configuration
     ///
     /// # Errors
     ///
     /// Will return `Err` when home directory not found or failed to create a file
-    pub fn init() -> Result<String> {
-        let file = Self::get_sensitive_pattern_file()?;
-        fs::write(&file, SENSITIVE_PATTERN_TEMPLATE)?;
+    pub fn init(&self) -> Result<String> {
+        let file = &self.sensitive_commands_path;
+        fs::write(file, SENSITIVE_PATTERN_TEMPLATE)?;
         Ok(file.display().to_string())
     }
 
@@ -32,8 +45,9 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err` home directory not found
-    pub fn get_sensitive_pattern_name() -> Result<String> {
-        Ok(Self::get_sensitive_pattern_file()?.display().to_string())
+    #[must_use]
+    pub fn get_sensitive_pattern_name(&self) -> String {
+        self.sensitive_commands_path.display().to_string()
     }
 
     /// Is sensitive file is exists
@@ -41,8 +55,9 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err` home directory not found
-    pub fn is_sensitive_pattern_file_exists() -> Result<bool> {
-        Ok(Self::get_sensitive_pattern_file()?.exists())
+    #[must_use]
+    pub fn is_sensitive_pattern_file_exists(&self) -> bool {
+        self.sensitive_commands_path.exists()
     }
 
     /// Load sensitive pattern file
@@ -50,8 +65,8 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err` home directory not found or yaml is invalid
-    pub fn load_patterns_from_default_path() -> Result<Vec<SensitiveCommands>> {
-        Self::load_patterns_from_file(Self::get_sensitive_pattern_file()?)
+    pub fn load_patterns_from_default_path(&self) -> Result<Vec<SensitiveCommands>> {
+        self.load_patterns_from_file(&self.sensitive_commands_path)
     }
 
     /// Load sensitive pattern from the given path
@@ -59,31 +74,14 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err`  yaml is invalid
-    fn load_patterns_from_file(path: PathBuf) -> Result<Vec<SensitiveCommands>> {
+    fn load_patterns_from_file(&self, path: &PathBuf) -> Result<Vec<SensitiveCommands>> {
         let f = std::fs::File::open(path)?;
         Ok(serde_yaml::from_reader(f)?)
     }
 
-    /// Returns the root config folder
-    ///
-    /// # Errors
-    ///
-    /// Will return `Err` home directory not found
-    fn get_root_config() -> Result<PathBuf> {
-        match dirs::home_dir() {
-            Some(d) => Ok(d),
-            None => return Err(anyhow!("home dir not found")),
-        }
-    }
-
-    /// Returns the root shellform config folder
-    ///
-    /// # Errors
-    ///
-    /// Will return `Err` home directory not found
-    fn get_sensitive_pattern_file() -> Result<PathBuf> {
-        Ok(Self::get_root_config()?
-            .join(format!(".{}", CONFIG_FOLDER))
-            .join(CONFIG_SENSITIVE_PATTERNS))
+    /// Returns the root shellclear config folder
+    fn get_sensitive_pattern_file(path: &PathBuf) -> PathBuf {
+        path.join(format!(".{}", ROOT_APP_FOLDER))
+            .join(CONFIG_SENSITIVE_PATTERNS)
     }
 }

@@ -30,17 +30,8 @@ pub struct Findings {
 
 impl Default for PatternsEngine {
     fn default() -> Self {
-        let sensitive_patterns = {
-            let mut patterns: Vec<SensitiveCommands> =
-                serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap();
-            match Config::load_patterns_from_default_path() {
-                Ok(p) => patterns.extend(p),
-                Err(e) => log::debug!("{:?}", e),
-            };
-            patterns
-        };
         Self {
-            sensitive_commands: sensitive_patterns,
+            sensitive_commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
         }
     }
 }
@@ -64,6 +55,30 @@ impl Findings {
 }
 
 impl PatternsEngine {
+    /// Load the engine with config
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when could not load default sensitive commands
+    pub fn with_config(config: &Config) -> Result<Self> {
+        let sensitive_patterns = {
+            let mut patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
+
+            if config.is_sensitive_pattern_file_exists() {
+                match config.load_patterns_from_default_path() {
+                    Ok(p) => patterns.extend(p),
+                    Err(e) => log::debug!("could not load external pattern{:?}", e),
+                };
+            } else {
+                log::debug!("config file not found");
+            }
+
+            patterns
+        };
+        Ok(Self {
+            sensitive_commands: sensitive_patterns,
+        })
+    }
     /// Search sensitive command patterns from the given sehll list
     ///
     /// # Errors
