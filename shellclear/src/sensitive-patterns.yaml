@@ -9,7 +9,7 @@
 - name: GitHub ENV Token
   test: GITHUB_TOKEN=
 - name: GitHub Personal Token
-  test: c[0-9a-zA-Z]{36}
+  test: ghp_[0-9a-zA-Z]{36}
 - name: GitHub OAuth Token
   test: gho_[0-9a-zA-Z]{36}
 - name: GitHub App Token
