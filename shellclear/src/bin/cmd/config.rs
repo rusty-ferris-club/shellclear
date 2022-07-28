@@ -13,6 +13,13 @@ pub fn command() -> Command<'static> {
                 .help("Validate configuration file.")
                 .takes_value(false),
         )
+        .arg(
+            Arg::new("delete")
+                .short('d')
+                .long("delete")
+                .help("Delete configuration file.")
+                .takes_value(false),
+        )
 }
 
 pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit> {
@@ -30,6 +37,23 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
                 exitcode::OK,
             )
         }
+    } else if matches.is_present("delete") {
+        if let Err(e) = promter::confirm(format!("Delete {} file?", &file_path).as_str()) {
+            log::debug!("{:?}", e);
+            return Ok(shellclear::CmdExit {
+                code: exitcode::OK,
+                message: None,
+            });
+        }
+
+        if config.is_sensitive_pattern_file_exists() {
+            config.delete_sensitive_patterns_from_file()?;
+        }
+
+        (
+            format!("Config file deleted successfully in path: {}", file_path),
+            exitcode::OK,
+        )
     } else {
         if config.is_sensitive_pattern_file_exists() {
             let confirm_message = format!(

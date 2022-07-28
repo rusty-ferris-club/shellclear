@@ -60,13 +60,23 @@ impl Config {
         self.sensitive_commands_path.exists()
     }
 
+    /// Delete sensitive pattern file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` home directory not found
+    pub fn delete_sensitive_patterns_from_file(&self) -> Result<()> {
+        fs::remove_file(&self.sensitive_commands_path)?;
+        Ok(())
+    }
+
     /// Load sensitive pattern file
     ///
     /// # Errors
     ///
     /// Will return `Err` home directory not found or yaml is invalid
     pub fn load_patterns_from_default_path(&self) -> Result<Vec<SensitiveCommands>> {
-        self.load_patterns_from_file(&self.sensitive_commands_path)
+        self.load_sensitive_patterns_from_file(&self.sensitive_commands_path)
     }
 
     /// Load sensitive pattern from the given path
@@ -74,7 +84,7 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err`  yaml is invalid
-    fn load_patterns_from_file(&self, path: &PathBuf) -> Result<Vec<SensitiveCommands>> {
+    fn load_sensitive_patterns_from_file(&self, path: &PathBuf) -> Result<Vec<SensitiveCommands>> {
         let f = std::fs::File::open(path)?;
         Ok(serde_yaml::from_reader(f)?)
     }
