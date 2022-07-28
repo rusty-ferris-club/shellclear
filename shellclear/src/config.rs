@@ -18,13 +18,14 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            sensitive_commands_path: Config::get_sensitive_pattern_file(&dirs::home_dir().unwrap()),
+            sensitive_commands_path: Config::get_sensitive_pattern_file(dirs::home_dir().unwrap()),
         }
     }
 }
 
 impl Config {
-    fn with_custom_path(root: &PathBuf) -> Self {
+    #[allow(dead_code)]
+    fn with_custom_path(root: PathBuf) -> Self {
         Self {
             sensitive_commands_path: Self::get_sensitive_pattern_file(root),
         }
@@ -93,7 +94,7 @@ impl Config {
     }
 
     /// Returns the root shellclear config folder
-    fn get_sensitive_pattern_file(path: &PathBuf) -> PathBuf {
+    fn get_sensitive_pattern_file(path: PathBuf) -> PathBuf {
         path.join(format!(".{}", ROOT_APP_FOLDER))
             .join(CONFIG_SENSITIVE_PATTERNS)
     }
