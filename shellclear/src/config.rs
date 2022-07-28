@@ -36,6 +36,9 @@ impl Config {
     /// Will return `Err` when home directory not found or failed to create a file
     pub fn init(&self) -> Result<String> {
         let file = &self.sensitive_commands_path;
+        if let Some(parent) = file.parent() {
+            fs::create_dir_all(parent)?;
+        }
         fs::write(file, SENSITIVE_PATTERN_TEMPLATE)?;
         Ok(file.display().to_string())
     }
@@ -93,5 +96,71 @@ impl Config {
     fn get_sensitive_pattern_file(path: &PathBuf) -> PathBuf {
         path.join(format!(".{}", ROOT_APP_FOLDER))
             .join(CONFIG_SENSITIVE_PATTERNS)
+    }
+}
+
+#[cfg(test)]
+mod test_config {
+    use super::{Config, SENSITIVE_PATTERN_TEMPLATE};
+    use insta::assert_debug_snapshot;
+    use std::fs;
+    use tempdir::TempDir;
+
+    fn new_config(temp_dir: &TempDir) -> Config {
+        let path = temp_dir.path().join("app");
+        fs::create_dir_all(&path).unwrap();
+        Config::with_custom_path(&path)
+    }
+
+    #[test]
+    fn can_init() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        let path = config.init();
+        assert_debug_snapshot!(path.is_ok());
+        assert_debug_snapshot!(
+            fs::read_to_string(path.unwrap()).unwrap() == SENSITIVE_PATTERN_TEMPLATE
+        );
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn can_get_sensitive_pattern_name() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        assert_debug_snapshot!(config
+            .get_sensitive_pattern_name()
+            .replace(&temp_dir.path().to_str().unwrap(), ""));
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn can_is_sensitive_pattern_file_exists() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
+        config.init();
+        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
+        temp_dir.close().unwrap()
+    }
+
+    #[test]
+    fn can_delete_sensitive_patterns_from_file() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        config.init();
+        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
+        assert_debug_snapshot!(config.delete_sensitive_patterns_from_file());
+        assert_debug_snapshot!(!config.is_sensitive_pattern_file_exists());
+        temp_dir.close().unwrap()
+    }
+
+    #[test]
+    fn can_load_patterns_from_default_path() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        config.init();
+        assert_debug_snapshot!(config.load_patterns_from_default_path());
+        temp_dir.close().unwrap()
     }
 }

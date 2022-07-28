@@ -1,0 +1,7 @@
+---
+source: shellclear/src/config.rs
+expression: config.delete_sensitive_patterns_from_file()
+---
+Ok(
+    (),
+)

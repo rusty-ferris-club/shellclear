@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: path.is_ok()
+---
+true

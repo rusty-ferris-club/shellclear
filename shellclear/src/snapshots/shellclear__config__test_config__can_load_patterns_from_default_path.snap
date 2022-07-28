@@ -1,0 +1,12 @@
+---
+source: shellclear/src/config.rs
+expression: config.load_patterns_from_default_path()
+---
+Ok(
+    [
+        SensitiveCommands {
+            test: <PATTERN REGEX>,
+            name: "Pattern Name",
+        },
+    ],
+)
