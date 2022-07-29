@@ -2,7 +2,7 @@ use crate::data::FindingSensitiveCommands;
 use crate::shell::FishHistory;
 use crate::shell::Shell;
 use anyhow::Result;
-use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -61,8 +61,8 @@ pub fn extract_time(finding: &FindingSensitiveCommands) -> Result<String> {
     }
 }
 
-fn convert_str_timestamp_to_date_time(timestamp: &str) -> Result<DateTime<Local>> {
-    Ok(Local.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp.parse::<i64>()?, 0)))
+fn convert_str_timestamp_to_date_time(timestamp: &str) -> Result<DateTime<Utc>> {
+    Ok(Utc.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp.parse::<i64>()?, 0)))
 }
 
 #[cfg(test)]
