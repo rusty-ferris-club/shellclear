@@ -34,6 +34,7 @@ impl Text {
 
             writeln!(out, "{}", style(title).bold())?;
             writeln!(out, "{}", chunk(&f.command, LIMIT_COMMAND))?;
+            writeln!(out)?;
         }
         Ok(())
     }
@@ -80,6 +81,10 @@ mod test_exporter_text {
         let resp = Text::prepare_sensitive_data(&mut out, &findings);
 
         assert_debug_snapshot!(resp);
-        assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n", "\n"));
+        assert_debug_snapshot!(str::from_utf8(&out)
+            .unwrap()
+            .replace("\r\n", "\n")
+            .replace("\u{1b}[1m", "")
+            .replace("\u{1b}[0m", ""));
     }
 }
