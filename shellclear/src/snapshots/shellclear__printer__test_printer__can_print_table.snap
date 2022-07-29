@@ -1,7 +1,0 @@
----
-source: shellclear/src/printer.rs
-expression: resp
----
-Ok(
-    (),
-)

@@ -8,26 +8,31 @@ Ok(
             shell_type: Bash,
             sensitive_findings: [],
             command: "history",
+            data: "history",
         },
         FindingSensitiveCommands {
             shell_type: Bash,
             sensitive_findings: [],
             command: "ls",
+            data: "ls",
         },
         FindingSensitiveCommands {
             shell_type: Bash,
             sensitive_findings: [],
             command: "echo 'hello you'",
+            data: "echo 'hello you'",
         },
         FindingSensitiveCommands {
             shell_type: Bash,
             sensitive_findings: [],
             command: "rm -f ./file.txt",
+            data: "rm -f ./file.txt",
         },
         FindingSensitiveCommands {
             shell_type: Bash,
             sensitive_findings: [],
             command: "export DELETE_ME=token",
+            data: "export DELETE_ME=token",
         },
     ],
 )

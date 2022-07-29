@@ -96,6 +96,7 @@ impl PatternsEngine {
         }
         Ok(findings)
     }
+
     /// Search sensitive command patterns
     ///
     /// # Errors

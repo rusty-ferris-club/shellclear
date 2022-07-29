@@ -5,7 +5,7 @@ mod state;
 
 pub mod config;
 pub mod engine;
-pub mod printer;
+pub mod exporter;
 pub mod promter;
 pub use self::data::{CmdExit, FindingSensitiveCommands};
 pub use self::emoji::Emojis;

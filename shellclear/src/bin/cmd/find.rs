@@ -2,9 +2,9 @@ use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
 use shellclear::config::Config;
+use shellclear::exporter::{Exporter, Table, Text};
 use shellclear::Emojis;
-use shellclear::{engine, printer, ShellContext};
-use std::str;
+use shellclear::{engine, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("find").about("Find sensitive commands").arg(
@@ -47,19 +47,21 @@ pub fn run(
     );
     println!("\r\n{}\r\n", style(message).yellow());
 
-    match matches.value_of("format") {
-        Some("table") => {
-            let mut out = Vec::new();
-            printer::show_sensitive_findings_in_table(&mut out, &sensitive_commands)?;
-            print!("{}", str::from_utf8(&out)?);
-        }
-        _ => {
-            printer::print_show_sensitive_findings(&sensitive_commands);
-        }
+    let exporter = match matches.value_of("format") {
+        Some("table") => Box::new(Table::default()) as Box<dyn Exporter>,
+        _ => Box::new(Text::default()) as Box<dyn Exporter>,
     };
 
-    Ok(shellclear::CmdExit {
-        code: exitcode::OK,
-        message: Some("Run `shellclear clear` to clear the findings from your history".to_string()),
+    Ok(match exporter.sensitive_data(&sensitive_commands) {
+        Ok(()) => shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some(
+                "Run `shellclear clear` to clear the findings from your history".to_string(),
+            ),
+        },
+        Err(e) => shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some(e.to_string()),
+        },
     })
 }
