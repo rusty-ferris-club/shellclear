@@ -1,0 +1,7 @@
+---
+source: shellclear/src/exporter/data.rs
+expression: resp
+---
+Ok(
+    "2022-06-13 11:55:59",
+)

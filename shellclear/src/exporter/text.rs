@@ -48,7 +48,7 @@ impl Exporter for Text {
 }
 
 #[cfg(test)]
-mod test_exporter_TEXT {
+mod test_exporter_text {
     use super::*;
     use crate::data::SensitiveCommands;
     use crate::shell::Shell;

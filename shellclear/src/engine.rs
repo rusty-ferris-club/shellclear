@@ -5,19 +5,12 @@ use crate::state::ShellContext;
 use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
-use serde_derive::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs::{write, File};
 use std::io::{prelude::*, BufReader};
 use std::time::Instant;
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct FishHistory {
-    pub cmd: String,
-    pub when: String,
-}
 
 pub struct PatternsEngine {
     commands: Vec<SensitiveCommands>,
@@ -197,7 +190,7 @@ impl PatternsEngine {
         clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let start = Instant::now();
-        let history: Vec<FishHistory> =
+        let history: Vec<shell::FishHistory> =
             serde_yaml::from_reader(File::open(&state_context.history.path)?)?;
 
         let results = history
@@ -225,7 +218,7 @@ impl PatternsEngine {
 
         if clear {
             let start = Instant::now();
-            let mut cleared_history: Vec<FishHistory> = Vec::new();
+            let mut cleared_history: Vec<shell::FishHistory> = Vec::new();
 
             for command_line in &results {
                 if command_line.sensitive_findings.is_empty() {
