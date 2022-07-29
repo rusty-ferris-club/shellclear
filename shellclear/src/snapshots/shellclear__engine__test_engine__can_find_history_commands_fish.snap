@@ -7,27 +7,32 @@ Ok(
         FindingSensitiveCommands {
             shell_type: Fish,
             sensitive_findings: [],
-            command: "---\ncmd: history\nwhen: \"1656438759\"\n",
+            command: "history",
+            data: "---\ncmd: history\nwhen: \"1656438759\"\n",
         },
         FindingSensitiveCommands {
             shell_type: Fish,
             sensitive_findings: [],
-            command: "---\ncmd: ls\nwhen: \"1656438760\"\n",
+            command: "ls",
+            data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
         },
         FindingSensitiveCommands {
             shell_type: Fish,
             sensitive_findings: [],
-            command: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
+            command: "echo 'hello you'",
+            data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
         },
         FindingSensitiveCommands {
             shell_type: Fish,
             sensitive_findings: [],
-            command: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
+            command: "rm -f ./file.txt",
+            data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
         },
         FindingSensitiveCommands {
             shell_type: Fish,
             sensitive_findings: [],
-            command: "---\ncmd: export DELETE_ME=token\nwhen: \"1656438760\"\n",
+            command: "export DELETE_ME=token",
+            data: "---\ncmd: export DELETE_ME=token\nwhen: \"1656438760\"\n",
         },
     ],
 )

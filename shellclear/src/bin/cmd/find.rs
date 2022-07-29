@@ -1,17 +1,25 @@
 use anyhow::Result;
-use clap::{ArgMatches, Command};
+use clap::{Arg, ArgMatches, Command};
 use console::style;
 use shellclear::config::Config;
+use shellclear::exporter::{Exporter, Table, Text};
 use shellclear::Emojis;
-use shellclear::{engine, printer, ShellContext};
-use std::str;
+use shellclear::{engine, ShellContext};
 
 pub fn command() -> Command<'static> {
-    Command::new("find").about("Find sensitive commands")
+    Command::new("find").about("Find sensitive commands").arg(
+        Arg::new("format")
+            .long("format")
+            .help("Finding output format")
+            .possible_values(vec!["text", "table"])
+            .ignore_case(true)
+            .default_value("text")
+            .takes_value(true),
+    )
 }
 
 pub fn run(
-    _matches: &ArgMatches,
+    matches: &ArgMatches,
     shells_context: &Vec<ShellContext>,
     config: &Config,
 ) -> Result<shellclear::CmdExit> {
@@ -32,21 +40,28 @@ pub fn run(
         });
     };
 
-    let mut out = Vec::new();
     let message = format!(
         " {} found {} sensitive commands",
         emojis.alarm,
         sensitive_commands.len()
     );
-
     println!("\r\n{}\r\n", style(message).yellow());
-    printer::show_sensitive_findings(&mut out, &sensitive_commands)?;
-    print!("{}", str::from_utf8(&out)?);
 
-    Ok(shellclear::CmdExit {
-        code: exitcode::OK,
-        message: Some(
-            "Run `shellclear --clear` to clear the findings from your history".to_string(),
-        ),
+    let exporter = match matches.value_of("format") {
+        Some("table") => Box::new(Table::default()) as Box<dyn Exporter>,
+        _ => Box::new(Text::default()) as Box<dyn Exporter>,
+    };
+
+    Ok(match exporter.sensitive_data(&sensitive_commands) {
+        Ok(()) => shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some(
+                "Run `shellclear clear` to clear command findings from your history".to_string(),
+            ),
+        },
+        Err(e) => shellclear::CmdExit {
+            code: exitcode::OK,
+            message: Some(e.to_string()),
+        },
     })
 }

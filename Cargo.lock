@@ -997,6 +997,7 @@ dependencies = [
  "env_logger",
  "exitcode",
  "insta",
+ "lazy_static",
  "log",
  "prettytable-rs",
  "rayon",

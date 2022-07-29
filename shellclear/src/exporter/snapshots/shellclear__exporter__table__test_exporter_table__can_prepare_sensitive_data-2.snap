@@ -1,0 +1,5 @@
+---
+source: shellclear/src/exporter/table.rs
+expression: "str::from_utf8(&out).unwrap().replace(\"\\r\\n\", \"\\n\")"
+---
+"+---+-------+---------------------+------------+--------------+\n| # | Shell | Time                | Name       | Command      |\n+---+-------+---------------------+------------+--------------+\n| 1 | Zshrc | 2022-06-13 08:55:59 | test name  | test command |\n|   |       |                     | test name2 |              |\n+---+-------+---------------------+------------+--------------+\n"

@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use anyhow::Result;
+use serde_derive::{Deserialize, Serialize};
 use std::fmt;
 use std::path::Path;
 use strum::{EnumIter, IntoEnumIterator};
@@ -11,13 +12,18 @@ pub enum Shell {
     Zshrc,
     Fish,
 }
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct FishHistory {
+    pub cmd: String,
+    pub when: String,
+}
 
 impl fmt::Display for Shell {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Shell::Bash => write!(f, "bash"),
-            Shell::Zshrc => write!(f, "zshrc"),
-            Shell::Fish => write!(f, "fish"),
+            Self::Bash => write!(f, "bash"),
+            Self::Zshrc => write!(f, "zshrc"),
+            Self::Fish => write!(f, "fish"),
         }
     }
 }

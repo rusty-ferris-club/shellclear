@@ -5,7 +5,6 @@ use crate::state::ShellContext;
 use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
-use serde_derive::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs::{write, File};
 use std::io::{prelude::*, BufReader};
@@ -13,14 +12,8 @@ use std::time::Instant;
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct FishHistory {
-    pub cmd: String,
-    pub when: String,
-}
-
 pub struct PatternsEngine {
-    sensitive_commands: Vec<SensitiveCommands>,
+    commands: Vec<SensitiveCommands>,
 }
 
 #[derive(Default)]
@@ -31,7 +24,7 @@ pub struct Findings {
 impl Default for PatternsEngine {
     fn default() -> Self {
         Self {
-            sensitive_commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
+            commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
         }
     }
 }
@@ -76,7 +69,7 @@ impl PatternsEngine {
             patterns
         };
         Ok(Self {
-            sensitive_commands: sensitive_patterns,
+            commands: sensitive_patterns,
         })
     }
     /// Search sensitive command patterns from the given sehll list
@@ -96,6 +89,7 @@ impl PatternsEngine {
         }
         Ok(findings)
     }
+
     /// Search sensitive command patterns
     ///
     /// # Errors
@@ -112,8 +106,8 @@ impl PatternsEngine {
         );
 
         match state_context.history.shell {
-            shell::Shell::Fish => self.find_fish(state_context, &self.sensitive_commands, clear),
-            _ => self.find_by_lines(state_context, &self.sensitive_commands, clear),
+            shell::Shell::Fish => self.find_fish(state_context, &self.commands, clear),
+            _ => self.find_by_lines(state_context, &self.commands, clear),
         }
     }
 
@@ -150,10 +144,15 @@ impl PatternsEngine {
                     .map(std::clone::Clone::clone)
                     .collect::<Vec<_>>();
 
+                let only_command = match command.split_once(';') {
+                    Some((_x, y)) => y.to_string(),
+                    _ => command.clone(),
+                };
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
-                    command: command.clone(),
+                    command: only_command,
+                    data: command.clone(),
                 }
             })
             .collect::<Vec<_>>();
@@ -169,7 +168,7 @@ impl PatternsEngine {
 
             for r in &results {
                 if r.sensitive_findings.is_empty() {
-                    let _ = writeln!(&mut cleared_history, "{}", r.command);
+                    let _ = writeln!(&mut cleared_history, "{}", r.data);
                 }
             }
             if !cleared_history.is_empty() {
@@ -191,7 +190,7 @@ impl PatternsEngine {
         clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let start = Instant::now();
-        let history: Vec<FishHistory> =
+        let history: Vec<shell::FishHistory> =
             serde_yaml::from_reader(File::open(&state_context.history.path)?)?;
 
         let results = history
@@ -206,7 +205,8 @@ impl PatternsEngine {
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
-                    command: serde_yaml::to_string(&h).unwrap(),
+                    command: h.cmd.clone(),
+                    data: serde_yaml::to_string(&h).unwrap(),
                 }
             })
             .collect::<Vec<_>>();
@@ -218,11 +218,11 @@ impl PatternsEngine {
 
         if clear {
             let start = Instant::now();
-            let mut cleared_history: Vec<FishHistory> = Vec::new();
+            let mut cleared_history: Vec<shell::FishHistory> = Vec::new();
 
             for command_line in &results {
                 if command_line.sensitive_findings.is_empty() {
-                    cleared_history.push(serde_yaml::from_str(&command_line.command)?);
+                    cleared_history.push(serde_yaml::from_str(&command_line.data)?);
                 }
             }
             if !cleared_history.is_empty() {

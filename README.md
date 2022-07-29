@@ -68,12 +68,9 @@ SUBCOMMANDS:
 ## :eyes: Find Sensitive Commands
 Sensetive data can be stored in your history file when export a token of something or running a script with token. 
 ```sh
-$ shellclear find
+$ shellclear find --format table
 ```
 ![find](./media/find.png)
-
-
-
 
 ### :broom: Clear findings :
 ```sh

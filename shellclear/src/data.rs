@@ -20,4 +20,5 @@ pub struct FindingSensitiveCommands {
     pub shell_type: Shell,
     pub sensitive_findings: Vec<SensitiveCommands>,
     pub command: String,
+    pub data: String,
 }
