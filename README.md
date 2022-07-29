@@ -27,7 +27,7 @@ brew tap rusty-ferris-club/tap && brew install shellclear
 ```
 Or download the binary file from [releases](https://github.com/rusty-ferris-club/shellclear/releases) page.
 
-## Add Summary 
+## Terminal Summary 
 Add in shell profile (~/.zshrc / .bash_profile / .bashrc)
 ```
 eval $(shellclear --init-shell)
