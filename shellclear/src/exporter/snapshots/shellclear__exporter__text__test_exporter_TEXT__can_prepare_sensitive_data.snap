@@ -1,7 +1,0 @@
----
-source: shellclear/src/exporter/text.rs
-expression: resp
----
-Ok(
-    (),
-)
