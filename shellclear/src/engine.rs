@@ -20,7 +20,7 @@ struct FishHistory {
 }
 
 pub struct PatternsEngine {
-    sensitive_commands: Vec<SensitiveCommands>,
+    commands: Vec<SensitiveCommands>,
 }
 
 #[derive(Default)]
@@ -31,7 +31,7 @@ pub struct Findings {
 impl Default for PatternsEngine {
     fn default() -> Self {
         Self {
-            sensitive_commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
+            commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
         }
     }
 }
@@ -76,7 +76,7 @@ impl PatternsEngine {
             patterns
         };
         Ok(Self {
-            sensitive_commands: sensitive_patterns,
+            commands: sensitive_patterns,
         })
     }
     /// Search sensitive command patterns from the given sehll list
@@ -113,8 +113,8 @@ impl PatternsEngine {
         );
 
         match state_context.history.shell {
-            shell::Shell::Fish => self.find_fish(state_context, &self.sensitive_commands, clear),
-            _ => self.find_by_lines(state_context, &self.sensitive_commands, clear),
+            shell::Shell::Fish => self.find_fish(state_context, &self.commands, clear),
+            _ => self.find_by_lines(state_context, &self.commands, clear),
         }
     }
 
