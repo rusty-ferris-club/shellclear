@@ -21,7 +21,7 @@
 - name: Gitlab Personal Token
   test: glpat-[0-9a-zA-Z]-_]{20}
 - name: Heroku API Key
-  test: (?i)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:['|"|\n|\r|\s|\x60]|$)
+  test: (?i)(?:heroku)(?:[0-9a-z\-_\t .]{0,20})(?:[\s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|"|\s|=|\x60){0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:['|"|\n|\r|\s|\x60]|$)
 - name: Heroku api key
   test: HEROKU_API_KEY=
 - name: hashicorp vault token
