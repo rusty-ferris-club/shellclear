@@ -1,7 +1,7 @@
 use std::io::Write;
 
 use crate::data::FindingSensitiveCommands;
-use crate::exporter::data::{chunk, extract_time, Exporter};
+use crate::exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND};
 use anyhow::Result;
 use console::style;
 use std::str;
@@ -33,7 +33,7 @@ impl Text {
             );
 
             writeln!(out, "{}", style(title).bold())?;
-            writeln!(out, "{}", chunk(&f.command, 150))?;
+            writeln!(out, "{}", chunk(&f.command, LIMIT_COMMAND))?;
         }
         Ok(())
     }

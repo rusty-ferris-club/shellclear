@@ -1,5 +1,5 @@
 use crate::data::FindingSensitiveCommands;
-use crate::exporter::data::{chunk, extract_time, Exporter};
+use crate::exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND};
 use anyhow::Result;
 use prettytable::{Cell, Row};
 use std::str;
@@ -39,7 +39,7 @@ impl Table {
                             .join("\r\n")
                             .as_ref(),
                     ),
-                    Cell::new(&chunk(&f.command, 150)),
+                    Cell::new(&chunk(&f.command, LIMIT_COMMAND)),
                 ]
             })
             .collect::<Vec<_>>();

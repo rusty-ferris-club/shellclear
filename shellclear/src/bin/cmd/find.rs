@@ -56,7 +56,7 @@ pub fn run(
         Ok(()) => shellclear::CmdExit {
             code: exitcode::OK,
             message: Some(
-                "Run `shellclear clear` to clear the findings from your history".to_string(),
+                "Run `shellclear clear` to clear command findings from your history".to_string(),
             ),
         },
         Err(e) => shellclear::CmdExit {
