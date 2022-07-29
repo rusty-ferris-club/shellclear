@@ -150,10 +150,15 @@ impl PatternsEngine {
                     .map(std::clone::Clone::clone)
                     .collect::<Vec<_>>();
 
+                let only_command = match command.split_once(';') {
+                    Some((_x, y)) => y.to_string(),
+                    _ => command.clone(),
+                };
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
-                    command: command.clone(),
+                    command: only_command,
+                    data: command.clone(),
                 }
             })
             .collect::<Vec<_>>();
@@ -169,7 +174,7 @@ impl PatternsEngine {
 
             for r in &results {
                 if r.sensitive_findings.is_empty() {
-                    let _ = writeln!(&mut cleared_history, "{}", r.command);
+                    let _ = writeln!(&mut cleared_history, "{}", r.data);
                 }
             }
             if !cleared_history.is_empty() {
@@ -206,7 +211,8 @@ impl PatternsEngine {
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
-                    command: serde_yaml::to_string(&h).unwrap(),
+                    command: h.cmd.clone(),
+                    data: serde_yaml::to_string(&h).unwrap(),
                 }
             })
             .collect::<Vec<_>>();
@@ -222,7 +228,7 @@ impl PatternsEngine {
 
             for command_line in &results {
                 if command_line.sensitive_findings.is_empty() {
-                    cleared_history.push(serde_yaml::from_str(&command_line.command)?);
+                    cleared_history.push(serde_yaml::from_str(&command_line.data)?);
                 }
             }
             if !cleared_history.is_empty() {

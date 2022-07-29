@@ -1,13 +1,22 @@
 use crate::data::FindingSensitiveCommands;
+use crate::shell::Shell;
 use anyhow::Result;
+use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
+use console::style;
+use lazy_static::lazy_static;
 use prettytable::{Cell, Row, Table};
+use regex::Regex;
+
+lazy_static! {
+    static ref ZSHRC_CAPTURE_TIME: Regex = Regex::new(r"^: ([0-9]+):").unwrap();
+}
 
 /// write sensitive command findings to the given out
 ///
 /// # Errors
 ///
 /// Will return `Err` when couldn't write table result to out file
-pub fn show_sensitive_findings(
+pub fn show_sensitive_findings_in_table(
     out: &mut Vec<u8>,
     findings: &[&FindingSensitiveCommands],
 ) -> Result<()> {
@@ -52,6 +61,28 @@ pub fn show_sensitive_findings(
     Ok(())
 }
 
+pub fn print_show_sensitive_findings(findings: &[&FindingSensitiveCommands]) {
+    let mut count = 0;
+    for f in findings.iter() {
+        count += 1;
+        let finding_names = f
+            .sensitive_findings
+            .iter()
+            .map(|f| f.name.clone())
+            .collect::<Vec<_>>()
+            .join(",");
+
+        let title = format!(
+            "{}. {} {}",
+            count,
+            finding_names,
+            extract_time(f).unwrap_or_else(|_| "".to_string())
+        );
+        println!("{}", style(title).bold());
+        println!("{}", chunk(&f.command, 150));
+    }
+}
+
 fn chunk(text: &str, size: usize) -> String {
     text.chars()
         .collect::<Vec<char>>()
@@ -59,6 +90,23 @@ fn chunk(text: &str, size: usize) -> String {
         .map(|c| c.iter().collect::<String>())
         .collect::<Vec<String>>()
         .join("\r\n")
+}
+
+fn extract_time(finding: &FindingSensitiveCommands) -> Result<String> {
+    match finding.shell_type {
+        Shell::Zshrc => {
+            if let Some(c) = ZSHRC_CAPTURE_TIME.captures(&finding.data) {
+                if let Some(timestemp) = c.get(1) {
+                    let aa = timestemp.as_str().parse::<i64>()?;
+                    let date_time: DateTime<Local> =
+                        Local.from_utc_datetime(&NaiveDateTime::from_timestamp(aa, 0));
+                    return Ok(format!("{}", date_time));
+                }
+            };
+            Ok(finding.data.clone())
+        }
+        _ => Ok("".to_string()),
+    }
 }
 
 #[cfg(test)]
@@ -87,9 +135,10 @@ mod test_printer {
                 },
             ],
             command: "test command".to_string(),
+            data: "command data".to_string(),
         };
         let findings = vec![&shell_finding];
-        let resp = show_sensitive_findings(&mut out, &findings);
+        let resp = show_sensitive_findings_in_table(&mut out, &findings);
 
         assert_debug_snapshot!(resp);
         assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n", "\n"));
