@@ -1,0 +1,5 @@
+---
+source: shellclear/src/exporter/text.rs
+expression: "str::from_utf8(&out).unwrap().replace(\"\\r\\n\", \"\\n\")"
+---
+"\u{1b}[1m1. test name,test name2 2022-06-13 11:55:59\u{1b}[0m\ntest command\n"

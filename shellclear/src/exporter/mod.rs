@@ -1,4 +1,4 @@
-pub mod data;
+mod data;
 mod table;
 mod text;
 

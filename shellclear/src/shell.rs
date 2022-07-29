@@ -15,9 +15,9 @@ pub enum Shell {
 impl fmt::Display for Shell {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Shell::Bash => write!(f, "bash"),
-            Shell::Zshrc => write!(f, "zshrc"),
-            Shell::Fish => write!(f, "fish"),
+            Self::Bash => write!(f, "bash"),
+            Self::Zshrc => write!(f, "zshrc"),
+            Self::Fish => write!(f, "fish"),
         }
     }
 }
