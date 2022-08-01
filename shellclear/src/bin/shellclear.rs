@@ -49,7 +49,7 @@ fn main() {
                     let sensitive_commands = findings.get_sensitive_commands();
                     if sensitive_commands.is_empty() {
                         eprintln!(
-                            "{} Your shells is clean from sensitive data!",
+                            "{} Your shell is clean from sensitive data!",
                             emojis.confetti
                         );
                     } else {
