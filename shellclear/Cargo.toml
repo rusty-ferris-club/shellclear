@@ -8,6 +8,7 @@ repository = "https://github.com/rusty-ferris-club/shellclear"
 homepage = "https://github.com/rusty-ferris-club/shellclear"
 build = "build.rs"
 
+
 [dependencies]
 clap = { version = "3", features = ["cargo"], optional = true }
 serde = "1"
@@ -23,8 +24,7 @@ regex = "1"
 chrono = "0.4"
 strum = { version = "0.24", features = ["derive"] }
 prettytable-rs = "^0.8"
-dialoguer = "^0.10.1"
-ctrlc = "3.2.2"
+requestty = "0.4.1"
 exitcode = "^1.1.2"
 dirs = "4.0"
 lazy_static = "1.4.0"

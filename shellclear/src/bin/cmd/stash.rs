@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::{crate_name, ArgMatches, Command};
-use shellclear::{promter, ShellContext};
+use shellclear::{dialog, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("stash")
@@ -26,7 +26,7 @@ pub fn run(
 fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     // todo:: check if file exists and remove the unwrap
     if shell_context.is_stash_file_exists()? {
-        if let Err(e) = promter::confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
+        if let Err(e) = dialog::confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
             log::debug!("{:?}", e);
             return Ok(shellclear::CmdExit {
                 code: exitcode::OK,
@@ -84,7 +84,7 @@ pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::CmdExit> 
     }
 
     backup_files.sort_by(|a, b| b.cmp(a));
-    let restore_from_path = match promter::select("select backup file", &backup_files) {
+    let restore_from_path = match dialog::select("select backup file", &backup_files) {
         Ok(selection) => &backup_files[selection],
         Err(_e) => {
             return Ok(shellclear::CmdExit {

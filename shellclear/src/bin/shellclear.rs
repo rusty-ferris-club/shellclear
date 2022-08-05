@@ -1,7 +1,7 @@
 mod cmd;
 use anyhow::anyhow;
 use console::{style, Style};
-use shellclear::{config::Config, engine, init, promter, Emojis, ShellContext};
+use shellclear::{config::Config, dialog, engine, init, Emojis, ShellContext};
 use std::process::exit;
 
 const DEFAULT_ERR_EXIT_CODE: i32 = 1;
@@ -72,13 +72,6 @@ fn main() {
         );
     }
 
-    if let Err(e) = ctrlc::set_handler(move || {
-        let term = console::Term::stdout();
-        let _ = term.show_cursor();
-    }) {
-        log::debug!("{:?}", e);
-    }
-
     let res = match matches.subcommand() {
         None => Err(anyhow!("command not found")),
         Some(tup) => match tup {
@@ -125,7 +118,7 @@ fn select_shell(shell_contexts: &Vec<ShellContext>) -> &ShellContext {
         .map(|f| format!("{:?}     : {}", f.history.shell, f.history.path))
         .collect::<Vec<_>>();
 
-    match promter::select("Pick your shell", &selections) {
+    match dialog::select("Pick your shell", &selections) {
         Ok(selection) => &shell_contexts[selection],
         Err(e) => {
             log::debug!("promter select err: {:?} ", e);
