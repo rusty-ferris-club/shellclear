@@ -97,17 +97,25 @@ You can also restore your history backup file by running the command:
 $ shellclear stash restore
 ```
 
-## :pencil2: Custom Sensitive Patterns
-To create a custom sensitive patters you can run
+## :pencil2: External Configuration
+Create custom configuration by running the command
 ```sh
 $ shellclear config
 ```
-Config command will create a file that you can add your custom patters that `shellclear` automatically.
+Config command will create:
+1. Custom pattern template for adding a custom risky patterns
+2. Ignore file to allows you ignore specific pattern
 
-### Validate Config File
+### Validate Config Files
 Validate syntax file
 ```sh
-$ shellclear config --validate
+$ shellclear config validate
+```
+
+### Delete Config Folder
+Validate syntax file
+```sh
+$ shellclear config delete
 ```
 
 
