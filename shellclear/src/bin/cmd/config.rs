@@ -33,7 +33,7 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
             (
                 format!(
                     "configuration file: {} is valid.",
-                    config.sensitive_commands_path.display().to_string()
+                    config.sensitive_commands_path.display()
                 ),
                 exitcode::OK,
             )
