@@ -1,0 +1,21 @@
+---
+source: shellclear/src/shell.rs
+expression: get_all_history_files(&temp_dir.display().to_string())
+---
+[
+    History {
+        shell: Bash,
+        path: "PATH/.bash_history",
+        file_name: ".bash_history",
+    },
+    History {
+        shell: Zshrc,
+        path: "PATH/.zsh_history",
+        file_name: ".zsh_history",
+    },
+    History {
+        shell: Fish,
+        path: "PATH/.local/share/fish/fish_history",
+        file_name: "fish_history",
+    },
+]

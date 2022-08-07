@@ -50,7 +50,7 @@ pub fn init() -> Result<Vec<ShellContext>> {
         debug!("state created in path: {:?}", state_folder);
     }
 
-    Ok(shell::get_all_history_files()?
+    Ok(shell::get_all_history_files(&homedir)
         .iter()
         .map(|h| ShellContext {
             app_folder_path: state_folder.clone(),
