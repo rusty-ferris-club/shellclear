@@ -3,36 +3,43 @@ source: shellclear/src/engine.rs
 expression: result
 ---
 Ok(
-    [
-        FindingSensitiveCommands {
-            shell_type: Fish,
-            sensitive_findings: [],
-            command: "history",
-            data: "---\ncmd: history\nwhen: \"1656438759\"\n",
-        },
-        FindingSensitiveCommands {
-            shell_type: Fish,
-            sensitive_findings: [],
-            command: "ls",
-            data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
-        },
-        FindingSensitiveCommands {
-            shell_type: Fish,
-            sensitive_findings: [],
-            command: "echo 'hello you'",
-            data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
-        },
-        FindingSensitiveCommands {
-            shell_type: Fish,
-            sensitive_findings: [],
-            command: "rm -f ./file.txt",
-            data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
-        },
-        FindingSensitiveCommands {
-            shell_type: Fish,
-            sensitive_findings: [],
-            command: "export DELETE_ME=token",
-            data: "---\ncmd: export DELETE_ME=token\nwhen: \"1656438760\"\n",
-        },
-    ],
+    Findings {
+        patterns: [
+            FindingSensitiveCommands {
+                shell_type: Fish,
+                sensitive_findings: [],
+                command: "history",
+                data: "---\ncmd: history\nwhen: \"1656438759\"\n",
+            },
+            FindingSensitiveCommands {
+                shell_type: Fish,
+                sensitive_findings: [],
+                command: "ls",
+                data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
+            },
+            FindingSensitiveCommands {
+                shell_type: Fish,
+                sensitive_findings: [],
+                command: "echo 'hello you'",
+                data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
+            },
+            FindingSensitiveCommands {
+                shell_type: Fish,
+                sensitive_findings: [],
+                command: "rm -f ./file.txt",
+                data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
+            },
+            FindingSensitiveCommands {
+                shell_type: Fish,
+                sensitive_findings: [
+                    SensitiveCommands {
+                        test: FIND_ME=,
+                        name: "Find me",
+                    },
+                ],
+                command: "export FIND_ME=token",
+                data: "---\ncmd: export FIND_ME=token\nwhen: \"1656438760\"\n",
+            },
+        ],
+    },
 )
