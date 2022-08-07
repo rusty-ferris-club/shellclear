@@ -135,6 +135,18 @@ impl Config {
         );
         Ok(ignore_ids)
     }
+
+    /// Write a ignore patterns
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when has an error to write a file
+    pub fn save_ignores_patterns(&self, ignores: &[String]) -> Result<()> {
+        Ok(fs::write(
+            &self.ignore_sensitive_path,
+            serde_yaml::to_string(&ignores)?,
+        )?)
+    }
 }
 
 #[cfg(test)]
@@ -219,6 +231,18 @@ mod test_config {
         let config = new_config(&temp_dir);
         assert_debug_snapshot!(config.init());
         assert_debug_snapshot!(config.load_patterns_from_default_path());
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn can_save_ignore_file() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        config.init().unwrap();
+        assert_debug_snapshot!(
+            config.save_ignores_patterns(&["patter-1".to_string(), "patter-2".to_string()])
+        );
+        assert_debug_snapshot!(config.get_ignore_patterns());
         temp_dir.close().unwrap();
     }
 }

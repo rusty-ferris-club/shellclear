@@ -1,7 +1,9 @@
+use crate::engine::SENSITIVE_COMMANDS;
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use shellclear::config::Config;
 use shellclear::dialog;
+use shellclear::SensitiveCommands;
 
 pub fn command() -> Command<'static> {
     Command::new("config")
@@ -17,6 +19,7 @@ pub fn command() -> Command<'static> {
                         .takes_value(false),
                 ),
         )
+        .subcommand(Command::new("ignores").about("Manage ignores patterns."))
 }
 
 pub fn run(subcommand_matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit> {
@@ -25,6 +28,7 @@ pub fn run(subcommand_matches: &ArgMatches, config: &Config) -> Result<shellclea
         Some(tup) => match tup {
             ("validate", _subcommand_matches) => Ok(run_validate(config)),
             ("delete", matches) => Ok(run_delete(config, matches.is_present("force"))?),
+            ("ignores", _matches) => Ok(run_ignore(config)?),
             _ => unreachable!(),
         },
     }
@@ -119,10 +123,70 @@ fn run_delete(config: &Config, force: bool) -> Result<shellclear::CmdExit> {
     })
 }
 
+fn run_ignore(config: &Config) -> Result<shellclear::CmdExit> {
+    if !config.is_app_path_exists() {
+        log::debug!("app folder not found, creating...");
+        config.init()?;
+    }
+
+    // get all sensitive commands
+    let sensitive_patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
+
+    let (show_selections, show_ignores) =
+        get_patter_ignore_multi_choice(config, &sensitive_patterns);
+
+    let selected_ignores = dialog::multi_choice(
+        "Select which pattern you would like to ignore",
+        show_selections,
+        show_ignores,
+        20,
+    )?;
+
+    // convert user selections to id's
+    let selected_ides = sensitive_patterns
+        .iter()
+        .filter(|s| selected_ignores.contains(&s.name))
+        .map(|s| s.id.to_string())
+        .collect::<Vec<_>>();
+
+    log::debug!("selected ignores patterns: {:?}", selected_ides);
+
+    config.save_ignores_patterns(&selected_ides)?;
+    Ok(shellclear::CmdExit {
+        code: exitcode::OK,
+        message: None,
+    })
+}
+
+fn get_patter_ignore_multi_choice(
+    config: &Config,
+    sensitive_patterns: &[SensitiveCommands],
+) -> (Vec<String>, Vec<String>) {
+    // get current pattern ignores
+    let ignore_patterns = config.get_ignore_patterns().unwrap_or_default();
+
+    // filter ignores
+    let show_selections = sensitive_patterns
+        .iter()
+        .filter(|s| !ignore_patterns.contains(&s.id))
+        .map(|s| s.name.clone())
+        .collect::<Vec<_>>();
+
+    // filter ignores
+    let show_ignores = sensitive_patterns
+        .iter()
+        .filter(|s| ignore_patterns.contains(&s.id))
+        .map(|s| s.name.clone())
+        .collect::<Vec<_>>();
+
+    (show_selections, show_ignores)
+}
+
 #[cfg(test)]
 mod test_cli_config {
     use super::*;
     use insta::assert_debug_snapshot;
+    use regex::Regex;
     use std::fs;
     use tempdir::TempDir;
 
@@ -171,6 +235,36 @@ mod test_cli_config {
         run_delete(&config, true).unwrap();
         assert_debug_snapshot!(&config.ignore_sensitive_path.exists());
         assert_debug_snapshot!(&config.sensitive_commands_path.exists());
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn can_run_prepare_multi_choice_data() {
+        let temp_dir = TempDir::new("config-app-delete").unwrap();
+        let config = new_config(&temp_dir);
+
+        config.init().unwrap();
+        config.save_ignores_patterns(&["id-3".to_string()]).unwrap();
+
+        let patterns: Vec<SensitiveCommands> = vec![
+            SensitiveCommands {
+                test: Regex::new("test").unwrap(),
+                name: "test-1".to_string(),
+                id: "id-1".to_string(),
+            },
+            SensitiveCommands {
+                test: Regex::new("test").unwrap(),
+                name: "test-2".to_string(),
+                id: "id-2".to_string(),
+            },
+            SensitiveCommands {
+                test: Regex::new("test").unwrap(),
+                name: "test-3".to_string(),
+                id: "id-3".to_string(),
+            },
+        ];
+
+        assert_debug_snapshot!(get_patter_ignore_multi_choice(&config, &patterns));
         temp_dir.close().unwrap();
     }
 }

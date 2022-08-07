@@ -119,6 +119,13 @@ $ shellclear config delete
 ```
 
 
+### Ignores Pattern
+Manage pattern ignores
+```sh
+$ shellclear config ignores
+```
+
+
 
 # Thanks
 To all [Contributors](https://github.com/rusty-ferris-club/shellclear/graphs/contributors) - you make this happen, thanks!
