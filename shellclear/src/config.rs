@@ -30,7 +30,8 @@ impl Default for Config {
 
 impl Config {
     #[allow(dead_code)]
-    fn with_custom_path(root: PathBuf) -> Self {
+    #[must_use]
+    pub fn with_custom_path(root: PathBuf) -> Self {
         // todo check if we can remove this get_base_app_folder function
         let app_path = Self::get_base_app_folder(root);
         Self {
@@ -109,17 +110,30 @@ impl Config {
     ///
     /// Will return `Err` home directory not found or yaml is invalid
     pub fn load_patterns_from_default_path(&self) -> Result<Vec<SensitiveCommands>> {
-        self.load_sensitive_patterns_from_file(&self.sensitive_commands_path)
+        let f = std::fs::File::open(&self.sensitive_commands_path)?;
+        let custom_patterns = serde_yaml::from_reader(f)?;
+        log::debug!(
+            "found {:?} ignore ids. loaded from path: {}",
+            custom_patterns,
+            &self.sensitive_commands_path.display()
+        );
+        Ok(custom_patterns)
     }
 
-    /// Load sensitive pattern from the given path
+    /// Load sensitive ignores file
     ///
     /// # Errors
     ///
-    /// Will return `Err`  yaml is invalid
-    fn load_sensitive_patterns_from_file(&self, path: &PathBuf) -> Result<Vec<SensitiveCommands>> {
-        let f = std::fs::File::open(path)?;
-        Ok(serde_yaml::from_reader(f)?)
+    /// Will return `Err` yaml is invalid
+    pub fn get_ignore_patterns(&self) -> Result<Vec<String>> {
+        let f = std::fs::File::open(&self.ignore_sensitive_path)?;
+        let ignore_ids = serde_yaml::from_reader(f)?;
+        log::debug!(
+            "found {:?} ignore ids. loaded from path: {}",
+            ignore_ids,
+            &self.ignore_sensitive_path.display()
+        );
+        Ok(ignore_ids)
     }
 }
 

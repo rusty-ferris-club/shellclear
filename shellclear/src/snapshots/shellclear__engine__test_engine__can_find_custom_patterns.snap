@@ -6,40 +6,40 @@ Ok(
     Findings {
         patterns: [
             FindingSensitiveCommands {
-                shell_type: Fish,
+                shell_type: Bash,
                 sensitive_findings: [],
                 command: "history",
-                data: "---\ncmd: history\nwhen: \"1656438759\"\n",
+                data: "history",
             },
             FindingSensitiveCommands {
-                shell_type: Fish,
+                shell_type: Bash,
                 sensitive_findings: [],
                 command: "ls",
-                data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
+                data: "ls",
             },
             FindingSensitiveCommands {
-                shell_type: Fish,
+                shell_type: Bash,
                 sensitive_findings: [],
                 command: "echo 'hello you'",
-                data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
+                data: "echo 'hello you'",
             },
             FindingSensitiveCommands {
-                shell_type: Fish,
+                shell_type: Bash,
                 sensitive_findings: [],
                 command: "rm -f ./file.txt",
-                data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
+                data: "rm -f ./file.txt",
             },
             FindingSensitiveCommands {
-                shell_type: Fish,
+                shell_type: Bash,
                 sensitive_findings: [
                     SensitiveCommands {
-                        test: FIND_ME=,
-                        name: "Find me",
-                        id: "",
+                        test: FIND_ME,
+                        name: "Pattern Name",
+                        id: "elad_ignore",
                     },
                 ],
                 command: "export FIND_ME=token",
-                data: "---\ncmd: export FIND_ME=token\nwhen: \"1656438760\"\n",
+                data: "export FIND_ME=token",
             },
         ],
     },

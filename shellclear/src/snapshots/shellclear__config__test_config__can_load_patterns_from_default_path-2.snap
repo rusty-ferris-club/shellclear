@@ -7,6 +7,7 @@ Ok(
         SensitiveCommands {
             test: <PATTERN REGEX>,
             name: "Pattern Name",
+            id: "",
         },
     ],
 )

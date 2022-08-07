@@ -84,10 +84,12 @@ mod test_exporter_table {
                 SensitiveCommands {
                     test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
+                    id: "".to_string(),
                 },
                 SensitiveCommands {
                     test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
+                    id: "".to_string(),
                 },
             ],
             command: "test command".to_string(),

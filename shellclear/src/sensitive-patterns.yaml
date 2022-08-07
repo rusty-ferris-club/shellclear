@@ -1,70 +1,105 @@
 - name: AWS Env Access Key
   test: AWS_ACCESS_KEY_ID=
+  id: aws_end_access_key
 - name: AWS Env Secret Key
   test: AWS_SECRET_ACCESS_KEY=
+  id: aws_env_secret_key
 - name: AWS Secret Key
   test: (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
+  id: ass_secret_key
 - name: AWS Cred
   test: (?i)(aws_access_key_id|aws_secret_access_key)=.[0-9a-zA-Z/+]{20,40}
-- name: GitHub ENV Token
+  id: aws_cred
+- name: GitHub Env Token
   test: GITHUB_TOKEN=
+  id: github_env_token
 - name: GitHub Personal Token
   test: ghp_[0-9a-zA-Z]{36}
+  id: github_personal_token
 - name: GitHub OAuth Token
   test: gho_[0-9a-zA-Z]{36}
+  id: github_oauth_token
 - name: GitHub App Token
   test: (ghu|ghs)_[0-9a-zA-Z]{36}
+  id: github_app_token
 - name: GitHub Refresh Token
   test: ghr_[0-9a-zA-Z]{36}
+  id: github_refresh_token
 - name: Gitlab token
   test: GITLAB_TOKEN=
+  id: gitlab_token
 - name: Gitlab Personal Token
   test: glpat-[0-9a-zA-Z]-_]{20}
+  id: gitlab_personal_token
 - name: Heroku API Key
   test: (?i)(?:heroku)(?:[0-9a-z\-_\t .]{0,20})(?:[\s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|"|\s|=|\x60){0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:['|"|\n|\r|\s|\x60]|$)
-- name: Heroku api key
+  id: heroku_api_key
+- name: Heroku Env api key
   test: HEROKU_API_KEY=
-- name: hashicorp vault token
+  id: heroku_env_api_key
+- name: hashicorp Env Vault Token
   test: VAULT_TOKEN=
-- name: hashicorp console HTTP token
+  id: hashicorp_env_vault_token
+- name: hashicorp Env console HTTP token
   test: CONSUL_HTTP_TOKEN=
-- name: Vercel token
+  id: hashicorp_env_console_http_token
+- name: Vercel Env Token
   test: VERCEL_TOKEN=
-- name: CyberArk Conjur
+  id: vercel_env_token
+- name: CyberArk Env API Key
   test: CONJUR_AUTHN_API_KEY=
-- name: Cloudflare api key
+  id: CyberArk_env_api_key
+- name: Cloudflare ENV Api Key
   test: CLOUDFLARE_API_KEY=
-- name: Newrelic api key
+  id: Cloudflare_anv_api_key
+- name: Newrelic Env api key
   test: NEWRELIC_API_KEY=
+  id: newrelic_env_api_key
 - name: MailGun API Key
   test: "[0-9a-zA-Z]{32}-[a-z0-9]{8}-[a-z0-9]{8}"
+  id: mailGun_api_key
 - name: MailGun API Key
   test: "key-[0-9a-zA-Z]{32}"
+  id: mailGun_api_key
 - name: MailChimp API Key
   test: (?i)[0-9a-f]{32}-us[0-9]{1,2}
+  id: mailChimp_api_key
 - name: SendGrid API Token
   test: SG.[0-9A-Za-z\-_]{15,30}\.[0-9A-Za-z\-_]{15,30}
-- name: Slack Token
-  test: xox[baprs]-([0-9a-zA-Z]{10,48})
-- name: Slack Webhook
-  test: https://hooks.slack.com/services/[A-Za-z0-9+/]{44,46}
-- name: Twilio API Key
-  test: SK[0-9a-fA-F]{32}
-- name: GCP API key
-  test: (?i)\b(AIza[0-9A-Za-z\\-_]{35})(?:['|"|\n|\r|\s|\x60]|$)
+  id: sendGrid_api_token
 - name: SendGrid API Key
   test: SG\.[0-9A-Za-z\-_]{22}\.[0-9A-Za-z\-_]{43}
+  id: sendGrid_api_key
+- name: Slack Token
+  test: xox[baprs]-([0-9a-zA-Z]{10,48})
+  id: slack_token
+- name: Slack Webhook
+  test: https://hooks.slack.com/services/[A-Za-z0-9+/]{44,46}
+  id: slack_webhook
+- name: Twilio API Key
+  test: SK[0-9a-fA-F]{32}
+  id: twilio_api_key
+- name: GCP API Key
+  test: (?i)\b(AIza[0-9A-Za-z\\-_]{35})(?:['|"|\n|\r|\s|\x60]|$)
+  id: gcp_api_key
 - name: Teams Webhook
   test: (https\\://outlook\\.office.com/webhook/[0-9a-f-]{36}\\@)
+  id: teams_webhook
 - name: NuGet API Key
   test: oy2[a-z0-9]{43}
+  id: nuGet_api_key
 - name: Twitter Secret Key
   test: (?i)twitter(.{0,20})?[''"][0-9a-z]{35,44}[''"]
+  id: twitter_secret_key
 - name: Twitter Client ID
   test: (?i)twitter(.{0,20})?[''"][0-9a-z]{18,25}[''"]
+  id: twitter_clientid
 - name: LinkedIn Secret Key
-  test: (?i)(.{0,20})?[''"][0-9a-z]{16}[''"]
-- name: Facebook access token
+  test: (?i)linkedin(.{0,20})?[''"][0-9a-z]{16}[''"]
+  id: LinkedIn_secret_key
+- name: Facebook Access Token
   test: EAACEdEose0cBA[0-9A-Za-z]+
+  id: facebook_access_token
 - name: Google OAuth Access Token
   test: ya29\\.[0-9A-Za-z\\-_]+
+  id: google_oAuth_access_token

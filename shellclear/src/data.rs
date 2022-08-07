@@ -13,6 +13,8 @@ pub struct SensitiveCommands {
     #[serde(with = "serde_regex")]
     pub test: regex::Regex,
     pub name: String,
+    #[serde(default)]
+    pub id: String,
 }
 
 #[derive(Debug)]

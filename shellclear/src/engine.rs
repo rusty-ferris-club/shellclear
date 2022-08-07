@@ -49,14 +49,32 @@ impl PatternsEngine {
         let sensitive_patterns = {
             let mut patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
 
-            if config.is_app_path_exists() {
+            patterns = if config.is_app_path_exists() {
+                // load external patterns
                 match config.load_patterns_from_default_path() {
                     Ok(p) => patterns.extend(p),
-                    Err(e) => log::debug!("could not load external pattern{:?}", e),
+                    Err(e) => log::debug!("could not load external pattern. {:?}", e),
                 };
+
+                // ignore patterns
+                match config.get_ignore_patterns() {
+                    Ok(ignores) => patterns
+                        .iter()
+                        .filter(|p| !ignores.contains(&p.id))
+                        .cloned()
+                        .collect::<Vec<_>>(),
+                    Err(e) => {
+                        log::debug!("could not load ignore pattern. {:?}", e);
+                        patterns
+                    }
+                }
             } else {
-                log::debug!("config file not found");
-            }
+                log::debug!(
+                    "app config folder not found in path: {}",
+                    &config.app_path.display()
+                );
+                patterns
+            };
 
             patterns
         };
@@ -344,6 +362,48 @@ export FIND_ME=token
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
         };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
+
+        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+
+        assert_debug_snapshot!(result);
+    }
+
+    #[test]
+    fn can_find_custom_patterns() {
+        let temp_dir = TempDir::new("engine").unwrap();
+
+        let config = Config::with_custom_path(temp_dir.path().join("app"));
+        config.init().unwrap();
+        let custom_pattern = r###"
+- name: Pattern Name
+  test: FIND_ME
+  id: elad_ignore
+"###;
+        fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
+
+        let en = PatternsEngine::with_config(&config).unwrap();
+        let state_context =
+            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+
+        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+
+        assert_debug_snapshot!(result);
+    }
+
+    #[test]
+    fn can_ignore_patterns() {
+        let temp_dir = TempDir::new("engine").unwrap();
+
+        let config = Config::with_custom_path(temp_dir.path().join("app"));
+        config.init().unwrap();
+        let custom_pattern = r###"
+- elad_ignore
+"###;
+        fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
+
+        let en = PatternsEngine::with_config(&config).unwrap();
+        let state_context =
+            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
         let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
