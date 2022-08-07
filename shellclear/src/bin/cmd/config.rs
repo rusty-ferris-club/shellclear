@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use shellclear::config::Config;
-use shellclear::promter;
+use shellclear::dialog;
 
 pub fn command() -> Command<'static> {
     Command::new("config")
@@ -38,7 +38,7 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
             )
         }
     } else if matches.is_present("delete") {
-        if let Err(e) = promter::confirm(format!("Delete {} file?", &file_path).as_str()) {
+        if let Err(e) = dialog::confirm(format!("Delete {} file?", &file_path).as_str()) {
             log::debug!("{:?}", e);
             return Ok(shellclear::CmdExit {
                 code: exitcode::OK,
@@ -60,7 +60,7 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
                 "file {} already exists. do you want to override the existing file?",
                 file_path,
             );
-            if let Err(e) = promter::confirm(&confirm_message) {
+            if let Err(e) = dialog::confirm(&confirm_message) {
                 log::debug!("{:?}", e);
                 return Ok(shellclear::CmdExit {
                     code: exitcode::OK,
