@@ -4,54 +4,63 @@ use std::fs;
 use std::path::PathBuf;
 
 const CONFIG_SENSITIVE_PATTERNS: &str = "sensitive-patterns.yaml";
+const CONFIG_IGNORES: &str = "ignores.yaml";
 const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patters file allows you you add a custom patterns to shellclear
 
 - name: Pattern Name
   test: <PATTERN REGEX>
 "###;
+const IGNORES_SENSITIVE_PATTERN_TEMPLATE: &str = r###"# List of sensitive patters id to ignore
+
+- PATTERN_ID
+"###;
 
 #[derive(Clone, Debug)]
 pub struct Config {
-    sensitive_commands_path: PathBuf,
+    pub app_path: PathBuf,
+    pub sensitive_commands_path: PathBuf,
+    pub ignore_sensitive_path: PathBuf,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Self {
-            sensitive_commands_path: Self::get_sensitive_pattern_file(dirs::home_dir().unwrap()),
-        }
+        Self::with_custom_path(dirs::home_dir().unwrap())
     }
 }
 
 impl Config {
     #[allow(dead_code)]
     fn with_custom_path(root: PathBuf) -> Self {
+        // todo check if we can remove this get_base_app_folder function
+        let app_path = Self::get_base_app_folder(root);
         Self {
-            sensitive_commands_path: Self::get_sensitive_pattern_file(root),
+            ignore_sensitive_path: app_path.join(CONFIG_IGNORES),
+            sensitive_commands_path: app_path.join(CONFIG_SENSITIVE_PATTERNS),
+            app_path,
         }
     }
+
+    /// Returns the root shellclear config folder
+    fn get_base_app_folder(path: PathBuf) -> PathBuf {
+        path.join(ROOT_APP_FOLDER)
+    }
+
     /// Init external configuration
     ///
     /// # Errors
     ///
     /// Will return `Err` when home directory not found or failed to create a file
-    pub fn init(&self) -> Result<String> {
-        let file = &self.sensitive_commands_path;
-        if let Some(parent) = file.parent() {
-            fs::create_dir_all(parent)?;
+    pub fn init(&self) -> Result<()> {
+        if !self.is_app_path_exists() {
+            fs::create_dir_all(&self.app_path)?;
         }
-        fs::write(file, SENSITIVE_PATTERN_TEMPLATE)?;
-        Ok(file.display().to_string())
-    }
 
-    /// Get sensitive file path name
-    ///
-    /// # Errors
-    ///
-    /// Will return `Err` home directory not found
-    #[must_use]
-    pub fn get_sensitive_pattern_name(&self) -> String {
-        self.sensitive_commands_path.display().to_string()
+        fs::write(&self.sensitive_commands_path, SENSITIVE_PATTERN_TEMPLATE)?;
+        fs::write(
+            &self.ignore_sensitive_path,
+            IGNORES_SENSITIVE_PATTERN_TEMPLATE,
+        )?;
+        Ok(())
     }
 
     /// Is sensitive file is exists
@@ -60,8 +69,8 @@ impl Config {
     ///
     /// Will return `Err` home directory not found
     #[must_use]
-    pub fn is_sensitive_pattern_file_exists(&self) -> bool {
-        self.sensitive_commands_path.exists()
+    pub fn is_app_path_exists(&self) -> bool {
+        self.app_path.exists()
     }
 
     /// Delete sensitive pattern file
@@ -69,8 +78,28 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err` home directory not found
-    pub fn delete_sensitive_patterns_from_file(&self) -> Result<()> {
+    pub fn delete_app_folder(&self) -> Result<()> {
+        fs::remove_dir_all(&self.app_path)?;
+        Ok(())
+    }
+
+    /// Delete sensitive pattern file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` home directory not found
+    pub fn delete_sensitive_patterns_file(&self) -> Result<()> {
         fs::remove_file(&self.sensitive_commands_path)?;
+        Ok(())
+    }
+
+    /// Delete sensitive ignore file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` home directory not found
+    pub fn delete_sensitive_ignore_file(&self) -> Result<()> {
+        fs::remove_file(&self.ignore_sensitive_path)?;
         Ok(())
     }
 
@@ -92,16 +121,12 @@ impl Config {
         let f = std::fs::File::open(path)?;
         Ok(serde_yaml::from_reader(f)?)
     }
-
-    /// Returns the root shellclear config folder
-    fn get_sensitive_pattern_file(path: PathBuf) -> PathBuf {
-        path.join(format!(".{}", ROOT_APP_FOLDER))
-            .join(CONFIG_SENSITIVE_PATTERNS)
-    }
 }
 
 #[cfg(test)]
 mod test_config {
+    use crate::config::IGNORES_SENSITIVE_PATTERN_TEMPLATE;
+
     use super::{Config, SENSITIVE_PATTERN_TEMPLATE};
     use insta::assert_debug_snapshot;
     use std::fs;
@@ -117,10 +142,14 @@ mod test_config {
     fn can_init() {
         let temp_dir = TempDir::new("config-app").unwrap();
         let config = new_config(&temp_dir);
-        let path = config.init();
-        assert_debug_snapshot!(path.is_ok());
+        assert_debug_snapshot!(config.init());
         assert_debug_snapshot!(
-            fs::read_to_string(path.unwrap()).unwrap() == SENSITIVE_PATTERN_TEMPLATE
+            fs::read_to_string(config.sensitive_commands_path).unwrap()
+                == SENSITIVE_PATTERN_TEMPLATE
+        );
+        assert_debug_snapshot!(
+            fs::read_to_string(config.ignore_sensitive_path).unwrap()
+                == IGNORES_SENSITIVE_PATTERN_TEMPLATE
         );
         temp_dir.close().unwrap();
     }
@@ -130,7 +159,9 @@ mod test_config {
         let temp_dir = TempDir::new("config-app").unwrap();
         let config = new_config(&temp_dir);
         assert_debug_snapshot!(config
-            .get_sensitive_pattern_name()
+            .sensitive_commands_path
+            .display()
+            .to_string()
             .replace(&temp_dir.path().to_str().unwrap(), "")
             .replace('\\', "/"));
         temp_dir.close().unwrap();
@@ -140,29 +171,40 @@ mod test_config {
     fn can_is_sensitive_pattern_file_exists() {
         let temp_dir = TempDir::new("config-app").unwrap();
         let config = new_config(&temp_dir);
-        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
-        config.init();
-        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
-        temp_dir.close().unwrap()
+        assert_debug_snapshot!(config.sensitive_commands_path.exists());
+        assert_debug_snapshot!(config.init());
+        assert_debug_snapshot!(config.sensitive_commands_path.exists());
+        temp_dir.close().unwrap();
     }
 
     #[test]
-    fn can_delete_sensitive_patterns_from_file() {
+    fn can_delete_sensitive_patterns_file() {
         let temp_dir = TempDir::new("config-app").unwrap();
         let config = new_config(&temp_dir);
-        config.init();
-        assert_debug_snapshot!(config.is_sensitive_pattern_file_exists());
-        assert_debug_snapshot!(config.delete_sensitive_patterns_from_file());
-        assert_debug_snapshot!(!config.is_sensitive_pattern_file_exists());
-        temp_dir.close().unwrap()
+        assert_debug_snapshot!(config.init());
+        assert_debug_snapshot!(config.sensitive_commands_path.exists());
+        assert_debug_snapshot!(config.delete_sensitive_patterns_file());
+        assert_debug_snapshot!(!config.sensitive_commands_path.exists());
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn can_delete_sensitive_ignore_file() {
+        let temp_dir = TempDir::new("config-app").unwrap();
+        let config = new_config(&temp_dir);
+        assert_debug_snapshot!(config.init());
+        assert_debug_snapshot!(config.ignore_sensitive_path.exists());
+        assert_debug_snapshot!(config.delete_sensitive_ignore_file());
+        assert_debug_snapshot!(!config.ignore_sensitive_path.exists());
+        temp_dir.close().unwrap();
     }
 
     #[test]
     fn can_load_patterns_from_default_path() {
         let temp_dir = TempDir::new("config-app").unwrap();
         let config = new_config(&temp_dir);
-        config.init();
+        assert_debug_snapshot!(config.init());
         assert_debug_snapshot!(config.load_patterns_from_default_path());
-        temp_dir.close().unwrap()
+        temp_dir.close().unwrap();
     }
 }

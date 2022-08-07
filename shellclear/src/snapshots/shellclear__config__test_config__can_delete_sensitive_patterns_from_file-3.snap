@@ -1,5 +1,0 @@
----
-source: shellclear/src/config.rs
-expression: "!config.is_sensitive_pattern_file_exists()"
----
-true

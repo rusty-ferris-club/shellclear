@@ -21,14 +21,6 @@ pub struct Findings {
     pub patterns: Vec<FindingSensitiveCommands>,
 }
 
-impl Default for PatternsEngine {
-    fn default() -> Self {
-        Self {
-            commands: serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap(),
-        }
-    }
-}
-
 impl Findings {
     #[must_use]
     // add list of finding
@@ -57,7 +49,7 @@ impl PatternsEngine {
         let sensitive_patterns = {
             let mut patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
 
-            if config.is_sensitive_pattern_file_exists() {
+            if config.is_app_path_exists() {
                 match config.load_patterns_from_default_path() {
                     Ok(p) => patterns.extend(p),
                     Err(e) => log::debug!("could not load external pattern{:?}", e),
@@ -72,7 +64,7 @@ impl PatternsEngine {
             commands: sensitive_patterns,
         })
     }
-    /// Search sensitive command patterns from the given sehll list
+    /// Search sensitive command patterns from the given shell list
     ///
     /// # Errors
     ///
@@ -244,7 +236,6 @@ impl PatternsEngine {
 mod test_engine {
     use super::*;
     use insta::assert_debug_snapshot;
-    use regex::Regex;
     use std::fs;
     use std::fs::File;
     use std::io::Write;

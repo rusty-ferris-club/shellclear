@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: config.ignore_sensitive_path.exists()
+---
+true

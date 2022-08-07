@@ -23,8 +23,6 @@ pub fn command() -> Command<'static> {
 }
 
 pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit> {
-    let file_path = config.get_sensitive_pattern_name();
-
     let (message, exit_code) = if matches.is_present("validate") {
         if let Err(e) = config.load_patterns_from_default_path() {
             (
@@ -33,12 +31,17 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
             )
         } else {
             (
-                format!("configuration file: {} is valid.", file_path),
+                format!(
+                    "configuration file: {} is valid.",
+                    config.sensitive_commands_path.display().to_string()
+                ),
                 exitcode::OK,
             )
         }
     } else if matches.is_present("delete") {
-        if let Err(e) = dialog::confirm(format!("Delete {} file?", &file_path).as_str()) {
+        if let Err(e) =
+            dialog::confirm(format!("Delete {} folder?", config.app_path.display()).as_str())
+        {
             log::debug!("{:?}", e);
             return Ok(shellclear::CmdExit {
                 code: exitcode::OK,
@@ -46,19 +49,22 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
             });
         }
 
-        if config.is_sensitive_pattern_file_exists() {
-            config.delete_sensitive_patterns_from_file()?;
+        if config.is_app_path_exists() {
+            config.delete_app_folder()?;
         }
 
         (
-            format!("Config file deleted successfully in path: {}", file_path),
+            format!(
+                "Config file deleted successfully in path: {}",
+                config.app_path.display()
+            ),
             exitcode::OK,
         )
     } else {
-        if config.is_sensitive_pattern_file_exists() {
+        if config.is_app_path_exists() {
             let confirm_message = format!(
-                "file {} already exists. do you want to override the existing file?",
-                file_path,
+                "folder {} already exists. do you want to override the existing files?",
+                config.app_path.display(),
             );
             if let Err(e) = dialog::confirm(&confirm_message) {
                 log::debug!("{:?}", e);
@@ -70,7 +76,10 @@ pub fn run(matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit>
         }
         config.init()?;
         (
-            format!("Config file created successfully in path: {}", file_path),
+            format!(
+                "Config file created successfully in path: {}",
+                config.app_path.display()
+            ),
             exitcode::OK,
         )
     };
