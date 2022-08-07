@@ -35,6 +35,7 @@ Ok(
                     SensitiveCommands {
                         test: FIND_ME=,
                         name: "Find me",
+                        id: "",
                     },
                 ],
                 command: "export FIND_ME=token",

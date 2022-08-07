@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: "!config.sensitive_commands_path.exists()"
+---
+true

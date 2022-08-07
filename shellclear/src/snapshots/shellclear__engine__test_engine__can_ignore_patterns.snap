@@ -31,13 +31,7 @@ Ok(
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
-                sensitive_findings: [
-                    SensitiveCommands {
-                        test: FIND_ME=,
-                        name: "Find me",
-                        id: "",
-                    },
-                ],
+                sensitive_findings: [],
                 command: "export FIND_ME=token",
                 data: "export FIND_ME=token",
             },

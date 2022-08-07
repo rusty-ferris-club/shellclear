@@ -1,12 +1,7 @@
 ---
 source: shellclear/src/config.rs
-expression: config.load_patterns_from_default_path()
+expression: config.init()
 ---
 Ok(
-    [
-        SensitiveCommands {
-            test: <PATTERN REGEX>,
-            name: "Pattern Name",
-        },
-    ],
+    (),
 )

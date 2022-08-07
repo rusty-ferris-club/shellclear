@@ -1,5 +1,5 @@
 ---
 source: shellclear/src/config.rs
-expression: "config.get_sensitive_pattern_name().replace(&temp_dir.path().to_str().unwrap(),\n    \"\")"
+expression: "config.get_sensitive_pattern_name().replace(&temp_dir.path().to_str().unwrap(),\n        \"\").replace('\\\\', \"/\")"
 ---
-"/app/.shellclear/sensitive-patterns.yaml"
+"/app/shellclear/sensitive-patterns.yaml"

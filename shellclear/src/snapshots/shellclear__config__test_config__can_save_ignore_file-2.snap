@@ -1,0 +1,10 @@
+---
+source: shellclear/src/config.rs
+expression: config.get_ignore_patterns()
+---
+Ok(
+    [
+        "patter-1",
+        "patter-2",
+    ],
+)

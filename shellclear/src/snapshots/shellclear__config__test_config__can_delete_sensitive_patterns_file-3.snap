@@ -1,6 +1,6 @@
 ---
 source: shellclear/src/config.rs
-expression: config.init()
+expression: config.delete_sensitive_patterns_file()
 ---
 Ok(
     (),

@@ -1,0 +1,7 @@
+---
+source: shellclear/src/config.rs
+expression: "config.save_ignores_patterns(&[\"patter-1\".to_string(),\n                \"patter-2\".to_string()])"
+---
+Ok(
+    (),
+)

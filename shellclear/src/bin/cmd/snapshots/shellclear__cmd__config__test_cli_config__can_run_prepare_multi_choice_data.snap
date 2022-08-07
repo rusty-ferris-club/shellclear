@@ -1,0 +1,13 @@
+---
+source: shellclear/src/bin/cmd/config.rs
+expression: "get_patter_ignore_multi_choice(&config, &patterns)"
+---
+(
+    [
+        "test-1",
+        "test-2",
+    ],
+    [
+        "test-3",
+    ],
+)
