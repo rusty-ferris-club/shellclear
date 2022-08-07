@@ -90,7 +90,7 @@ fn get_shell_history_path(shell_type: &Shell, homedir: &str) -> String {
 }
 
 #[cfg(test)]
-mod state_context {
+mod state_shell {
     use super::{
         get_all_history_files, BASH_HISTORY_FILE_PATH, FISH_HISTORY_FILE_PATH,
         ZSH_HISTORY_FILE_PATH,
@@ -101,7 +101,7 @@ mod state_context {
     use tempdir::TempDir;
 
     #[test]
-    fn can_backup_file() {
+    fn can_get_all_history_files() {
         let temp_dir = TempDir::new("terminal").unwrap().path().join("app");
 
         fs::create_dir_all(&temp_dir).unwrap();
@@ -112,7 +112,7 @@ mod state_context {
         File::create(&temp_dir.join(FISH_HISTORY_FILE_PATH)).expect("create failed");
 
         with_settings!({filters => vec![
-            (r"/*.+/(app)", "PATH/"),
+            (r"//*.+/(app)", "PATH/"),
             (r"(c?:\\*.+app)", "PATH/")// for windows
         ]}, {
             assert_debug_snapshot!(get_all_history_files(&temp_dir.display().to_string()));
