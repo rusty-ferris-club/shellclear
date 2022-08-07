@@ -18,7 +18,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            sensitive_commands_path: Config::get_sensitive_pattern_file(dirs::home_dir().unwrap()),
+            sensitive_commands_path: Self::get_sensitive_pattern_file(dirs::home_dir().unwrap()),
         }
     }
 }
