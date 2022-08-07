@@ -16,7 +16,7 @@ pub struct PatternsEngine {
     commands: Vec<SensitiveCommands>,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Findings {
     pub patterns: Vec<FindingSensitiveCommands>,
 }
@@ -250,11 +250,16 @@ mod test_engine {
     use std::io::Write;
     use tempdir::TempDir;
 
+    const TEST_SENSITIVE_COMMANDS: &str = r###"
+- name: Find me
+  test: FIND_ME=
+    "###;
+
     const TEMP_HISTORY_LINES_CONTENT: &str = "history
 ls
 echo 'hello you'
 rm -f ./file.txt
-export DELETE_ME=token
+export FIND_ME=token
 ";
 
     const TEMP_HISTORY_FISH: &str = r#"---
@@ -266,7 +271,7 @@ export DELETE_ME=token
   when: "1656438760"
 - cmd: rm -f ./file.txt
   when: "1656438760"
-- cmd: export DELETE_ME=token
+- cmd: export FIND_ME=token
   when: "1656438760"
 "#;
 
@@ -298,11 +303,13 @@ export DELETE_ME=token
     fn can_find_history_commands_line() {
         let temp_dir = TempDir::new("engine").unwrap();
 
-        let en = PatternsEngine::default();
+        let en = PatternsEngine {
+            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+        };
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands(&state_context, false);
+        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
     }
@@ -310,16 +317,14 @@ export DELETE_ME=token
     #[test]
     fn can_clear_command_by_lines() {
         let temp_dir = TempDir::new("engine").unwrap();
-        let search_sensitive_commands = vec![SensitiveCommands {
-            name: "test".to_string(),
-            test: Regex::new("DELETE_ME").unwrap(),
-        }];
 
-        let en = PatternsEngine::default();
+        let en = PatternsEngine {
+            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+        };
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_by_lines(&state_context, &search_sensitive_commands, true);
+        let result = en.find_history_commands_from_shall_list(&vec![state_context.clone()], true);
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
@@ -328,14 +333,13 @@ export DELETE_ME=token
     #[test]
     fn can_clear_find_fish() {
         let temp_dir = TempDir::new("engine").unwrap();
-        let search_sensitive_commands = vec![SensitiveCommands {
-            name: "test".to_string(),
-            test: Regex::new("DELETE_ME").unwrap(),
-        }];
 
-        let en = PatternsEngine::default();
+        let en = PatternsEngine {
+            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+        };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
-        let result = en.find_fish(&state_context, &search_sensitive_commands, true);
+
+        let result = en.find_history_commands_from_shall_list(&vec![state_context.clone()], true);
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
@@ -345,10 +349,12 @@ export DELETE_ME=token
     fn can_find_history_commands_fish() {
         let temp_dir = TempDir::new("engine").unwrap();
 
-        let en = PatternsEngine::default();
+        let en = PatternsEngine {
+            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+        };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
 
-        let result = en.find_history_commands(&state_context, false);
+        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
     }
