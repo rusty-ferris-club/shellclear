@@ -1,0 +1,5 @@
+---
+source: shellclear/src/bin/cmd/config.rs
+expression: run_create_config(&config).unwrap().code
+---
+0

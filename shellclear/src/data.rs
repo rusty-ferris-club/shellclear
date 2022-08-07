@@ -3,6 +3,7 @@ use serde_derive::Deserialize;
 
 pub const ROOT_APP_FOLDER: &str = env!("CARGO_PKG_NAME");
 
+#[derive(Debug)]
 pub struct CmdExit {
     pub code: exitcode::ExitCode,
     pub message: Option<String>,

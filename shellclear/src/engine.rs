@@ -321,6 +321,7 @@ export FIND_ME=token
         let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
+        temp_dir.close().unwrap();
     }
 
     #[test]
@@ -337,6 +338,7 @@ export FIND_ME=token
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
+        temp_dir.close().unwrap();
     }
 
     #[test]
@@ -352,6 +354,7 @@ export FIND_ME=token
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
+        temp_dir.close().unwrap();
     }
 
     #[test]
@@ -366,6 +369,7 @@ export FIND_ME=token
         let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
+        temp_dir.close().unwrap();
     }
 
     #[test]
@@ -388,6 +392,7 @@ export FIND_ME=token
         let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
+        temp_dir.close().unwrap();
     }
 
     #[test]
@@ -408,5 +413,6 @@ export FIND_ME=token
         let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
+        temp_dir.close().unwrap();
     }
 }
