@@ -113,7 +113,7 @@ mod state_shell {
 
         with_settings!({filters => vec![
             (r"//*.+/(app)", "PATH"),
-            (r"([C]?:\\.+app\\\\)", "PATH")// for windows
+            (r"([C]?:\\.+app\\\\)", "/PATH")// for windows
         ]}, {
             assert_debug_snapshot!(get_all_history_files(&temp_dir.display().to_string()));
         });
