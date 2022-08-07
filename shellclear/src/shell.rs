@@ -112,7 +112,8 @@ mod state_context {
         File::create(&temp_dir.join(FISH_HISTORY_FILE_PATH)).expect("create failed");
 
         with_settings!({filters => vec![
-            (r"/*.+/(app)", "PATH/")
+            (r"/*.+/(app)", "PATH/"),
+            (r"(c?:\\*.+app)", "PATH/")// for windows
         ]}, {
             assert_debug_snapshot!(get_all_history_files(&temp_dir.display().to_string()));
         });
