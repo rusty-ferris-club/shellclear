@@ -59,9 +59,9 @@
 - name: NuGet API Key
   test: oy2[a-z0-9]{43}
 - name: Twitter Secret Key
-  test: (?i)(.{0,20})?[''"][0-9a-z]{35,44}[''"]
+  test: (?i)twitter(.{0,20})?[''\"][0-9a-z]{35,44}[''\"]
 - name: Twitter Client ID
-  test: (?i)(.{0,20})?[''"][0-9a-z]{18,25}[''"]
+  test: (?i)twitter(.{0,20})?[''\"][0-9a-z]{18,25}[''\"]
 - name: LinkedIn Secret Key
   test: (?i)(.{0,20})?[''"][0-9a-z]{16}[''"]
 - name: Facebook access token
