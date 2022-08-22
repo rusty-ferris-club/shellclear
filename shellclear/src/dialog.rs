@@ -61,6 +61,6 @@ pub fn multi_choice(
 
     match answer.as_list_items() {
         Some(list) => Ok(list.iter().map(|s| s.text.to_string()).collect::<Vec<_>>()),
-        None => return Err(anyhow!("could not get selected list")),
+        None => Err(anyhow!("could not get selected list")),
     }
 }
