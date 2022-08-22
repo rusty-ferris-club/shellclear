@@ -28,6 +28,17 @@ impl Default for Config {
     }
 }
 
+impl From<Option<&str>> for Config {
+    fn from(config_dir_path_option: Option<&str>) -> Self {
+       match config_dir_path_option {
+           None => Self::default(),
+           Some(cfg_dir_path) => {
+            Self::with_custom_path(PathBuf::from(cfg_dir_path))
+           },
+       }
+    }
+}
+
 impl Config {
     #[allow(dead_code)]
     #[must_use]

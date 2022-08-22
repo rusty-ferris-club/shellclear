@@ -36,4 +36,11 @@ pub fn command() -> Command<'static> {
                 .help("Show sensitive findings summary for MOTD")
                 .takes_value(false),
         )
+        .arg(
+            Arg::new("config-dir")
+                .long("config-dir")
+                .help("Set configuration directory path")
+                .value_name("CFG_DIR_PATH")
+                .takes_value(true),
+        )
 }

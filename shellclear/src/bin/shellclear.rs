@@ -28,7 +28,7 @@ fn main() {
     );
     env_logger::init_from_env(env);
 
-    let config = Config::default();
+    let config = Config::from(matches.value_of("config-dir"));
     // create app config to store state data
     let shells_context = match init() {
         Ok(s) => s,
