@@ -106,3 +106,5 @@
 - name: Datadog Key
   test: (?i)(?:datadog)(?:[0-9a-z\-_\t .]{0,20})(?:[\s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|"|\s|=|\x60){0,5}([a-z0-9]{40})(?:['|"|\n|\r|\s|\x60|;]|$)
   id: datadog_key
+- name: ReadMe io Api Key
+  test: README_API_KEY=
