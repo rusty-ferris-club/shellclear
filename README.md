@@ -45,12 +45,14 @@ USAGE:
     shellclear [OPTIONS] [SUBCOMMAND]
 
 OPTIONS:
-    -h, --help           Print help information
-        --init-shell     Show sensitive findings summary for MOTD
-        --log <LEVEL>    Set logging level [default: INFO] [possible values: OFF, TRACE, DEBUG,
-                         INFO, WARN, ERROR]
-        --no-banner      Don't show the banner
-    -V, --version        Print version information
+        --config-dir <CFG_DIR_PATH>    Set configuration directory path
+    -h, --help                         Print help information
+        --init-shell                   Show sensitive findings summary for MOTD
+        --log <LEVEL>                  Set logging level [default: INFO] [possible values: OFF,
+                                       TRACE, DEBUG, INFO, WARN, ERROR]
+        --no-banner                    Don't show the banner
+    -V, --version                      Print version information
+
 
 SUBCOMMANDS:
     config     Create custom configuration

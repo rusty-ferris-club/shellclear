@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: "config.sensitive_commands_path ==\n    PathBuf::from(format!(\"{}/{}/{}\", cfg_dir, ROOT_APP_FOLDER,\n            CONFIG_SENSITIVE_PATTERNS))"
+---
+true

@@ -1,0 +1,5 @@
+---
+source: shellclear/src/config.rs
+expression: config.app_path == default_config.app_path
+---
+true

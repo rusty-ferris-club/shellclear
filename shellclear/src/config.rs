@@ -28,6 +28,15 @@ impl Default for Config {
     }
 }
 
+impl From<Option<&str>> for Config {
+    fn from(config_dir: Option<&str>) -> Self {
+        match config_dir {
+            None => Self::default(),
+            Some(cfg_dir_path) => Self::with_custom_path(PathBuf::from(cfg_dir_path)),
+        }
+    }
+}
+
 impl Config {
     #[allow(dead_code)]
     #[must_use]
@@ -151,17 +160,54 @@ impl Config {
 
 #[cfg(test)]
 mod test_config {
-    use crate::config::IGNORES_SENSITIVE_PATTERN_TEMPLATE;
+    use crate::{config::IGNORES_SENSITIVE_PATTERN_TEMPLATE, data::ROOT_APP_FOLDER};
 
-    use super::{Config, SENSITIVE_PATTERN_TEMPLATE};
+    use super::{Config, CONFIG_IGNORES, CONFIG_SENSITIVE_PATTERNS, SENSITIVE_PATTERN_TEMPLATE};
     use insta::assert_debug_snapshot;
-    use std::fs;
+    use std::{fs, path::PathBuf};
     use tempdir::TempDir;
 
     fn new_config(temp_dir: &TempDir) -> Config {
         let path = temp_dir.path().join("app");
         fs::create_dir_all(&path).unwrap();
         Config::with_custom_path(path)
+    }
+
+    #[test]
+    fn new_config_from_string() {
+        let cfg_dir = "home/user1";
+        let path = PathBuf::from(cfg_dir);
+        let config = Config::from(path.as_os_str().to_str());
+        assert_debug_snapshot!(
+            config.app_path == PathBuf::from(format!("{}/{}", cfg_dir, ROOT_APP_FOLDER))
+        );
+        assert_debug_snapshot!(
+            config.ignore_sensitive_path
+                == PathBuf::from(format!(
+                    "{}/{}/{}",
+                    cfg_dir, ROOT_APP_FOLDER, CONFIG_IGNORES
+                ))
+        );
+        assert_debug_snapshot!(
+            config.sensitive_commands_path
+                == PathBuf::from(format!(
+                    "{}/{}/{}",
+                    cfg_dir, ROOT_APP_FOLDER, CONFIG_SENSITIVE_PATTERNS
+                ))
+        );
+    }
+
+    #[test]
+    fn new_config_from_none_use_default() {
+        let config = Config::from(None);
+        let default_config = Config::default();
+        assert_debug_snapshot!(config.app_path == default_config.app_path);
+        assert_debug_snapshot!(
+            config.ignore_sensitive_path == default_config.ignore_sensitive_path
+        );
+        assert_debug_snapshot!(
+            config.sensitive_commands_path == default_config.sensitive_commands_path
+        );
     }
 
     #[test]
