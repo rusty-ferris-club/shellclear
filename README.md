@@ -68,7 +68,7 @@ SUBCOMMANDS:
 - fish
 
 ## :eyes: Find Sensitive Commands
-Sensetive data can be stored in your history file when export a token of something or running a script with token. 
+Sensitive data can be stored in your history file when export a token of something or running a script with token. 
 ```sh
 $ shellclear find --format table
 ```
