@@ -121,7 +121,7 @@ fn select_shell(shell_contexts: &Vec<ShellContext>) -> &ShellContext {
     match dialog::select("Pick your shell", &selections) {
         Ok(selection) => &shell_contexts[selection],
         Err(e) => {
-            log::debug!("promter select err: {:?} ", e);
+            log::debug!("prompter select err: {:?} ", e);
             exit(1)
         }
     }

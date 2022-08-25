@@ -40,10 +40,10 @@ pub fn extract_time(finding: &FindingSensitiveCommands) -> Result<String> {
     match finding.shell_type {
         Shell::Zshrc => {
             if let Some(c) = ZSHRC_CAPTURE_COMMAND_TIME.captures(&finding.data) {
-                if let Some(timestemp) = c.get(1) {
+                if let Some(timestamp) = c.get(1) {
                     return Ok(format!(
                         "{}",
-                        convert_str_timestamp_to_date_time(timestemp.as_str())?
+                        convert_str_timestamp_to_date_time(timestamp.as_str())?
                             .format(DATE_TIME_FORMAT)
                     ));
                 }
