@@ -8,7 +8,7 @@ use std::path::Path;
 extern crate chrono;
 use chrono::{DateTime, Local};
 
-/// timestemp format for attache backups file.
+/// timestamp format for attached backups file.
 const DATE_TIME_BACKUP_FORMAT: &str = "%Y%m%d%H%M%S%.f";
 /// the base folder name for the crates to store the data like backups, pop files etc.
 const STATE_FOLDER_NAME: &str = ".shellclear";

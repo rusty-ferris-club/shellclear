@@ -5,12 +5,12 @@ use std::path::PathBuf;
 
 const CONFIG_SENSITIVE_PATTERNS: &str = "sensitive-patterns.yaml";
 const CONFIG_IGNORES: &str = "ignores.yaml";
-const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patters file allows you you add a custom patterns to shellclear
+const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patterns file allows you you add a custom patterns to shellclear
 
 - name: Pattern Name
   test: <PATTERN REGEX>
 "###;
-const IGNORES_SENSITIVE_PATTERN_TEMPLATE: &str = r###"# List of sensitive patters id to ignore
+const IGNORES_SENSITIVE_PATTERN_TEMPLATE: &str = r###"# List of sensitive patterns id to ignore
 
 - PATTERN_ID
 "###;

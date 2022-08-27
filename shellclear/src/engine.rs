@@ -86,7 +86,7 @@ impl PatternsEngine {
     ///
     /// # Errors
     ///
-    /// Will return `Err` when has an error when find sensitive patters in a specific shell
+    /// Will return `Err` when has an error when find sensitive patterns in a specific shell
     pub fn find_history_commands_from_shall_list(
         &self,
         shells_context: &Vec<ShellContext>,
@@ -104,7 +104,7 @@ impl PatternsEngine {
     ///
     /// # Errors
     ///
-    /// Will return `Err` if history file not exists/ could't open
+    /// Will return `Err` if history file not exists/ couldn't open
     pub fn find_history_commands(
         &self,
         state_context: &ShellContext,
