@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/README.md'
+      - "**/README.md"
   # you can enable a schedule to build
   # schedule:
   # - cron: '00 01 * * *'
@@ -61,13 +61,12 @@ jobs:
         with:
           command: xtask
           args: coverage
-          
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
           files: coverage/*.lcov
-          
+
   test:
     name: Test Suite
     strategy:
@@ -92,7 +91,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-
 
   lints:
     name: Lints
