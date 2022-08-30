@@ -108,3 +108,5 @@
   id: datadog_key
 - name: ReadMe io Api Key
   test: README_API_KEY=
+- name: Cargo Registry Token
+  test: CARGO_REGISTRY_TOKEN=
