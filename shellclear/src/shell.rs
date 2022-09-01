@@ -10,6 +10,7 @@ pub enum Shell {
     Bash,
     Zshrc,
     Fish,
+    PowerShell,
 }
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct FishHistory {
@@ -23,6 +24,7 @@ impl fmt::Display for Shell {
             Self::Bash => write!(f, "bash"),
             Self::Zshrc => write!(f, "zshrc"),
             Self::Fish => write!(f, "fish"),
+            Self::PowerShell => write!(f, "powershell"),
         }
     }
 }
@@ -32,6 +34,8 @@ const ZSH_HISTORY_FILE_PATH: &str = ".zsh_history";
 /// Bash history file name
 const BASH_HISTORY_FILE_PATH: &str = ".bash_history";
 const FISH_HISTORY_FILE_PATH: &str = ".local/share/fish/fish_history";
+const POWERSHELL_HISTORY_FILE_PATH: &str =
+    "AppData/Roaming/Microsoft/Windows/PowerShell/PSReadline/ConsoleHost_history.txt";
 
 /// History shell details
 #[derive(Clone, Debug)]
@@ -84,6 +88,10 @@ fn get_shell_history_path(shell_type: &Shell, homedir: &str) -> String {
             .to_string(),
         Shell::Fish => Path::new(homedir)
             .join(FISH_HISTORY_FILE_PATH)
+            .display()
+            .to_string(),
+        Shell::PowerShell => Path::new(homedir)
+            .join(POWERSHELL_HISTORY_FILE_PATH)
             .display()
             .to_string(),
     }

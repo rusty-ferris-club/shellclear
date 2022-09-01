@@ -1,3 +1,5 @@
+use std::env;
+
 pub struct Emojis {
     pub alarm: String,
     pub confetti: String,
@@ -5,9 +7,16 @@ pub struct Emojis {
 
 impl Default for Emojis {
     fn default() -> Self {
-        Self {
-            alarm: "🚨".to_string(),
-            confetti: "🎉".to_string(),
+        if env::consts::OS == "windows" {
+            Self {
+                alarm: "".to_string(),
+                confetti: "".to_string(),
+            }
+        } else {
+            Self {
+                alarm: "🚨".to_string(),
+                confetti: "🎉".to_string(),
+            }
         }
     }
 }
