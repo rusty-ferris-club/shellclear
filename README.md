@@ -23,27 +23,73 @@
 
 The idea behind `shellclear` is to provide a simple and fast way to secure you shell commands history
 
-## Installation
 
-```bash
+<details>
+<summary>macOS</summary>
+
+```sh
 brew tap rusty-ferris-club/tap && brew install shellclear
 ```
 
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```sh
+TBD
+```
+
+</details>
+
 Or download the binary file from [releases](https://github.com/rusty-ferris-club/shellclear/releases) page.
 
-## Terminal Summary
+</details>
 
-Add in shell profile (~/.zshrc / .bash_profile / .bashrc)
+## Setup your shell
 
-```
+<details>
+<summary>Bash</summary>
+Add the following to the end of ~/.bashrc:
+
+```sh
 eval $(shellclear --init-shell)
 ```
+</details>
+
+<details>
+<summary>Zsh</summary>
+Add the following to the end of ~/.zshrc:
+
+```sh
+eval $(shellclear --init-shell)
+```
+</details>
+
+<details>
+<summary>PowerShell</summary>
+Add the following to the end of your PowerShell configuration (find it by running $PROFILE):
+
+```powershell
+Invoke-Expression (&shellclear --init-shell)
+```
+</details>
+
+<details>
+<summary>Fish</summary>
+Add the following to the end of ~/.config/fish/config.fish:
+
+```sh
+shellclear --init-shell | source
+```
+</details>
+
 
 ![motd](./media/motd.png)
 
 ## Using
 
-```
+```sh
 $ shellclear --help
 
 Secure shell commands
