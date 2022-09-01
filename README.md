@@ -37,7 +37,7 @@ brew tap rusty-ferris-club/tap && brew install shellclear
 <summary>Windows</summary>
 
 ```sh
-TBD
+iwr https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.ps1 -useb | iex
 ```
 
 </details>
