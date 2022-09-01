@@ -51,7 +51,7 @@ mkdir -p ${downloadFolder}
 curl --fail --location --output "${downloaded_file}" "${asset_uri}"
 
 echo "[3/4] Install ${bin_name} to the ${executable_folder}"
-tar -xz -f ${downloaded_file} -C ${downloadFolder} --strip=1
+tar -xvf ${downloaded_file} -C ${downloadFolder} --strip=1
 mv $downloadFolder/$bin_name $executable_folder
 rm -rf ${downloadFolder}
 chmod +x $executable_folder/$bin_name

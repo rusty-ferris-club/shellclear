@@ -26,6 +26,7 @@ The idea behind `shellclear` is to provide a simple and fast way to secure you s
 
 <details>
 <summary>macOS</summary>
+
 ```sh
 curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | sh
 ```
@@ -40,6 +41,7 @@ brew tap rusty-ferris-club/tap && brew install shellclear
 <details>
 <summary>Linux</summary>
 
+You need to make sure that `apt install xz-utils` is install. There is an open issue [#52](https://github.com/rusty-ferris-club/shellclear/issues/52) to remove this dependencies.
 ```sh
 curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | sh
 ```
