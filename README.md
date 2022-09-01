@@ -26,9 +26,22 @@ The idea behind `shellclear` is to provide a simple and fast way to secure you s
 
 <details>
 <summary>macOS</summary>
+```sh
+curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | sh
+```
 
+Or via brew
 ```sh
 brew tap rusty-ferris-club/tap && brew install shellclear
+```
+
+</details>
+
+<details>
+<summary>Linux</summary>
+
+```sh
+curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | sh
 ```
 
 </details>
