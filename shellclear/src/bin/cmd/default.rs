@@ -3,7 +3,6 @@ use clap::{crate_name, AppSettings, Arg, Command};
 
 pub fn command() -> Command<'static> {
     Command::new(crate_name!())
-        .version(env!("VERGEN_GIT_SEMVER"))
         .version(crate_version!())
         .setting(AppSettings::ArgRequiredElseHelp)
         .about("Secure shell commands")
