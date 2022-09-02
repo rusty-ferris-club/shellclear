@@ -130,12 +130,6 @@ SUBCOMMANDS:
     stash      Stash history file
 ```
 
-## Supported Shells
-
-- bash
-- zshrc
-- fish
-
 ## :eyes: Find Sensitive Commands
 
 Sensitive data can be stored in your history file when export a token of something or running a script with token.
@@ -214,6 +208,10 @@ Manage pattern ignores
 ```sh
 shellclear config ignores
 ```
+
+# Examples
+[All the examples here](./example/README.MD) - you make this happen, thanks!
+
 
 # Thanks
 
