@@ -12,7 +12,7 @@ pub fn command() -> Command<'static> {
 pub fn run(
     subcommand_matches: &ArgMatches,
     shell_context: &ShellContext,
-) -> Result<shellclear::CmdExit> {
+) -> Result<shellclear::data::CmdExit> {
     match subcommand_matches.subcommand() {
         None => run_stash(shell_context),
         Some(tup) => match tup {
@@ -23,12 +23,12 @@ pub fn run(
     }
 }
 
-fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
+fn run_stash(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> {
     // todo:: check if file exists and remove the unwrap
     if shell_context.is_stash_file_exists()? {
         if let Err(e) = dialog::confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
             log::debug!("{:?}", e);
-            return Ok(shellclear::CmdExit {
+            return Ok(shellclear::data::CmdExit {
                 code: exitcode::OK,
                 message: None,
             });
@@ -36,32 +36,32 @@ fn run_stash(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     }
 
     if let Err(err) = shell_context.stash() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: 1,
             message: Some(format!("stash failed: {:?}", err)),
         });
     }
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: 0,
         message: Some(format!("Shell {:?} stash successfully when open a new tab. Run `{} stash pop` to return your history commands",shell_context.history.shell, crate_name!() )),
     })
 }
 
-fn run_pop(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
+fn run_pop(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> {
     if !shell_context.is_stash_file_exists()? {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: 1,
             message: Some("Stash file not found".to_string()),
         });
     }
 
     if let Err(err) = shell_context.pop() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: 1,
             message: Some(format!("stash pop failed: {:?}", err)),
         });
     }
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: 0,
         message: Some(format!(
             "Shell {:?} history pop successfully when open a new tab. ",
@@ -70,10 +70,10 @@ fn run_pop(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
     })
 }
 
-pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::CmdExit> {
+pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> {
     let mut backup_files = shell_context.get_backup_files()?;
     if backup_files.is_empty() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some("backup files not found".to_string()),
         });
@@ -87,7 +87,7 @@ pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::CmdExit> 
     let restore_from_path = match dialog::select("select backup file", &backup_files) {
         Ok(selection) => &backup_files[selection],
         Err(_e) => {
-            return Ok(shellclear::CmdExit {
+            return Ok(shellclear::data::CmdExit {
                 code: 0,
                 message: None,
             });
@@ -95,13 +95,13 @@ pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::CmdExit> 
     };
 
     if let Some(e) = shell_context.restore(restore_from_path).err() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: 1,
             message: Some(format!("restore failed: {:?}", e)),
         });
     }
 
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: exitcode::OK,
         message: Some("History file restored successfully".to_string()),
     })

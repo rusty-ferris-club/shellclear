@@ -22,7 +22,7 @@ pub fn run(
     matches: &ArgMatches,
     shells_context: &Vec<ShellContext>,
     config: &Config,
-) -> Result<shellclear::CmdExit> {
+) -> Result<shellclear::data::CmdExit> {
     let en = engine::PatternsEngine::with_config(config)?;
 
     let findings = en.find_history_commands_from_shall_list(shells_context, false)?;
@@ -31,7 +31,7 @@ pub fn run(
     let emojis = Emojis::default();
 
     if sensitive_commands.is_empty() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(format!(
                 "{} Your shell are clean from sensitive data!",
@@ -53,13 +53,13 @@ pub fn run(
     };
 
     Ok(match exporter.sensitive_data(&sensitive_commands) {
-        Ok(()) => shellclear::CmdExit {
+        Ok(()) => shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(
                 "Run `shellclear clear` to clear command findings from your history".to_string(),
             ),
         },
-        Err(e) => shellclear::CmdExit {
+        Err(e) => shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(e.to_string()),
         },

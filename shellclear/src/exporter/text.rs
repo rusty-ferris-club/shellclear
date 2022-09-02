@@ -68,11 +68,13 @@ mod test_exporter_text {
                     test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
                     id: "".to_string(),
+                    secret_group: 0,
                 },
                 SensitiveCommands {
                     test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
                     id: "".to_string(),
+                    secret_group: 0,
                 },
             ],
             command: "test command".to_string(),

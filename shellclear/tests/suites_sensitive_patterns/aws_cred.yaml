@@ -1,0 +1,3 @@
+- name: detect aws_access_key_id
+  test: aws_access_key_id=AKISHELLCLEAREXAMPLE
+  expected: AKISHELLCLEAREXAMPLE

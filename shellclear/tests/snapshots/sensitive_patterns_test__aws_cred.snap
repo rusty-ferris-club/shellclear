@@ -1,0 +1,11 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect aws_access_key_id",
+        detect: "AKISHELLCLEAREXAMPLE",
+        expected: "AKISHELLCLEAREXAMPLE",
+    },
+]
