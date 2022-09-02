@@ -6,8 +6,6 @@ authors = ["Elad-Kaplan <kaplan.elad@gmail.com>"]
 readme = "README.md"
 repository = "https://github.com/rusty-ferris-club/shellclear"
 homepage = "https://github.com/rusty-ferris-club/shellclear"
-build = "build.rs"
-
 
 [dependencies]
 clap = { version = "3", features = ["cargo"], optional = true }
@@ -34,9 +32,7 @@ insta = { version = "1.17.2", features = ["backtrace", "filters"] }
 tempdir = "0.3"
 
 [build-dependencies]
-vergen = "7"
 anyhow = "1"
-
 
 [features]
 default = ["cli"]
