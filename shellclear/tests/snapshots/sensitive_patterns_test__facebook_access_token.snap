@@ -4,7 +4,7 @@ expression: results
 ---
 [
     TestPatternResult {
-        name: "Detect Facebook Access Token",
+        name: "detect Facebook Access Token",
         test: "EAACEdEose0cBABaAxVtmW2jBmndwtbPfXxZBHCjiJR1eyMez3ZaHfPttYOxAA2deO9EBEERaaaPXHx8F6wfXd7yQTo11nPJEymEYSLhl4nOpZBoiJaecZC30ZARVkIiqHtsTZBWGvvaafOm2R9tfZPsXh1cWb9s1VBzDXSKP7aPaQQQQQQQ",
         detect: "EAACEdEose0cBABaAxVtmW2jBmndwtbPfXxZBHCjiJR1eyMez3ZaHfPttYOxAA2deO9EBEERaaaPXHx8F6wfXd7yQTo11nPJEymEYSLhl4nOpZBoiJaecZC30ZARVkIiqHtsTZBWGvvaafOm2R9tfZPsXh1cWb9s1VBzDXSKP7aPaQQQQQQQ",
         expected: "EAACEdEose0cBABaAxVtmW2jBmndwtbPfXxZBHCjiJR1eyMez3ZaHfPttYOxAA2deO9EBEERaaaPXHx8F6wfXd7yQTo11nPJEymEYSLhl4nOpZBoiJaecZC30ZARVkIiqHtsTZBWGvvaafOm2R9tfZPsXh1cWb9s1VBzDXSKP7aPaQQQQQQQ",
