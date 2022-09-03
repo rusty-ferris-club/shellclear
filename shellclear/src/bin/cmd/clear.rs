@@ -19,7 +19,7 @@ pub fn run(
     matches: &ArgMatches,
     shells_context: &Vec<ShellContext>,
     config: &Config,
-) -> Result<shellclear::CmdExit> {
+) -> Result<shellclear::data::CmdExit> {
     let en = engine::PatternsEngine::with_config(config)?;
 
     for shell_context in shells_context {
@@ -27,7 +27,7 @@ pub fn run(
             match shell_context.backup() {
                 Ok(path) => log::debug!("history backup successfully: {}", path),
                 Err(e) => {
-                    return Ok(shellclear::CmdExit {
+                    return Ok(shellclear::data::CmdExit {
                         code: 1,
                         message: Some(format!(
                             "could not backup shell {:?} history. err: {:?}",
@@ -45,7 +45,7 @@ pub fn run(
     let emojis = Emojis::default();
 
     if sensitive_commands.is_empty() {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(format!(
                 "{} Your shell are clean from sensitive data!",
@@ -60,7 +60,7 @@ pub fn run(
         sensitive_commands.len()
     );
 
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: exitcode::OK,
         message: Some(message),
     })

@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect MailGun API Key",
+        test: "key-123asZSDWq1331shellclearshellclear",
+        detect: "key-123asZSDWq1331shellclearshellcle",
+        expected: "key-123asZSDWq1331shellclearshellcle",
+    },
+]

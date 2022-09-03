@@ -35,6 +35,7 @@ Ok(
                     SensitiveCommands {
                         test: FIND_ME,
                         name: "Pattern Name",
+                        secret_group: 1,
                         id: "elad_ignore",
                     },
                 ],

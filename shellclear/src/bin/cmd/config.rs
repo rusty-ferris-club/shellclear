@@ -2,8 +2,8 @@ use crate::engine::SENSITIVE_COMMANDS;
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use shellclear::config::Config;
+use shellclear::data::SensitiveCommands;
 use shellclear::dialog;
-use shellclear::SensitiveCommands;
 
 pub fn command() -> Command<'static> {
     Command::new("config")
@@ -22,7 +22,7 @@ pub fn command() -> Command<'static> {
         .subcommand(Command::new("ignores").about("Manage ignores patterns."))
 }
 
-pub fn run(subcommand_matches: &ArgMatches, config: &Config) -> Result<shellclear::CmdExit> {
+pub fn run(subcommand_matches: &ArgMatches, config: &Config) -> Result<shellclear::data::CmdExit> {
     match subcommand_matches.subcommand() {
         None => run_create_config(config),
         Some(tup) => match tup {
@@ -34,7 +34,7 @@ pub fn run(subcommand_matches: &ArgMatches, config: &Config) -> Result<shellclea
     }
 }
 
-fn run_create_config(config: &Config) -> Result<shellclear::CmdExit> {
+fn run_create_config(config: &Config) -> Result<shellclear::data::CmdExit> {
     if config.is_app_path_exists() {
         let confirm_message = format!(
             "folder {} already exists. do you want to override the existing files?",
@@ -42,7 +42,7 @@ fn run_create_config(config: &Config) -> Result<shellclear::CmdExit> {
         );
         if let Err(e) = dialog::confirm(&confirm_message) {
             log::debug!("{:?}", e);
-            return Ok(shellclear::CmdExit {
+            return Ok(shellclear::data::CmdExit {
                 code: exitcode::OK,
                 message: None,
             });
@@ -50,7 +50,7 @@ fn run_create_config(config: &Config) -> Result<shellclear::CmdExit> {
     }
     config.init()?;
 
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: exitcode::OK,
         message: Some(format!(
             "Config file created successfully in path: {}",
@@ -59,7 +59,7 @@ fn run_create_config(config: &Config) -> Result<shellclear::CmdExit> {
     })
 }
 
-fn run_validate(config: &Config) -> shellclear::CmdExit {
+fn run_validate(config: &Config) -> shellclear::data::CmdExit {
     let mut result: Vec<String> = vec![];
     let mut error_found = exitcode::OK;
 
@@ -93,18 +93,18 @@ fn run_validate(config: &Config) -> shellclear::CmdExit {
             error_found = exitcode::CONFIG;
         }
     }
-    shellclear::CmdExit {
+    shellclear::data::CmdExit {
         code: error_found,
         message: Some(result.join("\n\r")),
     }
 }
 
-fn run_delete(config: &Config, force: bool) -> Result<shellclear::CmdExit> {
+fn run_delete(config: &Config, force: bool) -> Result<shellclear::data::CmdExit> {
     if !force
         && dialog::confirm(format!("Delete {} folder?", config.app_path.display()).as_str())
             .is_err()
     {
-        return Ok(shellclear::CmdExit {
+        return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some("operation canceled".to_string()),
         });
@@ -114,7 +114,7 @@ fn run_delete(config: &Config, force: bool) -> Result<shellclear::CmdExit> {
         config.delete_app_folder()?;
     }
 
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: exitcode::OK,
         message: Some(format!(
             "Config folder {} deleted successfully",
@@ -123,7 +123,7 @@ fn run_delete(config: &Config, force: bool) -> Result<shellclear::CmdExit> {
     })
 }
 
-fn run_ignore(config: &Config) -> Result<shellclear::CmdExit> {
+fn run_ignore(config: &Config) -> Result<shellclear::data::CmdExit> {
     if !config.is_app_path_exists() {
         log::debug!("app folder not found, creating...");
         config.init()?;
@@ -152,7 +152,7 @@ fn run_ignore(config: &Config) -> Result<shellclear::CmdExit> {
     log::debug!("selected ignores patterns: {:?}", selected_ides);
 
     config.save_ignores_patterns(&selected_ides)?;
-    Ok(shellclear::CmdExit {
+    Ok(shellclear::data::CmdExit {
         code: exitcode::OK,
         message: None,
     })
@@ -251,16 +251,19 @@ mod test_cli_config {
                 test: Regex::new("test").unwrap(),
                 name: "test-1".to_string(),
                 id: "id-1".to_string(),
+                secret_group: 0,
             },
             SensitiveCommands {
                 test: Regex::new("test").unwrap(),
                 name: "test-2".to_string(),
                 id: "id-2".to_string(),
+                secret_group: 0,
             },
             SensitiveCommands {
                 test: Regex::new("test").unwrap(),
                 name: "test-3".to_string(),
                 id: "id-3".to_string(),
+                secret_group: 0,
             },
         ];
 

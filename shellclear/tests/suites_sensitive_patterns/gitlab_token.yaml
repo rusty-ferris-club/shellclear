@@ -1,0 +1,3 @@
+- name: detect gitlab token environment variable
+  test: GITLAB_TOKEN=shellclear
+  expected: shellclear

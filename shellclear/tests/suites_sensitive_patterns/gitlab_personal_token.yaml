@@ -1,0 +1,3 @@
+- name: detect Gitlab Personal Token
+  test: glpat-Shellclear_-Shellclear
+  expected: glpat-Shellclear_-Shellclear

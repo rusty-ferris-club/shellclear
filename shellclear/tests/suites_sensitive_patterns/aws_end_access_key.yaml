@@ -1,0 +1,6 @@
+- name: detect AWS_ACCESS_KEY_ID environment variable
+  test: AWS_ACCESS_KEY_ID=AKISHELLCLEAREXAMPLE
+  expected: AKISHELLCLEAREXAMPLE
+- name: detect AWS_ACCESS_KEY_ID environment variable with space
+  test: AWS_ACCESS_KEY_ID=AKISHELLCLEAREXAMPLE AAA
+  expected: AKISHELLCLEAREXAMPLE

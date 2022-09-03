@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Vercel Env Token",
+        test: "VERCEL_TOKEN=shellclear",
+        detect: "shellclear",
+        expected: "shellclear",
+    },
+]

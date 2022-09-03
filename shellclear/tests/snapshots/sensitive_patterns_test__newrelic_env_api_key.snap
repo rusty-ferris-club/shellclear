@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Newrelic Env api key",
+        test: "NEWRELIC_API_KEY=shellclear",
+        detect: "shellclear",
+        expected: "shellclear",
+    },
+]

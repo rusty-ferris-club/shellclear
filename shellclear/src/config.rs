@@ -9,6 +9,7 @@ const SENSITIVE_PATTERN_TEMPLATE: &str = r###"# External sensitive patterns file
 
 - name: Pattern Name
   test: <PATTERN REGEX>
+  secret_group: 0
 "###;
 const IGNORES_SENSITIVE_PATTERN_TEMPLATE: &str = r###"# List of sensitive patterns id to ignore
 

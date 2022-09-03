@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Teams Webhook",
+        test: "https://outlook.office.com/webhook/11111111111111111111111111111abf-111/@",
+        detect: "11111111111111111111111111111abf-111",
+        expected: "11111111111111111111111111111abf-111",
+    },
+]

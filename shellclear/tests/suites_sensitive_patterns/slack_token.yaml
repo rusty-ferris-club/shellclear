@@ -1,0 +1,3 @@
+- name: detect slack token
+  test: xoxb-123456789123-123456778912-123455642345-23rdsf435V2viZF0paWhc7sasSsnad
+  expected: xoxb-123456789123-123456778912-123455642345-23rdsf435V2viZF0paWhc7sasSsnad

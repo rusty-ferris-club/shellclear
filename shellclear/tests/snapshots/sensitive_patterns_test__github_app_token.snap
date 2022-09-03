@@ -1,0 +1,18 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect GitHub App Token ghu prefix",
+        test: "ghu_shellclear123SHELLCLEAR1111111111111",
+        detect: "ghu_shellclear123SHELLCLEAR1111111111111",
+        expected: "ghu_shellclear123SHELLCLEAR1111111111111",
+    },
+    TestPatternResult {
+        name: "detect GitHub App Token ghs prefix",
+        test: "ghs_shellclear123SHELLCLEAR1111111111111",
+        detect: "ghs_shellclear123SHELLCLEAR1111111111111",
+        expected: "ghs_shellclear123SHELLCLEAR1111111111111",
+    },
+]

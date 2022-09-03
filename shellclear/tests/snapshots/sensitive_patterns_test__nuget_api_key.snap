@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect NuGet API Key",
+        test: "oy2shellclear1shellclear9shellclearshellclearshellclear",
+        detect: "oy2shellclear1shellclear9shellclearshellclears",
+        expected: "oy2shellclear1shellclear9shellclearshellclears",
+    },
+]

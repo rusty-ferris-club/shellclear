@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect hashicorp Env Vault Token",
+        test: "VAULT_TOKEN=shellclear",
+        detect: "shellclear",
+        expected: "shellclear",
+    },
+]

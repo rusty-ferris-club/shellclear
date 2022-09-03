@@ -1,0 +1,3 @@
+- name: detect MailChimp API Key
+  test: 2313131abcfaaaaaaaaaaaaaaaaaaaaa-us01
+  expected: 2313131abcfaaaaaaaaaaaaaaaaaaaaa-us01

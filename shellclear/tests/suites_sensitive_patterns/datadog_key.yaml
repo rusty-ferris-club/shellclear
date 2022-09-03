@@ -1,0 +1,3 @@
+- name: detect Datadog key
+  test: datadog=12345vea12345cb23cdb2b4cbe2e6798e0faab22
+  expected: 12345vea12345cb23cdb2b4cbe2e6798e0faab22

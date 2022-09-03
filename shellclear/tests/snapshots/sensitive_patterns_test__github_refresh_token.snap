@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect GitHub Personal Token",
+        test: "ghr_shellclear1shellclear2shellclear3shellclear",
+        detect: "ghr_shellclear1shellclear2shellclear3she",
+        expected: "ghr_shellclear1shellclear2shellclear3she",
+    },
+]

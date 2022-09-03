@@ -1,0 +1,3 @@
+- name: detect GitHub Env Token
+  test: GITHUB_TOKEN=SHELLCLEAR
+  expected: SHELLCLEAR

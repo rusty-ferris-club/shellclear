@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect gitlab token environment variable",
+        test: "GITLAB_TOKEN=shellclear",
+        detect: "shellclear",
+        expected: "shellclear",
+    },
+]

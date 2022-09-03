@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect MailChimp API Key",
+        test: "2313131abcfaaaaaaaaaaaaaaaaaaaaa-us01",
+        detect: "2313131abcfaaaaaaaaaaaaaaaaaaaaa-us01",
+        expected: "2313131abcfaaaaaaaaaaaaaaaaaaaaa-us01",
+    },
+]

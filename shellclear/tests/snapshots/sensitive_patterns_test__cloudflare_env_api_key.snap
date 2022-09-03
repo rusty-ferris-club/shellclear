@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect CLOUDFLARE_API_KEY environment variable",
+        test: "CLOUDFLARE_API_KEY=shellclear",
+        detect: "shellclear",
+        expected: "shellclear",
+    },
+]

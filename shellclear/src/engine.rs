@@ -261,6 +261,7 @@ mod test_engine {
 
     const TEST_SENSITIVE_COMMANDS: &str = r###"
 - name: Find me
+  secret_group: 0
   test: FIND_ME=
     "###;
 
@@ -381,6 +382,7 @@ export FIND_ME=token
         let custom_pattern = r###"
 - name: Pattern Name
   test: FIND_ME
+  secret_group: 1
   id: elad_ignore
 "###;
         fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
