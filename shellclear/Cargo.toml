@@ -1,6 +1,6 @@
 [package]
 name = "shellclear"
-version = "0.4.3"
+version = "0.4.4"
 edition = "2021"
 authors = ["Elad-Kaplan <kaplan.elad@gmail.com>"]
 readme = "README.md"
