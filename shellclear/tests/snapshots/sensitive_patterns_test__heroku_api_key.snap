@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Heroku API Key",
+        test: "HEROKU_API_KEY=\"B2222202-A12C-11C4-911E-1236B11AA123\"",
+        detect: "HEROKU_API_KEY=\"B2222202-A12C-11C4-911E-1236B11AA123\"",
+        expected: "B2222202-A12C-11C4-911E-1236B11AA123",
+    },
+]

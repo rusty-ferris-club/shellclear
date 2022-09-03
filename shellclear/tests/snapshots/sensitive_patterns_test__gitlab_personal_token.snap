@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Gitlab Personal Token",
+        test: "glpat-Shellclear_-Shellclear",
+        detect: "glpat-Shellclear_-Shellcle",
+        expected: "glpat-Shellclear_-Shellclear",
+    },
+]

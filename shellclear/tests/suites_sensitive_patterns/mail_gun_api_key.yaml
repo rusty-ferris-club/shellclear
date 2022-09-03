@@ -1,0 +1,3 @@
+- name: detect MailGun API Key
+  test: key-123asZSDWq1331shellclearshellclear
+  expected: key-123asZSDWq1331shellclearshellcle

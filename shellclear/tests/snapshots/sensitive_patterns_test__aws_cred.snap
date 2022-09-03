@@ -5,6 +5,13 @@ expression: results
 [
     TestPatternResult {
         name: "detect aws_access_key_id",
+        test: "aws_access_key_id=AKISHELLCLEAREXAMPLE",
+        detect: "AKISHELLCLEAREXAMPLE",
+        expected: "AKISHELLCLEAREXAMPLE",
+    },
+    TestPatternResult {
+        name: "detect aws_secret_access_key",
+        test: "aws_secret_access_key=AKISHELLCLEAREXAMPLE",
         detect: "AKISHELLCLEAREXAMPLE",
         expected: "AKISHELLCLEAREXAMPLE",
     },

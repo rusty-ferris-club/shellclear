@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect GCP API Key",
+        test: "AIzaDxAapocifhrt_spchtSDC2p2dpsWWspllsP",
+        detect: "AIzaDxAapocifhrt_spchtSDC2p2dpsWWspllsP",
+        expected: "AIzaDxAapocifhrt_spchtSDC2p2dpsWWspllsP",
+    },
+]

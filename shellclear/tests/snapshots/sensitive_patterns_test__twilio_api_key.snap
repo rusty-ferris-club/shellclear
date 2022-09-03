@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect Twilio API Key",
+        test: "SK1A11c1111C111f11111F11111111111111s",
+        detect: "SK1A11c1111C111f11111F111111111111",
+        expected: "SK1A11c1111C111f11111F111111111111",
+    },
+]

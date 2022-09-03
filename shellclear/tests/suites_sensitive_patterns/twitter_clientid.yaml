@@ -1,0 +1,3 @@
+- name: detect Twitter Client ID
+  test: TWITTER_CLIENT_ID:'shellclear3fsvgshellcler'
+  expected: shellclear3fsvgshellcler

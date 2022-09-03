@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect CARGO_REGISTRY_TOKEN environment variable",
+        test: "CARGO_REGISTRY_TOKEN=shellclear6Ia22iEC1S7F3tfVeWEPcJ0m0",
+        detect: "shellclear6Ia22iEC1S7F3tfVeWEPcJ0m0",
+        expected: "shellclear6Ia22iEC1S7F3tfVeWEPcJ0m0",
+    },
+]

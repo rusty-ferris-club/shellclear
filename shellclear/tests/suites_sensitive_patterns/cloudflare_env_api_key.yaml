@@ -1,0 +1,3 @@
+- name: detect CLOUDFLARE_API_KEY environment variable
+  test: CLOUDFLARE_API_KEY=shellclear
+  expected: shellclear

@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect SendGrid API Key",
+        test: "SG.shellcleardH0bSHADAAs2.9Shellclaer_SdadvcCFG33dsSDFDDshellshellshellshellshell",
+        detect: "SG.shellcleardH0bSHADAAs2.9Shellclaer_SdadvcCFG33dsSDFDDshellshellshe",
+        expected: "SG.shellcleardH0bSHADAAs2.9Shellclaer_SdadvcCFG33dsSDFDDshellshellshe",
+    },
+]

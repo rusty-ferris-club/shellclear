@@ -1,0 +1,3 @@
+- name: detect ReadMe io Api Key
+  test: README_API_KEY=shellclear
+  expected: shellclear

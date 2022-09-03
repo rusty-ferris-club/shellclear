@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect GitHub Env Token",
+        test: "GITHUB_TOKEN=SHELLCLEAR",
+        detect: "SHELLCLEAR",
+        expected: "SHELLCLEAR",
+    },
+]

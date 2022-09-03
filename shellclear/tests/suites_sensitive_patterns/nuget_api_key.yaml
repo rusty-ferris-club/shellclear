@@ -1,0 +1,3 @@
+- name: detect NuGet API Key
+  test: oy2shellclear1shellclear9shellclearshellclearshellclear
+  expected: oy2shellclear1shellclear9shellclearshellclears

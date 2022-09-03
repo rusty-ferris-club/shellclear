@@ -1,0 +1,3 @@
+- name: detect GitHub Personal Token
+  test: ghr_shellclear1shellclear2shellclear3shellclear
+  expected: ghr_shellclear1shellclear2shellclear3she

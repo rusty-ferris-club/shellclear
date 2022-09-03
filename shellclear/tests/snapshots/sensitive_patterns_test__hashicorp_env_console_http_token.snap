@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect hashicorp Env console HTTP token",
+        test: "CONSUL_HTTP_TOKEN=shellclaer",
+        detect: "shellclaer",
+        expected: "shellclaer",
+    },
+]
