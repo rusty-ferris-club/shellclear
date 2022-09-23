@@ -1,14 +1,20 @@
-use crate::config::Config;
-use crate::data::{FindingSensitiveCommands, SensitiveCommands};
-use crate::shell;
-use crate::state::ShellContext;
+use std::{
+    fmt::Write,
+    fs::{write, File},
+    io::{prelude::*, BufReader},
+    time::Instant,
+};
+
 use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
-use std::fmt::Write;
-use std::fs::{write, File};
-use std::io::{prelude::*, BufReader};
-use std::time::Instant;
+
+use crate::{
+    config::Config,
+    data::{FindingSensitiveCommands, SensitiveCommands},
+    shell,
+    state::ShellContext,
+};
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
@@ -86,7 +92,8 @@ impl PatternsEngine {
     ///
     /// # Errors
     ///
-    /// Will return `Err` when has an error when find sensitive patterns in a specific shell
+    /// Will return `Err` when has an error when find sensitive patterns in a
+    /// specific shell
     pub fn find_history_commands_from_shall_list(
         &self,
         shells_context: &Vec<ShellContext>,
@@ -252,12 +259,12 @@ impl PatternsEngine {
 
 #[cfg(test)]
 mod test_engine {
-    use super::*;
+    use std::{fs, fs::File, io::Write};
+
     use insta::assert_debug_snapshot;
-    use std::fs;
-    use std::fs::File;
-    use std::io::Write;
     use tempdir::TempDir;
+
+    use super::*;
 
     const TEST_SENSITIVE_COMMANDS: &str = r###"
 - name: Find me

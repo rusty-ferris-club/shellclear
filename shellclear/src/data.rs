@@ -1,5 +1,6 @@
-use crate::shell::Shell;
 use serde_derive::Deserialize;
+
+use crate::shell::Shell;
 
 pub const ROOT_APP_FOLDER: &str = env!("CARGO_PKG_NAME");
 

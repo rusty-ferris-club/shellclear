@@ -1,7 +1,8 @@
-use crate::data::{SensitiveCommands, ROOT_APP_FOLDER};
+use std::{fs, path::PathBuf};
+
 use anyhow::Result;
-use std::fs;
-use std::path::PathBuf;
+
+use crate::data::{SensitiveCommands, ROOT_APP_FOLDER};
 
 const CONFIG_SENSITIVE_PATTERNS: &str = "sensitive-patterns.yaml";
 const CONFIG_IGNORES: &str = "ignores.yaml";
@@ -60,7 +61,8 @@ impl Config {
     ///
     /// # Errors
     ///
-    /// Will return `Err` when home directory not found or failed to create a file
+    /// Will return `Err` when home directory not found or failed to create a
+    /// file
     pub fn init(&self) -> Result<()> {
         if !self.is_app_path_exists() {
             fs::create_dir_all(&self.app_path)?;
@@ -161,12 +163,13 @@ impl Config {
 
 #[cfg(test)]
 mod test_config {
-    use crate::{config::IGNORES_SENSITIVE_PATTERN_TEMPLATE, data::ROOT_APP_FOLDER};
+    use std::{fs, path::PathBuf};
+
+    use insta::assert_debug_snapshot;
+    use tempdir::TempDir;
 
     use super::{Config, CONFIG_IGNORES, CONFIG_SENSITIVE_PATTERNS, SENSITIVE_PATTERN_TEMPLATE};
-    use insta::assert_debug_snapshot;
-    use std::{fs, path::PathBuf};
-    use tempdir::TempDir;
+    use crate::{config::IGNORES_SENSITIVE_PATTERN_TEMPLATE, data::ROOT_APP_FOLDER};
 
     fn new_config(temp_dir: &TempDir) -> Config {
         let path = temp_dir.path().join("app");

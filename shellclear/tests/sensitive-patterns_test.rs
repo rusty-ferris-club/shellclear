@@ -1,7 +1,6 @@
 use insta::assert_debug_snapshot;
 use serde_derive::Deserialize;
-use shellclear::data::SensitiveCommands;
-use shellclear::engine::SENSITIVE_COMMANDS;
+use shellclear::{data::SensitiveCommands, engine::SENSITIVE_COMMANDS};
 
 #[derive(Debug, Deserialize, Clone)]
 struct TestSensitivePatterns {

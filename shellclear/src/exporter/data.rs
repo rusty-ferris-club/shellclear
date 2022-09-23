@@ -1,10 +1,12 @@
-use crate::data::FindingSensitiveCommands;
-use crate::shell::FishHistory;
-use crate::shell::Shell;
 use anyhow::Result;
 use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use lazy_static::lazy_static;
 use regex::Regex;
+
+use crate::{
+    data::FindingSensitiveCommands,
+    shell::{FishHistory, Shell},
+};
 
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 pub const LIMIT_COMMAND: usize = 100;
@@ -67,10 +69,12 @@ fn convert_str_timestamp_to_date_time(timestamp: &str) -> Result<DateTime<Utc>> 
 
 #[cfg(test)]
 mod test_exporter {
+    use std::str;
+
+    use insta::assert_debug_snapshot;
+
     use super::*;
     use crate::shell::Shell;
-    use insta::assert_debug_snapshot;
-    use std::str;
 
     #[test]
     fn can_extract_time_zshrc() {

@@ -1,9 +1,8 @@
-use crate::engine::SENSITIVE_COMMANDS;
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
-use shellclear::config::Config;
-use shellclear::data::SensitiveCommands;
-use shellclear::dialog;
+use shellclear::{config::Config, data::SensitiveCommands, dialog};
+
+use crate::engine::SENSITIVE_COMMANDS;
 
 pub fn command() -> Command<'static> {
     Command::new("config")
@@ -184,11 +183,13 @@ fn get_patter_ignore_multi_choice(
 
 #[cfg(test)]
 mod test_cli_config {
-    use super::*;
+    use std::fs;
+
     use insta::assert_debug_snapshot;
     use regex::Regex;
-    use std::fs;
     use tempdir::TempDir;
+
+    use super::*;
 
     fn new_config(temp_dir: &TempDir) -> Config {
         let path = temp_dir.path().join("app");

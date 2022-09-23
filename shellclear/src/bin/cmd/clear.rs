@@ -1,8 +1,6 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
-use shellclear::config::Config;
-use shellclear::Emojis;
-use shellclear::{engine, ShellContext};
+use shellclear::{config::Config, engine, Emojis, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("clear")
