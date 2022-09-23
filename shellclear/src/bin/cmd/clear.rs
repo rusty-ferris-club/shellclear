@@ -25,7 +25,7 @@ pub fn run(
     for shell_context in shells_context {
         if matches.is_present("backup") {
             match shell_context.backup() {
-                Ok(path) => log::debug!("history backup successfully: {}", path),
+                Ok(path) => log::debug!("history backup successful: {}", path),
                 Err(e) => {
                     return Ok(shellclear::data::CmdExit {
                         code: 1,
@@ -48,14 +48,14 @@ pub fn run(
         return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(format!(
-                "{} Your shell are clean from sensitive data!",
+                "{} Your shell is clean from sensitive data!",
                 emojis.confetti
             )),
         });
     };
 
     let message = format!(
-        " {} shellclear clear {} sensitive commands",
+        " {} shellclear cleared {} sensitive commands",
         emojis.alarm,
         sensitive_commands.len()
     );

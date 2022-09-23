@@ -34,7 +34,7 @@ pub fn run(
         return Ok(shellclear::data::CmdExit {
             code: exitcode::OK,
             message: Some(format!(
-                "{} Your shell are clean from sensitive data!",
+                "{} Your shell is clean from sensitive data!",
                 emojis.confetti
             )),
         });
