@@ -1,5 +1,4 @@
-use clap::crate_version;
-use clap::{crate_name, AppSettings, Arg, Command};
+use clap::{crate_name, crate_version, AppSettings, Arg, Command};
 
 pub fn command() -> Command<'static> {
     Command::new(crate_name!())

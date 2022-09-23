@@ -1,7 +1,7 @@
+use std::{fmt, path::Path};
+
 use anyhow::anyhow;
 use serde_derive::{Deserialize, Serialize};
-use std::fmt;
-use std::path::Path;
 use strum::{EnumIter, IntoEnumIterator};
 
 /// List of all supported shells
@@ -99,14 +99,15 @@ fn get_shell_history_path(shell_type: &Shell, homedir: &str) -> String {
 
 #[cfg(test)]
 mod state_shell {
+    use std::{fs, fs::File};
+
+    use insta::{assert_debug_snapshot, with_settings};
+    use tempdir::TempDir;
+
     use super::{
         get_all_history_files, BASH_HISTORY_FILE_PATH, FISH_HISTORY_FILE_PATH,
         ZSH_HISTORY_FILE_PATH,
     };
-    use insta::{assert_debug_snapshot, with_settings};
-    use std::fs;
-    use std::fs::File;
-    use tempdir::TempDir;
 
     #[test]
     fn can_get_all_history_files() {

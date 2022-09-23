@@ -1,4 +1,9 @@
 #![allow(dead_code)]
+use std::{
+    fs::create_dir_all,
+    path::{Path, PathBuf},
+};
+
 use anyhow::Result as AnyResult;
 use clap::{AppSettings, Arg, Command};
 use dialoguer::{theme::ColorfulTheme, Confirm};
@@ -6,10 +11,6 @@ use duct::cmd;
 use fs_extra as fsx;
 use fsx::dir::CopyOptions;
 use glob::glob;
-use std::{
-    fs::create_dir_all,
-    path::{Path, PathBuf},
-};
 
 const TEMPLATE_PROJECT_NAME: &str = "shellclear";
 fn main() -> Result<(), anyhow::Error> {

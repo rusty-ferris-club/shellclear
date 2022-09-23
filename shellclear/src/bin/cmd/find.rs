@@ -1,10 +1,12 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
-use shellclear::config::Config;
-use shellclear::exporter::{Exporter, Table, Text};
-use shellclear::Emojis;
-use shellclear::{engine, ShellContext};
+use shellclear::{
+    config::Config,
+    engine,
+    exporter::{Exporter, Table, Text},
+    Emojis, ShellContext,
+};
 
 pub fn command() -> Command<'static> {
     Command::new("find").about("Find sensitive commands").arg(

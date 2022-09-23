@@ -1,8 +1,12 @@
-use crate::data::FindingSensitiveCommands;
-use crate::exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND};
+use std::str;
+
 use anyhow::Result;
 use prettytable::{Cell, Row};
-use std::str;
+
+use crate::{
+    data::FindingSensitiveCommands,
+    exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND},
+};
 
 #[derive(Default)]
 pub struct Table {}
@@ -67,12 +71,13 @@ impl Exporter for Table {
 
 #[cfg(test)]
 mod test_exporter_table {
-    use super::*;
-    use crate::data::SensitiveCommands;
-    use crate::shell::Shell;
+    use std::str;
+
     use insta::assert_debug_snapshot;
     use regex::Regex;
-    use std::str;
+
+    use super::*;
+    use crate::{data::SensitiveCommands, shell::Shell};
 
     #[test]
     fn can_prepare_sensitive_data() {

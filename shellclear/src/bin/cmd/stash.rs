@@ -26,7 +26,10 @@ pub fn run(
 fn run_stash(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> {
     // todo:: check if file exists and remove the unwrap
     if shell_context.is_stash_file_exists()? {
-        if let Err(e) = dialog::confirm("Stash file already find. do you want to override? (you can lose all your history commands)"){
+        if let Err(e) = dialog::confirm(
+            "Stash file already find. do you want to override? (you can lose all your history \
+             commands)",
+        ) {
             log::debug!("{:?}", e);
             return Ok(shellclear::data::CmdExit {
                 code: exitcode::OK,
@@ -43,7 +46,12 @@ fn run_stash(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> 
     }
     Ok(shellclear::data::CmdExit {
         code: 0,
-        message: Some(format!("Shell {:?} stash successfully when open a new tab. Run `{} stash pop` to return your history commands",shell_context.history.shell, crate_name!() )),
+        message: Some(format!(
+            "Shell {:?} stash successfully when open a new tab. Run `{} stash pop` to return your \
+             history commands",
+            shell_context.history.shell,
+            crate_name!()
+        )),
     })
 }
 

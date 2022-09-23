@@ -1,30 +1,32 @@
-use crate::shell;
-use anyhow::anyhow;
-use anyhow::Result;
+use std::{fs, fs::write, path::Path};
+
+use anyhow::{anyhow, Result};
 use log::debug;
-use std::fs;
-use std::fs::write;
-use std::path::Path;
+
+use crate::shell;
 extern crate chrono;
 use chrono::{DateTime, Local};
 
 /// timestamp format for attached backups file.
 const DATE_TIME_BACKUP_FORMAT: &str = "%Y%m%d%H%M%S%.f";
-/// the base folder name for the crates to store the data like backups, pop files etc.
+/// the base folder name for the crates to store the data like backups, pop
+/// files etc.
 const STATE_FOLDER_NAME: &str = ".shellclear";
 /// backup folder name
 const BACKUP_FOLDER: &str = "backups";
 /// stash folder name
 const STASH_FOLDER: &str = "stash";
 
-/// describe the shell context which contain the app folder path and the shell history details
+/// describe the shell context which contain the app folder path and the shell
+/// history details
 #[derive(Clone, Debug)]
 pub struct ShellContext {
     pub app_folder_path: String,
     pub history: shell::History,
 }
 
-/// Init crates state folder for storing history data and detect all history shell files
+/// Init crates state folder for storing history data and detect all history
+/// shell files
 ///
 /// # Errors
 ///
@@ -240,12 +242,13 @@ impl ShellContext {
 
 #[cfg(test)]
 mod state_context {
+    use std::{fs::File, io::Write};
+
+    use insta::assert_debug_snapshot;
+    use tempdir::TempDir;
+
     use super::{fs, shell, Path, ShellContext};
     use crate::shell::Shell;
-    use insta::assert_debug_snapshot;
-    use std::fs::File;
-    use std::io::Write;
-    use tempdir::TempDir;
 
     const TEMP_HISTORY_CONTENT: &str = "history
 ls

@@ -1,8 +1,9 @@
 mod cmd;
+use std::process::exit;
+
 use anyhow::anyhow;
 use console::{style, Style};
 use shellclear::{config::Config, dialog, engine, init, Emojis, ShellContext};
-use std::process::exit;
 
 const DEFAULT_ERR_EXIT_CODE: i32 = 1;
 
@@ -39,7 +40,8 @@ fn main() {
     };
 
     if matches.is_present("init-shell") {
-        // In case of an error, we need to suppress the errors to make sure that when new shell is open the users will not get any errors.
+        // In case of an error, we need to suppress the errors to make sure that when
+        // new shell is open the users will not get any errors.
         match engine::PatternsEngine::with_config(&config) {
             Ok(engine) => {
                 let emojis = Emojis::default();
@@ -53,7 +55,12 @@ fn main() {
                             emojis.confetti
                         );
                     } else {
-                        eprintln!("{} shellclear found {} sensitive commands in your shell history. run `shellclear find` to see more information", emojis.alarm,style(sensitive_commands.len()).red());
+                        eprintln!(
+                            "{} shellclear found {} sensitive commands in your shell history. run \
+                             `shellclear find` to see more information",
+                            emojis.alarm,
+                            style(sensitive_commands.len()).red()
+                        );
                     }
                 }
             }

@@ -1,10 +1,12 @@
-use std::io::Write;
+use std::{io::Write, str};
 
-use crate::data::FindingSensitiveCommands;
-use crate::exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND};
 use anyhow::Result;
 use console::style;
-use std::str;
+
+use crate::{
+    data::FindingSensitiveCommands,
+    exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND},
+};
 
 #[derive(Default)]
 pub struct Text {}
@@ -50,12 +52,13 @@ impl Exporter for Text {
 
 #[cfg(test)]
 mod test_exporter_text {
-    use super::*;
-    use crate::data::SensitiveCommands;
-    use crate::shell::Shell;
+    use std::str;
+
     use insta::assert_debug_snapshot;
     use regex::Regex;
-    use std::str;
+
+    use super::*;
+    use crate::{data::SensitiveCommands, shell::Shell};
 
     #[test]
     fn can_prepare_sensitive_data() {
