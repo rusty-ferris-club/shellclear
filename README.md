@@ -28,7 +28,7 @@ The idea behind `shellclear` is to provide a simple and fast way to secure you s
 <summary>macOS</summary>
 
 ```sh
-curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | sh
+curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | bash
 ```
 
 Or via brew
