@@ -210,7 +210,7 @@ shellclear config ignores
 ```
 
 # Examples
-[All the examples here](./example/README.MD) - you make this happen, thanks!
+[All the examples here](./example/README.MD)
 
 
 # Thanks
