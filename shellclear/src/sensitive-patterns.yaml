@@ -10,6 +10,14 @@
   test: (?i)(aws_access_key_id|aws_secret_access_key)=([0-9a-zA-Z/+]{20,40})
   secret_group: 2
   id: aws_cred
+- name: cURL Basic Authentication
+  test: (?i:authorization):(?:.*)(?i:Basic)(.*)(\"|\'|\x60|\$\()
+  secret_group: 2
+  id: curl_basic_auth
+- name: cURL User Login
+  test: curl.*(?:-u|--user) ([^ ]*)
+  secret_group: 1
+  id: curl_user_login
 - name: GitHub Env Token
   test: GITHUB_TOKEN=([0-9a-zA-Z/+]{0,100})
   secret_group: 1
