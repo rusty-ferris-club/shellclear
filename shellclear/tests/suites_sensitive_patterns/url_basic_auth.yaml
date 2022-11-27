@@ -1,3 +1,3 @@
 - name: detect schema://user:pass@domain.tld/
   test: ./do_something https://username:password@supersecure.service/
-  result: username:password
+  expected: username:password

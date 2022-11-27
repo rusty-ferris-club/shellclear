@@ -1,7 +1,6 @@
 - name: detect curl -u user:pass
   test: curl -u user:pass https://priv/
-  result: user:pass
-
+  expected: user:pass
 - name: detect curl --user user:pass
   test: curl --user user:pass https://priv/
-  result: user:pass
+  expected: user:pass
