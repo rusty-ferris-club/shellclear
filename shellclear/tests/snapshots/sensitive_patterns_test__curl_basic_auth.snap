@@ -1,0 +1,30 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect curl -H Authorization Basic [base64_encoded_login]",
+        test: "curl -X POST -H 'Authorization: Basic YmFzZTY0OnBhc3N3b3JkCg==' https://priv/",
+        detect: "YmFzZTY0OnBhc3N3b3JkCg==",
+        expected: "YmFzZTY0OnBhc3N3b3JkCg==",
+    },
+    TestPatternResult {
+        name: "detect curl header authorization basic with reading from a file",
+        test: "curl --header 'authorization: basic `cat /tmp/secret`' https://priv/",
+        detect: "`cat /tmp/secret`",
+        expected: "`cat /tmp/secret`",
+    },
+    TestPatternResult {
+        name: "detect curl header authorization basic with reading from a file alternative method",
+        test: "curl --header 'authorization: basic $(cat /tmp/secret)' https://priv/",
+        detect: "$(cat /tmp/secret)",
+        expected: "$(cat /tmp/secret)",
+    },
+    TestPatternResult {
+        name: "detect curl -H authorization with secret environment variable",
+        test: "curl -H 'Authorization: Basic $SECRET_VAR' https://priv/",
+        detect: "$SECRET_VAR",
+        expected: "$SECRET_VAR",
+    },
+]

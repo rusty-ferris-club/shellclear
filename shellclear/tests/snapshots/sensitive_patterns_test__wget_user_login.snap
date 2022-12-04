@@ -1,0 +1,24 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect wget ftp login",
+        test: "wget --ftp-user username --ftp-password password ftp.website.com",
+        detect: "password",
+        expected: "password",
+    },
+    TestPatternResult {
+        name: "detect wget http login",
+        test: "wget --http-user username --http-password password http.website.com",
+        detect: "password",
+        expected: "password",
+    },
+    TestPatternResult {
+        name: "detect wget basic login",
+        test: "wget -user username --password password website.com",
+        detect: "password",
+        expected: "password",
+    },
+]
