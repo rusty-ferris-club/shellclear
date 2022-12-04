@@ -46,6 +46,12 @@ Run unitest by the following command:
 cargo test
 ```
 
+### Create test snapshots
+To capture the snapshots test we using [insta](https://github.com/mitsuhiko/insta) rust project. you can see the snapshot changes / new snapshot by running the command:
+```sh
+cargo insta test --review
+```
+
 ## New Pattern
 
 If your PR includes a new sensitive data pattern/s you need add a tests by the following steps:
@@ -56,3 +62,4 @@ If your PR includes a new sensitive data pattern/s you need add a tests by the f
   test: # the content to run the regex on
   expected: # the regex reguls
 ```
+3. After adding the tests, add the snapshot (*.snap) results to the commit. read more [here](#create-test-snapshots).
