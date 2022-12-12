@@ -1,0 +1,15 @@
+- name: detect curl -H Authorization Basic [base64_encoded_login]
+  test: "curl -X POST -H 'Authorization: Basic YmFzZTY0OnBhc3N3b3JkCg==' https://priv/"
+  expected: YmFzZTY0OnBhc3N3b3JkCg==
+
+- name: detect curl header authorization basic with reading from a file
+  test: "curl --header 'authorization: basic `cat /tmp/secret`' https://priv/"
+  expected: "`cat /tmp/secret`"
+
+- name: detect curl header authorization basic with reading from a file alternative method
+  test: "curl --header 'authorization: basic $(cat /tmp/secret)' https://priv/"
+  expected: "$(cat /tmp/secret)"
+
+- name: detect curl -H authorization with secret environment variable
+  test: "curl -H 'Authorization: Basic $SECRET_VAR' https://priv/"
+  expected: "$SECRET_VAR"

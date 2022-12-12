@@ -1,0 +1,9 @@
+- name: detect wget ftp login
+  test: wget --ftp-user username --ftp-password password ftp.website.com
+  expected: password
+- name: detect wget http login
+  test: wget --http-user username --http-password password http.website.com
+  expected: password
+- name: detect wget basic login
+  test: wget -user username --password password website.com
+  expected: password

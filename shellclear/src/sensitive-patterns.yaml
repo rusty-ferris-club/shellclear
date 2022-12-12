@@ -10,6 +10,14 @@
   test: (?i)(aws_access_key_id|aws_secret_access_key)=([0-9a-zA-Z/+]{20,40})
   secret_group: 2
   id: aws_cred
+- name: cURL Basic Authentication
+  test: (?i:authorization):(?:.*)(?i:Basic).(.*)("|'|\x60|\$\()
+  secret_group: 1
+  id: curl_basic_auth
+- name: cURL User Login
+  test: curl.*(?:-u|--user)(?:[ =])([^ ]*)
+  secret_group: 1
+  id: curl_user_login
 - name: GitHub Env Token
   test: GITHUB_TOKEN=([0-9a-zA-Z/+]{0,100})
   secret_group: 1
@@ -94,6 +102,10 @@
   test: SK[0-9a-fA-F]{32}
   secret_group: 0
   id: twilio_api_key
+- name: URL Basic Auth
+  test: (([A-Za-z]*:(?://)?)([-;:&=\+\$,\w]+)@[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:/[\+~%/.\w\-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?
+  secret_group: 3
+  id: url_basic_auth
 - name: GCP API Key
   test: (?i)\b(AIza[0-9A-Za-z\\-_]{35})(?:['|"|\n|\r|\s|\x60]|$)
   secret_group: 0
@@ -114,6 +126,10 @@
   test: (?i)twitter(.{0,20})?[''"]([0-9a-z]{18,25})[''"]
   secret_group: 2
   id: twitter_clientid
+- name: Wget Username Password Authentication
+  test: wget(?:.*)--(?:ftp-|http-)?(?:password|user)[ =]([^ ]*)
+  secret_group: 1
+  id: wget_user_login
 - name: LinkedIn Secret Key
   test: (?i)linkedin(.{0,20})?(?-i)[''"]([0-9a-zA-Z]{12,16})[''"]
   secret_group: 2

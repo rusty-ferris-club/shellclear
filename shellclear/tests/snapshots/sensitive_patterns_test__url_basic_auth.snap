@@ -1,0 +1,12 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect schema://user:pass@domain.tld/",
+        test: "./do_something https://username:password@supersecure.service/",
+        detect: "username:password",
+        expected: "username:password",
+    },
+]

@@ -1,0 +1,18 @@
+---
+source: shellclear/tests/sensitive-patterns_test.rs
+expression: results
+---
+[
+    TestPatternResult {
+        name: "detect curl -u user:pass",
+        test: "curl -u user:pass https://priv/",
+        detect: "user:pass",
+        expected: "user:pass",
+    },
+    TestPatternResult {
+        name: "detect curl --user user:pass",
+        test: "curl --user user:pass https://priv/",
+        detect: "user:pass",
+        expected: "user:pass",
+    },
+]
