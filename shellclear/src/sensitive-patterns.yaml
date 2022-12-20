@@ -19,7 +19,7 @@
   secret_group: 1
   id: curl_user_login
 - name: GitHub Env Token
-  test: GITHUB_TOKEN=([0-9a-zA-Z/+]{0,100})
+  test: GITHUB_TOKEN=([0-9a-zA-Z_/+]{0,100})
   secret_group: 1
   id: github_env_token
 - name: GitHub Personal Token

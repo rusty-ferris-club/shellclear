@@ -27,7 +27,7 @@ pub fn run(
 ) -> Result<shellclear::data::CmdExit> {
     let en = engine::PatternsEngine::with_config(config)?;
 
-    let findings = en.find_history_commands_from_shall_list(shells_context, false)?;
+    let findings = en.find_history_commands_from_shell_list(shells_context, false)?;
 
     let sensitive_commands = findings.get_sensitive_commands();
     let emojis = Emojis::default();

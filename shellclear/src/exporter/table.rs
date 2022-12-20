@@ -101,6 +101,7 @@ mod test_exporter_table {
             ],
             command: "test command".to_string(),
             data: ": 1655110559:0;command data".to_string(),
+            secrets: vec![],
         };
 
         let findings = vec![&shell_finding];

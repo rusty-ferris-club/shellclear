@@ -26,4 +26,5 @@ pub struct FindingSensitiveCommands {
     pub sensitive_findings: Vec<SensitiveCommands>,
     pub command: String,
     pub data: String,
+    pub secrets: Vec<String>,
 }

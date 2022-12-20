@@ -4,11 +4,17 @@ use shellclear::{config::Config, engine, Emojis, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("clear")
-        .about("Clear the findings from shell history")
+        .about("Remove or mask the findings from shell history")
         .arg(
             Arg::new("backup")
                 .long("backup")
                 .help("Backup history file before delete commands")
+                .takes_value(false),
+        )
+        .arg(
+            Arg::new("remove")
+                .long("remove")
+                .help("remove history that contains secrets")
                 .takes_value(false),
         )
 }
@@ -31,13 +37,13 @@ pub fn run(
                             "could not backup shell {:?} history. err: {:?}",
                             shell_context.history.shell, e
                         )),
-                    })
+                    });
                 }
             }
         }
     }
 
-    let findings = en.find_history_commands_from_shall_list(shells_context, true)?;
+    let findings = en.find_history_commands_from_shell_list(shells_context, true)?;
 
     let sensitive_commands = findings.get_sensitive_commands();
     let emojis = Emojis::default();

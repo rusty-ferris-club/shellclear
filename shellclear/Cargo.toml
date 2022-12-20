@@ -26,6 +26,7 @@ requestty = "0.4.1"
 exitcode = "^1.1.2"
 dirs = "4.0"
 lazy_static = "1.4.0"
+mask-text = "0.1.2"
 
 [dev-dependencies]
 insta = { version = "1.17.2", features = ["backtrace", "filters"] }

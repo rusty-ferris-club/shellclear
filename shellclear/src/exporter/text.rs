@@ -24,7 +24,7 @@ impl Text {
                 .iter()
                 .map(|f| f.name.clone())
                 .collect::<Vec<_>>()
-                .join(",");
+                .join(", ");
 
             let title = format!(
                 "{}. [{}] {} {}",
@@ -41,6 +41,7 @@ impl Text {
         Ok(())
     }
 }
+
 impl Exporter for Text {
     fn sensitive_data(&self, findings: &[&FindingSensitiveCommands]) -> Result<()> {
         let mut out = Vec::new();
@@ -82,6 +83,7 @@ mod test_exporter_text {
             ],
             command: "test command".to_string(),
             data: ": 1655110559:0;command data".to_string(),
+            secrets: vec![],
         };
 
         let findings = vec![&shell_finding];

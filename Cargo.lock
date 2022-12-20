@@ -488,6 +488,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mask-text"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdf0976501618639f5d715869e2580e96db80ac59c6c3307646e899819ad17be"
+dependencies = [
+ "regex",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -881,6 +890,7 @@ dependencies = [
  "insta",
  "lazy_static",
  "log",
+ "mask-text",
  "prettytable-rs",
  "rayon",
  "regex",

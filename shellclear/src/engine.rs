@@ -8,6 +8,13 @@ use std::{
 use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
+use regex::Match;
+
+
+// TODO: Remove clear param
+// TODO: Add masking obj
+// TODO: Tests
+// TODO: add find secrets to self
 
 use crate::{
     config::Config,
@@ -94,7 +101,7 @@ impl PatternsEngine {
     ///
     /// Will return `Err` when has an error when find sensitive patterns in a
     /// specific shell
-    pub fn find_history_commands_from_shall_list(
+    pub fn find_history_commands_from_shell_list(
         &self,
         shells_context: &Vec<ShellContext>,
         clear: bool,
@@ -131,7 +138,7 @@ impl PatternsEngine {
     fn find_by_lines(
         &self,
         state_context: &ShellContext,
-        sensitive_commands: &Vec<SensitiveCommands>,
+        sensitive_commands: &[SensitiveCommands],
         clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let file = File::open(&state_context.history.path)?;
@@ -152,27 +159,28 @@ impl PatternsEngine {
         );
 
         let start = Instant::now();
-        let results = lines
+        let mut results = lines
             .par_iter()
             .map(|command| {
-                let sensitive_findings = sensitive_commands
-                    .par_iter()
-                    .filter(|v| v.test.is_match(command))
-                    .map(std::clone::Clone::clone)
-                    .collect::<Vec<_>>();
+                let (secrets, sensitive_findings) = find_secrets(command, sensitive_commands);
 
                 let only_command = match command.split_once(';') {
                     Some((_x, y)) => y.to_string(),
                     _ => command.clone(),
                 };
+
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
                     command: only_command,
                     data: command.clone(),
+                    secrets,
                 }
             })
             .collect::<Vec<_>>();
+
+
+        mask_results(results.as_mut());
 
         debug!(
             "time elapsed for detect sensitive commands: {:?}",
@@ -184,10 +192,10 @@ impl PatternsEngine {
             let mut cleared_history: String = String::new();
 
             for r in &results {
-                if r.sensitive_findings.is_empty() {
-                    let _ = writeln!(&mut cleared_history, "{}", r.data);
-                }
+                // TODO: Remove only when the user passes the --remove flag
+                let _ = writeln!(&mut cleared_history, "{}", r.data);
             }
+
             if !cleared_history.is_empty() {
                 write(&state_context.history.path, cleared_history)?;
                 debug!(
@@ -203,30 +211,30 @@ impl PatternsEngine {
     fn find_fish(
         &self,
         state_context: &ShellContext,
-        sensitive_commands: &Vec<SensitiveCommands>,
+        sensitive_commands: &[SensitiveCommands],
         clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let start = Instant::now();
         let history: Vec<shell::FishHistory> =
             serde_yaml::from_reader(File::open(&state_context.history.path)?)?;
 
-        let results = history
+        let mut results = history
             .par_iter()
             .map(|h| {
-                let sensitive_findings = sensitive_commands
-                    .par_iter()
-                    .filter(|v| v.test.is_match(&h.cmd))
-                    .map(std::clone::Clone::clone)
-                    .collect::<Vec<_>>();
+                let (secrets, sensitive_findings) = find_secrets(&h.cmd, sensitive_commands);
 
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
                     sensitive_findings,
                     command: h.cmd.clone(),
                     data: serde_yaml::to_string(&h).unwrap(),
+                    secrets,
                 }
             })
             .collect::<Vec<_>>();
+
+        mask_results(results.as_mut());
+
         debug!(
             "time elapsed to read history file: {:?}. found {} commands",
             start.elapsed(),
@@ -238,10 +246,10 @@ impl PatternsEngine {
             let mut cleared_history: Vec<shell::FishHistory> = Vec::new();
 
             for command_line in &results {
-                if command_line.sensitive_findings.is_empty() {
-                    cleared_history.push(serde_yaml::from_str(&command_line.data)?);
-                }
+                // TODO: Remove only when the user passes the --remove flag
+                cleared_history.push(serde_yaml::from_str(&command_line.data)?);
             }
+
             if !cleared_history.is_empty() {
                 write(
                     &state_context.history.path,
@@ -254,6 +262,41 @@ impl PatternsEngine {
             }
         }
         Ok(results)
+    }
+}
+
+fn find_secrets(command: &str, sensitive_commands: &[SensitiveCommands]) -> (Vec<String>, Vec<SensitiveCommands>) {
+    let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) = sensitive_commands
+        .par_iter()
+        .map(|v| {
+            let capture = v.test.captures(command)?;
+
+            Some((capture.get(v.secret_group as usize), v.clone()))
+        })
+        .flatten()
+        .unzip();
+
+    let secrets = secrets.iter()
+        .flatten()
+        .map(|m| m.as_str().to_string())
+        .collect();
+
+    (secrets, sensitive_findings)
+}
+
+fn mask_results(results: &mut [FindingSensitiveCommands]) {
+    for sensitive_command in results {
+        for secret in &sensitive_command.secrets {
+            let replaced_secret = mask_text::Kind::Percentage(
+                secret.clone(),
+                80,
+                3,
+                "*".to_string(),
+            ).mask();
+
+            sensitive_command.command = sensitive_command.command.replace(secret, &replaced_secret);
+            sensitive_command.data = sensitive_command.data.replace(secret, &replaced_secret)
+        }
     }
 }
 
@@ -326,7 +369,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
@@ -342,7 +385,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context.clone()], true);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
@@ -358,7 +401,7 @@ export FIND_ME=token
         };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context.clone()], true);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
@@ -374,7 +417,7 @@ export FIND_ME=token
         };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
@@ -398,7 +441,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
@@ -419,7 +462,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shall_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();

@@ -46,7 +46,7 @@ fn main() {
             Ok(engine) => {
                 let emojis = Emojis::default();
                 if let Ok(findings) =
-                    engine.find_history_commands_from_shall_list(&shells_context, false)
+                    engine.find_history_commands_from_shell_list(&shells_context, false)
                 {
                     let sensitive_commands = findings.get_sensitive_commands();
                     if sensitive_commands.is_empty() {

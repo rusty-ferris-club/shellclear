@@ -83,6 +83,7 @@ mod test_exporter {
             sensitive_findings: vec![],
             command: "test command".to_string(),
             data: ": 1655110559:0;command data".to_string(),
+            secrets: vec![],
         };
 
         let resp = extract_time(&shell_finding);
@@ -97,6 +98,7 @@ mod test_exporter {
             sensitive_findings: vec![],
             command: "test command".to_string(),
             data: r#"{ cmd: "export test command", when: "1655110559" }"#.to_string(),
+            secrets: vec![],
         };
 
         let resp = extract_time(&shell_finding);
