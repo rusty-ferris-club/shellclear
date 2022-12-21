@@ -245,12 +245,11 @@ impl PatternsEngine {
     fn find_secrets(&self, command: &str, sensitive_commands: &[SensitiveCommands]) -> (Vec<String>, Vec<SensitiveCommands>) {
         let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) = sensitive_commands
             .par_iter()
-            .map(|v| {
+            .filter_map(|v| {
                 let capture = v.test.captures(command)?;
 
                 Some((capture.get(v.secret_group as usize), v.clone()))
             })
-            .flatten()
             .unzip();
 
         let secrets = secrets.iter()
