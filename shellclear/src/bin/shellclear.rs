@@ -1,4 +1,5 @@
 mod cmd;
+
 use std::process::exit;
 
 use anyhow::anyhow;
@@ -48,7 +49,7 @@ fn main() {
                 if let Ok(findings) =
                     engine.find_history_commands_from_shell_list(&shells_context, false)
                 {
-                    let sensitive_commands = findings.get_sensitive_commands();
+                    let sensitive_commands = findings.get_all_sensitive_commands();
                     if sensitive_commands.is_empty() {
                         eprintln!(
                             "{} Your shell is clean from sensitive data!",

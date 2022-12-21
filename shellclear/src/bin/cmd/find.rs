@@ -29,7 +29,7 @@ pub fn run(
 
     let findings = en.find_history_commands_from_shell_list(shells_context, false)?;
 
-    let sensitive_commands = findings.get_sensitive_commands();
+    let sensitive_commands = findings.get_all_sensitive_commands();
     let emojis = Emojis::default();
 
     if sensitive_commands.is_empty() {

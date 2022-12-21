@@ -1,6 +1,9 @@
+use std::time::Instant;
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use shellclear::{config::Config, engine, Emojis, ShellContext};
+use std::fmt::{Write};
+use std::fs::write;
 
 pub fn command() -> Command<'static> {
     Command::new("clear")
@@ -43,10 +46,29 @@ pub fn run(
         }
     }
 
-    let findings = en.find_history_commands_from_shell_list(shells_context, true)?;
+    let findings = en.find_history_commands_from_shell_list(shells_context)?;
 
-    let sensitive_commands = findings.get_sensitive_commands();
+    let sensitive_commands = findings.get_all_sensitive_commands();
     let emojis = Emojis::default();
+
+
+    for context in shells_context {
+        let start = Instant::now();
+        let mut cleared_history: String = String::new();
+
+        for r in findings.get_sensitive_commands(&context.history.shell) {
+            // TODO: Remove only when the user passes the --remove flag
+            let _ = writeln!(&mut cleared_history, "{}", r.data);
+        }
+
+        if !cleared_history.is_empty() {
+            write(&context.history.path, cleared_history)?;
+            log::debug!(
+                    "time elapsed for backup existing file and write a new history to shell : {:?}",
+                    start.elapsed()
+                );
+        }
+    }
 
     if sensitive_commands.is_empty() {
         return Ok(shellclear::data::CmdExit {

@@ -5,13 +5,14 @@ use serde_derive::{Deserialize, Serialize};
 use strum::{EnumIter, IntoEnumIterator};
 
 /// List of all supported shells
-#[derive(Debug, EnumIter, Clone)]
+#[derive(Debug, EnumIter, Clone, Eq, Hash, PartialEq)]
 pub enum Shell {
     Bash,
     Zshrc,
     Fish,
     PowerShell,
 }
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct FishHistory {
     pub cmd: String,

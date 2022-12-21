@@ -4,6 +4,7 @@ use std::{
     io::{prelude::*, BufReader},
     time::Instant,
 };
+use std::collections::HashMap;
 
 use anyhow::Result;
 use log::debug;
@@ -12,41 +13,60 @@ use regex::Match;
 
 
 // TODO: Remove clear param
-// TODO: Add masking obj
 // TODO: Tests
-// TODO: add find secrets to self
+// TODO: comments
 
 use crate::{
     config::Config,
     data::{FindingSensitiveCommands, SensitiveCommands},
     shell,
     state::ShellContext,
+    masker::Masker,
 };
+use crate::shell::Shell;
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
 pub struct PatternsEngine {
     commands: Vec<SensitiveCommands>,
+    masker: Masker,
 }
 
 #[derive(Default, Debug)]
 pub struct Findings {
-    pub patterns: Vec<FindingSensitiveCommands>,
+    pub patterns: HashMap<Shell, Vec<FindingSensitiveCommands>>,
 }
 
 impl Findings {
     #[must_use]
     // add list of finding
-    pub fn add_findings(mut self, finding: Vec<FindingSensitiveCommands>) -> Self {
-        self.patterns.extend(finding);
+    pub fn add_findings(mut self, shell_type: &Shell, finding: Vec<FindingSensitiveCommands>) -> Self {
+        if let Some(vec) = self.patterns.get_mut(&shell_type) {
+            vec.extend(finding);
+        } else {
+            self.patterns.insert(shell_type.clone(), finding);
+        }
+
         self
     }
 
     #[must_use]
-    // return list of sensitive findings commands
-    pub fn get_sensitive_commands(&self) -> Vec<&FindingSensitiveCommands> {
+    // return list of sensitive findings commands by shell
+    pub fn get_sensitive_commands(&self, shell_type: &Shell) -> Vec<&FindingSensitiveCommands> {
+        if let Some(vec) = self.patterns.get(shell_type) {
+            return vec.iter()
+                .filter(|&f| !f.sensitive_findings.is_empty())
+                .collect::<Vec<_>>();
+        }
+
+        vec![]
+    }
+
+    // return list of all sensitive findings commands
+    pub fn get_all_sensitive_commands(&self) -> Vec<&FindingSensitiveCommands> {
         self.patterns
-            .iter()
+            .values()
+            .flatten()
             .filter(|&f| !f.sensitive_findings.is_empty())
             .collect::<Vec<_>>()
     }
@@ -93,6 +113,7 @@ impl PatternsEngine {
         };
         Ok(Self {
             commands: sensitive_patterns,
+            masker: Masker::new(),
         })
     }
     /// Search sensitive command patterns from the given shell list
@@ -104,12 +125,11 @@ impl PatternsEngine {
     pub fn find_history_commands_from_shell_list(
         &self,
         shells_context: &Vec<ShellContext>,
-        clear: bool,
     ) -> Result<Findings> {
         let mut findings = Findings::default();
 
         for shell_context in shells_context {
-            findings = findings.add_findings(self.find_history_commands(shell_context, clear)?);
+            findings = findings.add_findings(&shell_context.history.shell, self.find_history_commands(shell_context)?);
         }
         Ok(findings)
     }
@@ -122,16 +142,15 @@ impl PatternsEngine {
     pub fn find_history_commands(
         &self,
         state_context: &ShellContext,
-        clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         debug!(
-            "clear history commands from path: {}, params: is clear: {}",
-            state_context.history.path, clear
+            "clear history commands from path: {}",
+            state_context.history.path
         );
 
         match state_context.history.shell {
-            shell::Shell::Fish => self.find_fish(state_context, &self.commands, clear),
-            _ => self.find_by_lines(state_context, &self.commands, clear),
+            shell::Shell::Fish => self.find_fish(state_context, &self.commands),
+            _ => self.find_by_lines(state_context, &self.commands),
         }
     }
 
@@ -139,7 +158,6 @@ impl PatternsEngine {
         &self,
         state_context: &ShellContext,
         sensitive_commands: &[SensitiveCommands],
-        clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let file = File::open(&state_context.history.path)?;
         let reader = BufReader::new(file);
@@ -162,7 +180,7 @@ impl PatternsEngine {
         let mut results = lines
             .par_iter()
             .map(|command| {
-                let (secrets, sensitive_findings) = find_secrets(command, sensitive_commands);
+                let (secrets, sensitive_findings) = self.find_secrets(command, sensitive_commands);
 
                 let only_command = match command.split_once(';') {
                     Some((_x, y)) => y.to_string(),
@@ -179,31 +197,12 @@ impl PatternsEngine {
             })
             .collect::<Vec<_>>();
 
-
-        mask_results(results.as_mut());
+        self.masker.mask_sensitive_findings(results.as_mut());
 
         debug!(
             "time elapsed for detect sensitive commands: {:?}",
             start.elapsed()
         );
-
-        if clear {
-            let start = Instant::now();
-            let mut cleared_history: String = String::new();
-
-            for r in &results {
-                // TODO: Remove only when the user passes the --remove flag
-                let _ = writeln!(&mut cleared_history, "{}", r.data);
-            }
-
-            if !cleared_history.is_empty() {
-                write(&state_context.history.path, cleared_history)?;
-                debug!(
-                    "time elapsed for backup existing file and write a new history to shell : {:?}",
-                    start.elapsed()
-                );
-            }
-        }
 
         Ok(results)
     }
@@ -212,7 +211,6 @@ impl PatternsEngine {
         &self,
         state_context: &ShellContext,
         sensitive_commands: &[SensitiveCommands],
-        clear: bool,
     ) -> Result<Vec<FindingSensitiveCommands>> {
         let start = Instant::now();
         let history: Vec<shell::FishHistory> =
@@ -221,7 +219,7 @@ impl PatternsEngine {
         let mut results = history
             .par_iter()
             .map(|h| {
-                let (secrets, sensitive_findings) = find_secrets(&h.cmd, sensitive_commands);
+                let (secrets, sensitive_findings) = self.find_secrets(&h.cmd, sensitive_commands);
 
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
@@ -233,7 +231,7 @@ impl PatternsEngine {
             })
             .collect::<Vec<_>>();
 
-        mask_results(results.as_mut());
+        self.masker.mask_sensitive_findings(results.as_mut());
 
         debug!(
             "time elapsed to read history file: {:?}. found {} commands",
@@ -241,62 +239,26 @@ impl PatternsEngine {
             history.len()
         );
 
-        if clear {
-            let start = Instant::now();
-            let mut cleared_history: Vec<shell::FishHistory> = Vec::new();
-
-            for command_line in &results {
-                // TODO: Remove only when the user passes the --remove flag
-                cleared_history.push(serde_yaml::from_str(&command_line.data)?);
-            }
-
-            if !cleared_history.is_empty() {
-                write(
-                    &state_context.history.path,
-                    serde_yaml::to_string(&cleared_history).unwrap(),
-                )?;
-                debug!(
-                    "time elapsed for backup existing file and write a new history to shell : {:?}",
-                    start.elapsed()
-                );
-            }
-        }
         Ok(results)
     }
-}
 
-fn find_secrets(command: &str, sensitive_commands: &[SensitiveCommands]) -> (Vec<String>, Vec<SensitiveCommands>) {
-    let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) = sensitive_commands
-        .par_iter()
-        .map(|v| {
-            let capture = v.test.captures(command)?;
+    fn find_secrets(&self, command: &str, sensitive_commands: &[SensitiveCommands]) -> (Vec<String>, Vec<SensitiveCommands>) {
+        let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) = sensitive_commands
+            .par_iter()
+            .map(|v| {
+                let capture = v.test.captures(command)?;
 
-            Some((capture.get(v.secret_group as usize), v.clone()))
-        })
-        .flatten()
-        .unzip();
+                Some((capture.get(v.secret_group as usize), v.clone()))
+            })
+            .flatten()
+            .unzip();
 
-    let secrets = secrets.iter()
-        .flatten()
-        .map(|m| m.as_str().to_string())
-        .collect();
+        let secrets = secrets.iter()
+            .flatten()
+            .map(|m| m.as_str().to_string())
+            .collect();
 
-    (secrets, sensitive_findings)
-}
-
-fn mask_results(results: &mut [FindingSensitiveCommands]) {
-    for sensitive_command in results {
-        for secret in &sensitive_command.secrets {
-            let replaced_secret = mask_text::Kind::Percentage(
-                secret.clone(),
-                80,
-                3,
-                "*".to_string(),
-            ).mask();
-
-            sensitive_command.command = sensitive_command.command.replace(secret, &replaced_secret);
-            sensitive_command.data = sensitive_command.data.replace(secret, &replaced_secret)
-        }
+        (secrets, sensitive_findings)
     }
 }
 
@@ -365,15 +327,18 @@ export FIND_ME=token
 
         let en = PatternsEngine {
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+            masker: Masker::new(),
         };
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
     }
+
+    // TODO: think of a better place for test that clear history
 
     #[test]
     fn can_clear_command_by_lines() {
@@ -381,6 +346,7 @@ export FIND_ME=token
 
         let en = PatternsEngine {
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+            masker: Masker::new(),
         };
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
@@ -392,12 +358,15 @@ export FIND_ME=token
         temp_dir.close().unwrap();
     }
 
+
+    // TODO: think of a better place for test that clear history
     #[test]
     fn can_clear_find_fish() {
         let temp_dir = TempDir::new("engine").unwrap();
 
         let en = PatternsEngine {
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+            masker: Masker::new(),
         };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
 
@@ -414,10 +383,11 @@ export FIND_ME=token
 
         let en = PatternsEngine {
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+            masker: Masker::new(),
         };
         let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
 
-        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
@@ -441,7 +411,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
@@ -462,7 +432,7 @@ export FIND_ME=token
         let state_context =
             create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
 
-        let result = en.find_history_commands_from_shell_list(&vec![state_context], false);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
         assert_debug_snapshot!(result);
         temp_dir.close().unwrap();
