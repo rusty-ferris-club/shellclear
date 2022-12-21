@@ -1,9 +1,9 @@
 extern crate core;
 
 mod emoji;
+mod masker;
 mod shell;
 mod state;
-mod masker;
 
 pub mod config;
 pub mod data;

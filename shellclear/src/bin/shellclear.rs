@@ -46,8 +46,7 @@ fn main() {
         match engine::PatternsEngine::with_config(&config) {
             Ok(engine) => {
                 let emojis = Emojis::default();
-                if let Ok(findings) =
-                    engine.find_history_commands_from_shell_list(&shells_context, false)
+                if let Ok(findings) = engine.find_history_commands_from_shell_list(&shells_context)
                 {
                     let sensitive_commands = findings.get_all_sensitive_commands();
                     if sensitive_commands.is_empty() {

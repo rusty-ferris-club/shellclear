@@ -1,29 +1,23 @@
+use std::collections::HashMap;
 use std::{
-    fmt::Write,
-    fs::{write, File},
+    fs::File,
     io::{prelude::*, BufReader},
     time::Instant,
 };
-use std::collections::HashMap;
 
 use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
 use regex::Match;
 
-
-// TODO: Remove clear param
-// TODO: Tests
-// TODO: comments
-
+use crate::shell::Shell;
 use crate::{
     config::Config,
     data::{FindingSensitiveCommands, SensitiveCommands},
+    masker::Masker,
     shell,
     state::ShellContext,
-    masker::Masker,
 };
-use crate::shell::Shell;
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
@@ -40,8 +34,12 @@ pub struct Findings {
 impl Findings {
     #[must_use]
     // add list of finding
-    pub fn add_findings(mut self, shell_type: &Shell, finding: Vec<FindingSensitiveCommands>) -> Self {
-        if let Some(vec) = self.patterns.get_mut(&shell_type) {
+    pub fn add_findings(
+        mut self,
+        shell_type: &Shell,
+        finding: Vec<FindingSensitiveCommands>,
+    ) -> Self {
+        if let Some(vec) = self.patterns.get_mut(shell_type) {
             vec.extend(finding);
         } else {
             self.patterns.insert(shell_type.clone(), finding);
@@ -52,11 +50,9 @@ impl Findings {
 
     #[must_use]
     // return list of sensitive findings commands by shell
-    pub fn get_sensitive_commands(&self, shell_type: &Shell) -> Vec<&FindingSensitiveCommands> {
+    pub fn get_commands_per_shell(&self, shell_type: &Shell) -> Vec<&FindingSensitiveCommands> {
         if let Some(vec) = self.patterns.get(shell_type) {
-            return vec.iter()
-                .filter(|&f| !f.sensitive_findings.is_empty())
-                .collect::<Vec<_>>();
+            return vec.iter().collect::<Vec<_>>();
         }
 
         vec![]
@@ -86,7 +82,7 @@ impl PatternsEngine {
                 // load external patterns
                 match config.load_patterns_from_default_path() {
                     Ok(p) => patterns.extend(p),
-                    Err(e) => log::debug!("could not load external pattern. {:?}", e),
+                    Err(e) => debug!("could not load external pattern. {:?}", e),
                 };
 
                 // ignore patterns
@@ -97,12 +93,12 @@ impl PatternsEngine {
                         .cloned()
                         .collect::<Vec<_>>(),
                     Err(e) => {
-                        log::debug!("could not load ignore pattern. {:?}", e);
+                        debug!("could not load ignore pattern. {:?}", e);
                         patterns
                     }
                 }
             } else {
-                log::debug!(
+                debug!(
                     "app config folder not found in path: {}",
                     &config.app_path.display()
                 );
@@ -129,7 +125,10 @@ impl PatternsEngine {
         let mut findings = Findings::default();
 
         for shell_context in shells_context {
-            findings = findings.add_findings(&shell_context.history.shell, self.find_history_commands(shell_context)?);
+            findings = findings.add_findings(
+                &shell_context.history.shell,
+                self.find_history_commands(shell_context)?,
+            );
         }
         Ok(findings)
     }
@@ -149,7 +148,7 @@ impl PatternsEngine {
         );
 
         match state_context.history.shell {
-            shell::Shell::Fish => self.find_fish(state_context, &self.commands),
+            Shell::Fish => self.find_fish(state_context, &self.commands),
             _ => self.find_by_lines(state_context, &self.commands),
         }
     }
@@ -166,8 +165,8 @@ impl PatternsEngine {
 
         let lines = reader
             .lines()
-            .filter(std::result::Result::is_ok)
-            .map(std::result::Result::unwrap)
+            .filter(Result::is_ok)
+            .map(Result::unwrap)
             .collect::<Vec<_>>();
 
         debug!(
@@ -242,17 +241,23 @@ impl PatternsEngine {
         Ok(results)
     }
 
-    fn find_secrets(&self, command: &str, sensitive_commands: &[SensitiveCommands]) -> (Vec<String>, Vec<SensitiveCommands>) {
-        let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) = sensitive_commands
+    fn find_secrets(
+        &self,
+        command: &str,
+        sensitive_commands: &[SensitiveCommands],
+    ) -> (Vec<String>, Vec<SensitiveCommands>) {
+        let (secrets, sensitive_findings): (Vec<Option<Match>>, Vec<SensitiveCommands>) =
+            sensitive_commands
+                .par_iter()
+                .filter_map(|v| {
+                    let capture = v.test.captures(command)?;
+
+                    Some((capture.get(v.secret_group as usize), v.clone()))
+                })
+                .unzip();
+
+        let secrets = secrets
             .par_iter()
-            .filter_map(|v| {
-                let capture = v.test.captures(command)?;
-
-                Some((capture.get(v.secret_group as usize), v.clone()))
-            })
-            .unzip();
-
-        let secrets = secrets.iter()
             .flatten()
             .map(|m| m.as_str().to_string())
             .collect();
@@ -296,11 +301,7 @@ export FIND_ME=token
   when: "1656438760"
 "#;
 
-    fn create_mock_state(
-        temp_dir: &TempDir,
-        content: &str,
-        shell_type: shell::Shell,
-    ) -> ShellContext {
+    fn create_mock_state(temp_dir: &TempDir, content: &str, shell_type: Shell) -> ShellContext {
         let app_folder = temp_dir.path().join("app");
         let history_file_name = "history";
         let history_file_path = app_folder.join(history_file_name);
@@ -328,8 +329,7 @@ export FIND_ME=token
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
             masker: Masker::new(),
         };
-        let state_context =
-            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
 
         let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
@@ -339,42 +339,41 @@ export FIND_ME=token
 
     // TODO: think of a better place for test that clear history
 
-    #[test]
-    fn can_clear_command_by_lines() {
-        let temp_dir = TempDir::new("engine").unwrap();
-
-        let en = PatternsEngine {
-            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
-            masker: Masker::new(),
-        };
-        let state_context =
-            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
-
-        let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
-
-        assert_debug_snapshot!(result);
-        assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
-        temp_dir.close().unwrap();
-    }
-
-
-    // TODO: think of a better place for test that clear history
-    #[test]
-    fn can_clear_find_fish() {
-        let temp_dir = TempDir::new("engine").unwrap();
-
-        let en = PatternsEngine {
-            commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
-            masker: Masker::new(),
-        };
-        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
-
-        let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
-
-        assert_debug_snapshot!(result);
-        assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
-        temp_dir.close().unwrap();
-    }
+    // #[test]
+    // fn can_clear_command_by_lines() {
+    //     let temp_dir = TempDir::new("engine").unwrap();
+    //
+    //     let en = PatternsEngine {
+    //         commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+    //         masker: Masker::new(),
+    //     };
+    //     let state_context =
+    //         create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+    //
+    //     let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
+    //
+    //     assert_debug_snapshot!(result);
+    //     assert_debug_snapshot!(fs::read_to_string(state_context.history.path));
+    //     temp_dir.close().unwrap();
+    // }
+    //
+    // // TODO: think of a better place for test that clear history
+    // #[test]
+    // fn can_clear_find_fish() {
+    //     let temp_dir = TempDir::new("engine").unwrap();
+    //
+    //     let en = PatternsEngine {
+    //         commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
+    //         masker: Masker::new(),
+    //     };
+    //     let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
+    //
+    //     let result = en.find_history_commands_from_shell_list(&vec![state_context.clone()], true);
+    //
+    //     assert_debug_snapshot!(result);
+    //     assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
+    //     temp_dir.close().unwrap();
+    // }
 
     #[test]
     fn can_find_history_commands_fish() {
@@ -384,7 +383,7 @@ export FIND_ME=token
             commands: serde_yaml::from_str(TEST_SENSITIVE_COMMANDS).unwrap(),
             masker: Masker::new(),
         };
-        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, shell::Shell::Fish);
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_FISH, Shell::Fish);
 
         let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
@@ -407,8 +406,7 @@ export FIND_ME=token
         fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
 
         let en = PatternsEngine::with_config(&config).unwrap();
-        let state_context =
-            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
 
         let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
@@ -428,8 +426,7 @@ export FIND_ME=token
         fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
 
         let en = PatternsEngine::with_config(&config).unwrap();
-        let state_context =
-            create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, shell::Shell::Bash);
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
 
         let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
