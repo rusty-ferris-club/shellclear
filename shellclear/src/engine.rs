@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufReader, prelude::*},
+    io::{prelude::*, BufReader},
     time::Instant,
 };
 
@@ -8,6 +8,7 @@ use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
 
+use crate::shell::Shell;
 use crate::{
     config::Config,
     data::{FindingSensitiveCommands, SensitiveCommands},
@@ -15,7 +16,6 @@ use crate::{
     shell,
     state::ShellContext,
 };
-use crate::shell::Shell;
 
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
