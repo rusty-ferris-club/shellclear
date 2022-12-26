@@ -162,7 +162,11 @@ export FIND_ME=token
             &args,
             &vec![state_context.clone()],
             &Config::from(temp_dir.path().to_str()),
-        );
+        )
+        .unwrap()
+        .message
+        .unwrap()
+        .replace(|c: char| !c.is_ascii(), "");
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
@@ -186,7 +190,11 @@ export FIND_ME=token
             &args,
             &vec![state_context.clone()],
             &Config::from(temp_dir.path().to_str()),
-        );
+        )
+        .unwrap()
+        .message
+        .unwrap()
+        .replace(|c: char| !c.is_ascii(), "");
 
         assert_debug_snapshot!(result);
         assert_debug_snapshot!(fs::read_to_string(state_context.history.path).unwrap());
