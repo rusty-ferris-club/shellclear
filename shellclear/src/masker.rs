@@ -1,5 +1,6 @@
-use crate::data::FindingSensitiveCommands;
 use mask_text::Kind;
+
+use crate::data::FindingSensitiveCommands;
 
 const DEFAULT_PERCENTAGE: u8 = 80;
 const DEFAULT_MIN_CHARS: usize = 3;
@@ -12,14 +13,6 @@ pub struct Masker {
 }
 
 impl Masker {
-    pub fn _with(percentage: u8, min_chars: usize, mask_chars: String) -> Self {
-        Masker {
-            percentage,
-            min_chars,
-            mask_chars,
-        }
-    }
-
     pub fn new() -> Self {
         Masker {
             percentage: DEFAULT_PERCENTAGE,

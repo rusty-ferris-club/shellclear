@@ -20,7 +20,7 @@ pub struct SensitiveCommands {
     pub id: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FindingSensitiveCommands {
     pub shell_type: Shell,
     pub sensitive_findings: Vec<SensitiveCommands>,

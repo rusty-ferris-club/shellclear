@@ -1,11 +1,11 @@
-- name: AWS Env Access Key
-  test: AWS_ACCESS_KEY_ID=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: aws_end_access_key
-- name: AWS Env Secret Key
-  test: AWS_SECRET_ACCESS_KEY=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: aws_env_secret_key
+#- name: AWS Env Access Key
+#  test: AWS_ACCESS_KEY_ID=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: aws_end_access_key
+#- name: AWS Env Secret Key
+#  test: AWS_SECRET_ACCESS_KEY=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: aws_env_secret_key
 - name: AWS Cred
   test: (?i)(aws_access_key_id|aws_secret_access_key)=([0-9a-zA-Z/+]{20,40})
   secret_group: 2
@@ -18,10 +18,10 @@
   test: curl.*(?:-u|--user)(?:[ =])([^ ]*)
   secret_group: 1
   id: curl_user_login
-- name: GitHub Env Token
-  test: GITHUB_TOKEN=([0-9a-zA-Z_/+]{0,100})
-  secret_group: 1
-  id: github_env_token
+#- name: GitHub Env Token
+#  test: GITHUB_TOKEN=([0-9a-zA-Z_/+]{0,100})
+#  secret_group: 1
+#  id: github_env_token
 - name: GitHub Personal Token
   test: ghp_[0-9a-zA-Z]{36}
   secret_group: 0
@@ -38,10 +38,10 @@
   test: ghr_[0-9a-zA-Z]{36}
   secret_group: 0
   id: github_refresh_token
-- name: Gitlab token
-  test: GITLAB_TOKEN=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: gitlab_token
+#- name: Gitlab token
+#  test: GITLAB_TOKEN=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: gitlab_token
 - name: Gitlab Personal Token
   test: glpat-[0-9a-zA-Z-_]{20}
   secret_group: 0
@@ -50,30 +50,30 @@
   test: (?i)(?:heroku)(?:[0-9a-z\-_\t .]{0,20})(?:[\s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|"|\s|=|\x60){0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:['|"|\n|\r|\s|\x60]|$)
   secret_group: 0
   id: heroku_api_key
-- name: Heroku Env api key
-  test: HEROKU_API_KEY=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: heroku_env_api_key
-- name: hashicorp Env Vault Token
-  test: VAULT_TOKEN=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: hashicorp_env_vault_token
-- name: hashicorp Env console HTTP token
-  test: CONSUL_HTTP_TOKEN=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: hashicorp_env_console_http_token
-- name: Vercel Env Token
-  test: VERCEL_TOKEN=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: vercel_env_token
-- name: Cloudflare ENV Api Key
-  test: CLOUDFLARE_API_KEY=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: cloudflare_env_api_key
-- name: Newrelic Env api key
-  test: NEWRELIC_API_KEY=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: newrelic_env_api_key
+#- name: Heroku Env api key
+#  test: HEROKU_API_KEY=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: heroku_env_api_key
+#- name: hashicorp Env Vault Token
+#  test: VAULT_TOKEN=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: hashicorp_env_vault_token
+#- name: hashicorp Env console HTTP token
+#  test: CONSUL_HTTP_TOKEN=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: hashicorp_env_console_http_token
+#- name: Vercel Env Token
+#  test: VERCEL_TOKEN=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: vercel_env_token
+#- name: Cloudflare ENV Api Key
+#  test: CLOUDFLARE_API_KEY=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: cloudflare_env_api_key
+#- name: Newrelic Env api key
+#  test: NEWRELIC_API_KEY=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: newrelic_env_api_key
 - name: MailGun API Key
   test: "key-[0-9a-zA-Z]{32}"
   secret_group: 0
@@ -142,14 +142,14 @@
   test: (?i)(?:datadog)(?:[0-9a-z\-_\t .]{0,20})(?:\[s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|"|\s|=|\x60){0,5}([a-z0-9]{40})(?:['|"|\n|\r|\s|\x60|;]|$)
   secret_group: 1
   id: datadog_key
-- name: ReadMe io Api Key
-  test: README_API_KEY=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: readme_api_key
-- name: Cargo Registry Token
-  test: CARGO_REGISTRY_TOKEN=([0-9a-zA-Z/+]{0,100})
-  secret_group: 1
-  id: cargo_registry_token
+#- name: ReadMe io Api Key
+#  test: README_API_KEY=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: readme_api_key
+#- name: Cargo Registry Token
+#  test: CARGO_REGISTRY_TOKEN=([0-9a-zA-Z/+]{0,100})
+#  secret_group: 1
+#  id: cargo_registry_token
 - name: Diskutil Password
   test: diskutil.*passphrase ([[:alpha:][:punct:]]{0,200}).*
   secret_group: 1

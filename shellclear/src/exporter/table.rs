@@ -14,7 +14,7 @@ pub struct Table {}
 impl Table {
     fn prepare_sensitive_data(
         out: &mut Vec<u8>,
-        findings: &[&FindingSensitiveCommands],
+        findings: &[FindingSensitiveCommands],
     ) -> Result<()> {
         let mut table = prettytable::Table::new();
 
@@ -61,7 +61,7 @@ impl Table {
 }
 
 impl Exporter for Table {
-    fn sensitive_data(&self, findings: &[&FindingSensitiveCommands]) -> Result<()> {
+    fn sensitive_data(&self, findings: &[FindingSensitiveCommands]) -> Result<()> {
         let mut out = Vec::new();
         Self::prepare_sensitive_data(&mut out, findings)?;
         print!("{}", str::from_utf8(&out)?);
@@ -104,7 +104,7 @@ mod test_exporter_table {
             secrets: vec![],
         };
 
-        let findings = vec![&shell_finding];
+        let findings = vec![shell_finding];
         let resp = Table::prepare_sensitive_data(&mut out, &findings);
 
         assert_debug_snapshot!(resp);

@@ -1,0 +1,6 @@
+---
+source: shellclear/src/bin/cmd/clear.rs
+assertion_line: 186
+expression: "fs::read_to_string(state_context.history.path).unwrap()"
+---
+"history\nls\necho 'hello you'\nrm -f ./file.txt\n"

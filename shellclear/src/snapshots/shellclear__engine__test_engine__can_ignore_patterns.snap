@@ -1,40 +1,47 @@
 ---
 source: shellclear/src/engine.rs
+assertion_line: 357
 expression: result
 ---
 Ok(
-    Findings {
-        patterns: [
+    (
+        [
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "history",
                 data: "history",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "ls",
                 data: "ls",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "echo 'hello you'",
                 data: "echo 'hello you'",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "rm -f ./file.txt",
                 data: "rm -f ./file.txt",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "export FIND_ME=token",
                 data: "export FIND_ME=token",
+                secrets: [],
             },
         ],
-    },
+        [],
+    ),
 )

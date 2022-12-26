@@ -17,7 +17,7 @@ pub trait Exporter {
     /// # Errors
     ///
     /// Will return `Err` export has an error
-    fn sensitive_data(&self, findings: &[&FindingSensitiveCommands]) -> Result<()>;
+    fn sensitive_data(&self, findings: &[FindingSensitiveCommands]) -> Result<()>;
 }
 
 lazy_static! {

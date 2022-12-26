@@ -1,33 +1,38 @@
 ---
 source: shellclear/src/engine.rs
+assertion_line: 298
 expression: result
 ---
 Ok(
-    Findings {
-        patterns: [
+    (
+        [
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "history",
                 data: "history",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "ls",
                 data: "ls",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "echo 'hello you'",
                 data: "echo 'hello you'",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
                 sensitive_findings: [],
                 command: "rm -f ./file.txt",
                 data: "rm -f ./file.txt",
+                secrets: [],
             },
             FindingSensitiveCommands {
                 shell_type: Bash,
@@ -39,9 +44,30 @@ Ok(
                         id: "",
                     },
                 ],
-                command: "export FIND_ME=token",
-                data: "export FIND_ME=token",
+                command: "export FI******token",
+                data: "export FI******token",
+                secrets: [
+                    "FIND_ME=",
+                ],
             },
         ],
-    },
+        [
+            FindingSensitiveCommands {
+                shell_type: Bash,
+                sensitive_findings: [
+                    SensitiveCommands {
+                        test: FIND_ME=,
+                        name: "Find me",
+                        secret_group: 0,
+                        id: "",
+                    },
+                ],
+                command: "export FI******token",
+                data: "export FI******token",
+                secrets: [
+                    "FIND_ME=",
+                ],
+            },
+        ],
+    ),
 )

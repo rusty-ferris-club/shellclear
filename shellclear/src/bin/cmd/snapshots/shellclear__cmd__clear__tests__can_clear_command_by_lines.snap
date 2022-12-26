@@ -1,0 +1,13 @@
+---
+source: shellclear/src/bin/cmd/clear.rs
+assertion_line: 185
+expression: result
+---
+Ok(
+    CmdExit {
+        code: 0,
+        message: Some(
+            " 🚨 shellclear cleared 1 sensitive commands",
+        ),
+    },
+)

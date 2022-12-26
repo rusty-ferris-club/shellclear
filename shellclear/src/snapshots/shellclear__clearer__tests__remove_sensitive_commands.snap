@@ -1,0 +1,8 @@
+---
+source: shellclear/src/clearer.rs
+assertion_line: 112
+expression: result
+---
+Ok(
+    (),
+)

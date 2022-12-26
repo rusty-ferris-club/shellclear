@@ -1,0 +1,6 @@
+---
+source: shellclear/src/clearer.rs
+assertion_line: 113
+expression: content
+---
+"mock\n"

@@ -1,5 +1,0 @@
----
-source: shellclear/src/engine.rs
-expression: "fs::read_to_string(state_context.history.path).unwrap()"
----
-"---\n- cmd: history\n  when: \"1656438759\"\n- cmd: ls\n  when: \"1656438760\"\n- cmd: \"echo 'hello you'\"\n  when: \"1656438760\"\n- cmd: rm -f ./file.txt\n  when: \"1656438760\"\n"

@@ -14,7 +14,7 @@ pub struct Text {}
 impl Text {
     fn prepare_sensitive_data(
         out: &mut Vec<u8>,
-        findings: &[&FindingSensitiveCommands],
+        findings: &[FindingSensitiveCommands],
     ) -> Result<()> {
         let mut count = 0;
         for f in findings.iter() {
@@ -43,7 +43,7 @@ impl Text {
 }
 
 impl Exporter for Text {
-    fn sensitive_data(&self, findings: &[&FindingSensitiveCommands]) -> Result<()> {
+    fn sensitive_data(&self, findings: &[FindingSensitiveCommands]) -> Result<()> {
         let mut out = Vec::new();
         Self::prepare_sensitive_data(&mut out, findings)?;
         print!("{}", str::from_utf8(&out)?);
@@ -86,7 +86,7 @@ mod test_exporter_text {
             secrets: vec![],
         };
 
-        let findings = vec![&shell_finding];
+        let findings = vec![shell_finding];
         let resp = Text::prepare_sensitive_data(&mut out, &findings);
 
         assert_debug_snapshot!(resp);
