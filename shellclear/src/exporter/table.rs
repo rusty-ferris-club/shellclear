@@ -32,9 +32,9 @@ impl Table {
             .map(|f| {
                 count += 1;
                 vec![
-                    Cell::new(&format!("{:?}", count)),
+                    Cell::new(&format!("{count:?}")),
                     Cell::new(&format!("{:?}", f.shell_type)),
-                    Cell::new(&extract_time(f).unwrap_or_else(|_| "".to_string())),
+                    Cell::new(&extract_time(f).unwrap_or_else(|_| String::new())),
                     Cell::new(
                         f.sensitive_findings
                             .iter()
@@ -76,8 +76,9 @@ mod test_exporter_table {
     use insta::assert_debug_snapshot;
     use regex::Regex;
 
-    use super::*;
     use crate::{data::SensitiveCommands, shell::Shell};
+
+    use super::*;
 
     #[test]
     fn can_prepare_sensitive_data() {
@@ -89,13 +90,13 @@ mod test_exporter_table {
                 SensitiveCommands {
                     test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
-                    id: "".to_string(),
+                    id: String::new(),
                     secret_group: 0,
                 },
                 SensitiveCommands {
                     test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
-                    id: "".to_string(),
+                    id: String::new(),
                     secret_group: 0,
                 },
             ],

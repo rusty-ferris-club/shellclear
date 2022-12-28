@@ -31,7 +31,7 @@ impl Text {
                 count,
                 f.shell_type,
                 finding_names,
-                extract_time(f).unwrap_or_else(|_| "".to_string())
+                extract_time(f).unwrap_or_else(|_| String::new())
             );
 
             writeln!(out, "{}", style(title).bold())?;
@@ -71,13 +71,13 @@ mod test_exporter_text {
                 SensitiveCommands {
                     test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
-                    id: "".to_string(),
+                    id: String::new(),
                     secret_group: 0,
                 },
                 SensitiveCommands {
                     test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
-                    id: "".to_string(),
+                    id: String::new(),
                     secret_group: 0,
                 },
             ],

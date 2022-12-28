@@ -194,7 +194,7 @@ mod test_cli_config {
     fn new_config(temp_dir: &TempDir) -> Config {
         let path = temp_dir.path().join("app");
         fs::create_dir_all(&path).unwrap();
-        Config::with_custom_path(path)
+        Config::with_custom_path(&path)
     }
 
     #[test]

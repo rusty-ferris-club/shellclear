@@ -59,7 +59,7 @@ pub fn extract_time(finding: &FindingSensitiveCommands) -> Result<String> {
                 convert_str_timestamp_to_date_time(history.when.as_str())?.format(DATE_TIME_FORMAT)
             ))
         }
-        _ => Ok("".to_string()),
+        _ => Ok(String::new()),
     }
 }
 

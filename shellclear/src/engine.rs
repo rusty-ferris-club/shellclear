@@ -319,7 +319,7 @@ export FIND_ME=token
     fn can_find_custom_patterns() {
         let temp_dir = TempDir::new("engine").unwrap();
 
-        let config = Config::with_custom_path(temp_dir.path().join("app"));
+        let config = Config::with_custom_path(&temp_dir.path().join("app"));
         config.init().unwrap();
         let custom_pattern = r###"
 - name: Pattern Name
@@ -342,7 +342,7 @@ export FIND_ME=token
     fn can_ignore_patterns() {
         let temp_dir = TempDir::new("engine").unwrap();
 
-        let config = Config::with_custom_path(temp_dir.path().join("app"));
+        let config = Config::with_custom_path(&temp_dir.path().join("app"));
         config.init().unwrap();
         let custom_pattern = r###"
 - elad_ignore

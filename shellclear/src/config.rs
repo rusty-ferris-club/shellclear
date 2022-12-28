@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::{fs, path::PathBuf};
 
 use anyhow::Result;
@@ -26,7 +27,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self::with_custom_path(dirs::home_dir().unwrap())
+        Self::with_custom_path(&dirs::home_dir().unwrap())
     }
 }
 
@@ -34,7 +35,7 @@ impl From<Option<&str>> for Config {
     fn from(config_dir: Option<&str>) -> Self {
         match config_dir {
             None => Self::default(),
-            Some(cfg_dir_path) => Self::with_custom_path(PathBuf::from(cfg_dir_path)),
+            Some(cfg_dir_path) => Self::with_custom_path(&PathBuf::from(cfg_dir_path)),
         }
     }
 }
@@ -42,7 +43,7 @@ impl From<Option<&str>> for Config {
 impl Config {
     #[allow(dead_code)]
     #[must_use]
-    pub fn with_custom_path(root: PathBuf) -> Self {
+    pub fn with_custom_path(root: &Path) -> Self {
         // todo check if we can remove this get_base_app_folder function
         let app_path = Self::get_base_app_folder(root);
         Self {
@@ -53,7 +54,7 @@ impl Config {
     }
 
     /// Returns the root shellclear config folder
-    fn get_base_app_folder(path: PathBuf) -> PathBuf {
+    fn get_base_app_folder(path: &Path) -> PathBuf {
         path.join(ROOT_APP_FOLDER)
     }
 
@@ -168,13 +169,14 @@ mod test_config {
     use insta::assert_debug_snapshot;
     use tempdir::TempDir;
 
-    use super::{Config, CONFIG_IGNORES, CONFIG_SENSITIVE_PATTERNS, SENSITIVE_PATTERN_TEMPLATE};
     use crate::{config::IGNORES_SENSITIVE_PATTERN_TEMPLATE, data::ROOT_APP_FOLDER};
+
+    use super::{Config, CONFIG_IGNORES, CONFIG_SENSITIVE_PATTERNS, SENSITIVE_PATTERN_TEMPLATE};
 
     fn new_config(temp_dir: &TempDir) -> Config {
         let path = temp_dir.path().join("app");
         fs::create_dir_all(&path).unwrap();
-        Config::with_custom_path(path)
+        Config::with_custom_path(&path)
     }
 
     #[test]

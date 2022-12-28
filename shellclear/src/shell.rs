@@ -1,6 +1,5 @@
 use std::{fmt, path::Path};
 
-use anyhow::anyhow;
 use serde_derive::{Deserialize, Serialize};
 use strum::{EnumIter, IntoEnumIterator};
 
@@ -50,29 +49,26 @@ pub struct History {
 }
 
 /// return list of all existing history files
+#[must_use]
 pub fn get_all_history_files(homedir: &str) -> Vec<History> {
     // return list of existing shells
     Shell::iter()
-        .map(|shell| {
+        .filter_map(|shell| {
             let shell_history_path = get_shell_history_path(&shell, homedir);
             if !Path::new(&shell_history_path).exists() {
                 log::debug!("shell {:?} not found", shell);
-                return Err(anyhow!("could not get directory path"));
+                return None;
             }
             let file_name = Path::new(&shell_history_path)
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
+                .file_name()?
+                .to_str()?
                 .to_string();
-            Ok(History {
+            Some(History {
                 shell,
                 path: shell_history_path,
                 file_name,
             })
         })
-        .filter(std::result::Result::is_ok)
-        .map(std::result::Result::unwrap)
         .collect::<Vec<_>>()
 }
 

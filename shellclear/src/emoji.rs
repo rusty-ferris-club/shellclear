@@ -9,8 +9,8 @@ impl Default for Emojis {
     fn default() -> Self {
         if env::consts::OS == "windows" {
             Self {
-                alarm: "".to_string(),
-                confetti: "".to_string(),
+                alarm: String::new(),
+                confetti: String::new(),
             }
         } else {
             Self {

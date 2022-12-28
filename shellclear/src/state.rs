@@ -1,11 +1,12 @@
+extern crate chrono;
+
 use std::{fs, fs::write, path::Path};
 
 use anyhow::{anyhow, Result};
+use chrono::{DateTime, Local};
 use log::debug;
 
 use crate::shell;
-extern crate chrono;
-use chrono::{DateTime, Local};
 
 /// timestamp format for attached backups file.
 const DATE_TIME_BACKUP_FORMAT: &str = "%Y%m%d%H%M%S%.f";
@@ -186,6 +187,7 @@ impl ShellContext {
     }
 
     /// return stash file
+    #[must_use]
     pub fn get_stash_file(&self) -> Option<String> {
         let path = Path::new(&self.get_stash_folder()).join(&self.history.file_name);
         if path.exists() {
@@ -247,8 +249,9 @@ mod state_context {
     use insta::assert_debug_snapshot;
     use tempdir::TempDir;
 
-    use super::{fs, shell, Path, ShellContext};
     use crate::shell::Shell;
+
+    use super::{fs, shell, Path, ShellContext};
 
     const TEMP_HISTORY_CONTENT: &str = "history
 ls

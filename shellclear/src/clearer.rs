@@ -12,6 +12,11 @@ use crate::ShellContext;
 pub struct Clearer {}
 
 impl Clearer {
+    /// Load sensitive ignores file
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` when the history file cannot be opened / written to
     pub fn write_findings(
         shells_context: &[ShellContext],
         findings: &[FindingSensitiveCommands],
