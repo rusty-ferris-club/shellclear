@@ -141,7 +141,8 @@ impl PatternsEngine {
         let mut results = lines
             .par_iter()
             .map(|command| {
-                let (secrets, sensitive_findings) = self.find_secrets(command, sensitive_commands);
+                let (secrets, sensitive_findings) =
+                    PatternsEngine::find_secrets(command, sensitive_commands);
 
                 let only_command = match command.split_once(';') {
                     Some((_x, y)) => y.to_string(),
@@ -180,7 +181,8 @@ impl PatternsEngine {
         let mut results = history
             .par_iter()
             .map(|h| {
-                let (secrets, sensitive_findings) = self.find_secrets(&h.cmd, sensitive_commands);
+                let (secrets, sensitive_findings) =
+                    PatternsEngine::find_secrets(&h.cmd, sensitive_commands);
 
                 FindingSensitiveCommands {
                     shell_type: state_context.history.shell.clone(),
@@ -204,7 +206,6 @@ impl PatternsEngine {
     }
 
     fn find_secrets(
-        &self,
         command: &str,
         sensitive_commands: &[SensitiveCommands],
     ) -> (Vec<String>, Vec<SensitiveCommands>) {

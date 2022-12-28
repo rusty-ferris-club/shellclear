@@ -9,17 +9,15 @@ use crate::data::FindingSensitiveCommands;
 use crate::shell::Shell;
 use crate::ShellContext;
 
-#[derive(Default)]
 pub struct Clearer {}
 
 impl Clearer {
     pub fn write_findings(
-        self,
         shells_context: &[ShellContext],
         findings: &[FindingSensitiveCommands],
         remove: bool,
     ) -> Result<()> {
-        let findings_per_shell = self.group_findings_by_shell(findings);
+        let findings_per_shell = Clearer::group_findings_by_shell(findings);
 
         for context in shells_context {
             let start = Instant::now();
@@ -51,7 +49,6 @@ impl Clearer {
     }
 
     fn group_findings_by_shell(
-        self,
         findings: &[FindingSensitiveCommands],
     ) -> HashMap<Shell, Vec<&FindingSensitiveCommands>> {
         let mut findings_by_shell: HashMap<Shell, Vec<&FindingSensitiveCommands>> = HashMap::new();
@@ -127,11 +124,10 @@ mod tests {
 
         let (findings, state_context) = mock_state(&history);
 
-        let result = Clearer::default().write_findings(&state_context, &findings, true);
+        Clearer::write_findings(&state_context, &findings, true).unwrap();
 
         let content = fs::read_to_string(history).unwrap();
 
-        assert_debug_snapshot!(result);
         assert_debug_snapshot!(content);
 
         dir.close().unwrap();
@@ -144,11 +140,10 @@ mod tests {
 
         let (findings, state_context) = mock_state(&history);
 
-        let result = Clearer::default().write_findings(&state_context, &findings, false);
+        Clearer::write_findings(&state_context, &findings, false).unwrap();
 
         let content = fs::read_to_string(history).unwrap();
 
-        assert_debug_snapshot!(result);
         assert_debug_snapshot!(content);
 
         dir.close().unwrap();

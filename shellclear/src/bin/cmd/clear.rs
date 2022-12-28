@@ -16,7 +16,7 @@ pub fn command() -> Command<'static> {
         .arg(
             Arg::new("remove")
                 .long("remove")
-                .help("remove history that contains secrets")
+                .help("Remove history that contains secrets")
                 .takes_value(false),
         )
 }
@@ -49,7 +49,7 @@ pub fn run(
         en.find_history_commands_from_shell_list(shells_context)?;
     let emojis = Emojis::default();
 
-    Clearer::default().write_findings(shells_context, &findings, matches.is_present("remove"))?;
+    Clearer::write_findings(shells_context, &findings, matches.is_present("remove"))?;
 
     if sensitive_commands.is_empty() {
         return Ok(shellclear::data::CmdExit {

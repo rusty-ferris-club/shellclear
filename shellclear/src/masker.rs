@@ -34,7 +34,7 @@ impl Masker {
 
                 sensitive_command.command =
                     sensitive_command.command.replace(secret, &replaced_secret);
-                sensitive_command.data = sensitive_command.data.replace(secret, &replaced_secret)
+                sensitive_command.data = sensitive_command.data.replace(secret, &replaced_secret);
             }
         }
     }

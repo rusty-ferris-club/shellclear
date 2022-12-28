@@ -1,8 +1,6 @@
 ---
 source: shellclear/src/clearer.rs
-assertion_line: 112
-expression: result
+assertion_line: 131
+expression: content
 ---
-Ok(
-    (),
-)
+"mock\n"
