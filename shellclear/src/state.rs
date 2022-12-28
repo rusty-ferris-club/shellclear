@@ -177,12 +177,10 @@ impl ShellContext {
         let paths = fs::read_dir(backup_folder)?;
 
         Ok(paths
-            .map(|path| match path {
+            .filter_map(|path| match path {
                 Ok(p) => Some(p.path().display().to_string()),
                 Err(_e) => None,
             })
-            .filter(std::option::Option::is_some)
-            .flatten()
             .collect::<Vec<_>>())
     }
 

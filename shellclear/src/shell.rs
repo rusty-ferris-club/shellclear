@@ -111,11 +111,11 @@ mod state_shell {
         let temp_dir = TempDir::new("terminal").unwrap().path().join("app");
 
         fs::create_dir_all(&temp_dir).unwrap();
-        fs::create_dir_all(&temp_dir.join(FISH_HISTORY_FILE_PATH).parent().unwrap()).unwrap();
+        fs::create_dir_all(temp_dir.join(FISH_HISTORY_FILE_PATH).parent().unwrap()).unwrap();
 
-        File::create(&temp_dir.join(ZSH_HISTORY_FILE_PATH)).expect("create failed");
-        File::create(&temp_dir.join(BASH_HISTORY_FILE_PATH)).expect("create failed");
-        File::create(&temp_dir.join(FISH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(ZSH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(BASH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(FISH_HISTORY_FILE_PATH)).expect("create failed");
 
         with_settings!({filters => vec![
             (r"//*.+/(app)", "PATH"),

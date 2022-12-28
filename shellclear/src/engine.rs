@@ -125,11 +125,7 @@ impl PatternsEngine {
 
         let start = Instant::now();
 
-        let lines = reader
-            .lines()
-            .filter(Result::is_ok)
-            .map(Result::unwrap)
-            .collect::<Vec<_>>();
+        let lines = reader.lines().flatten().collect::<Vec<_>>();
 
         debug!(
             "time elapsed to read history file: {:?}. found {} commands",
