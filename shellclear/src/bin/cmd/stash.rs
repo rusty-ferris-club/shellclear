@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::{crate_name, ArgMatches, Command};
+
 use shellclear::{dialog, ShellContext};
 
 pub fn command() -> Command<'static> {
@@ -41,7 +42,7 @@ fn run_stash(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> 
     if let Err(err) = shell_context.stash() {
         return Ok(shellclear::data::CmdExit {
             code: 1,
-            message: Some(format!("stash failed: {:?}", err)),
+            message: Some(format!("stash failed: {err:?}")),
         });
     }
     Ok(shellclear::data::CmdExit {
@@ -66,7 +67,7 @@ fn run_pop(shell_context: &ShellContext) -> Result<shellclear::data::CmdExit> {
     if let Err(err) = shell_context.pop() {
         return Ok(shellclear::data::CmdExit {
             code: 1,
-            message: Some(format!("stash pop failed: {:?}", err)),
+            message: Some(format!("stash pop failed: {err:?}")),
         });
     }
     Ok(shellclear::data::CmdExit {
@@ -105,7 +106,7 @@ pub fn run_restore(shell_context: &ShellContext) -> Result<shellclear::data::Cmd
     if let Some(e) = shell_context.restore(restore_from_path).err() {
         return Ok(shellclear::data::CmdExit {
             code: 1,
-            message: Some(format!("restore failed: {:?}", e)),
+            message: Some(format!("restore failed: {e:?}")),
         });
     }
 

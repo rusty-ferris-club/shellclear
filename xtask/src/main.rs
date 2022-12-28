@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+
 use std::{
     fs::create_dir_all,
     path::{Path, PathBuf},
@@ -84,15 +85,15 @@ fn main() -> Result<(), anyhow::Error> {
                 if confirm("open report folder?") {
                     cmd!("open", file).run()?;
                 } else {
-                    println!("report location: {}", file);
+                    println!("report location: {file}");
                 }
             }
 
             Ok(())
         }
         Some(("vars", _)) => {
-            println!("project root: {:?}", project);
-            println!("root: {:?}", root);
+            println!("project root: {project:?}");
+            println!("root: {root:?}");
             Ok(())
         }
         Some(("ci", _)) => {

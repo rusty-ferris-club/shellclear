@@ -36,8 +36,8 @@ pub fn run(
                     return Ok(shellclear::data::CmdExit {
                         code: 1,
                         message: Some(format!(
-                            "could not backup shell {:?} history. err: {:?}",
-                            shell_context.history.shell, e
+                            "could not backup shell {:?} history. err: {e:?}",
+                            shell_context.history.shell,
                         )),
                     });
                 }
