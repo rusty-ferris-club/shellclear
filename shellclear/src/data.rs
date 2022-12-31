@@ -11,7 +11,7 @@ pub struct CmdExit {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct SensitiveCommands {
+pub struct Detection {
     #[serde(with = "serde_regex")]
     pub test: regex::Regex,
     pub name: String,
@@ -21,9 +21,9 @@ pub struct SensitiveCommands {
 }
 
 #[derive(Debug, Clone)]
-pub struct FindingSensitiveCommands {
+pub struct Command {
     pub shell_type: Shell,
-    pub sensitive_findings: Vec<SensitiveCommands>,
+    pub detections: Vec<Detection>,
     pub command: String,
     pub data: String,
     pub secrets: Vec<String>,

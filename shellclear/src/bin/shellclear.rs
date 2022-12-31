@@ -47,9 +47,11 @@ fn main() {
         match engine::PatternsEngine::with_config(&config) {
             Ok(engine) => {
                 let emojis = Emojis::default();
-                if let Ok((_, sensitive_commands)) =
+                if let Ok(shell_commands) =
                     engine.find_history_commands_from_shell_list(&shells_context)
                 {
+                    let sensitive_commands = shell_commands.get_commands_with_secrets();
+
                     if sensitive_commands.is_empty() {
                         eprintln!(
                             "{} Your shell is clean from sensitive data!",

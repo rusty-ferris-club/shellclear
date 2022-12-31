@@ -1,47 +1,48 @@
 ---
 source: shellclear/src/engine.rs
-assertion_line: 357
+assertion_line: 374
 expression: result
 ---
 Ok(
-    (
-        [
-            FindingSensitiveCommands {
-                shell_type: Bash,
-                sensitive_findings: [],
-                command: "history",
-                data: "history",
-                secrets: [],
-            },
-            FindingSensitiveCommands {
-                shell_type: Bash,
-                sensitive_findings: [],
-                command: "ls",
-                data: "ls",
-                secrets: [],
-            },
-            FindingSensitiveCommands {
-                shell_type: Bash,
-                sensitive_findings: [],
-                command: "echo 'hello you'",
-                data: "echo 'hello you'",
-                secrets: [],
-            },
-            FindingSensitiveCommands {
-                shell_type: Bash,
-                sensitive_findings: [],
-                command: "rm -f ./file.txt",
-                data: "rm -f ./file.txt",
-                secrets: [],
-            },
-            FindingSensitiveCommands {
-                shell_type: Bash,
-                sensitive_findings: [],
-                command: "export FIND_ME=token",
-                data: "export FIND_ME=token",
-                secrets: [],
-            },
-        ],
-        [],
-    ),
+    ShellCommands {
+        engine_kind: {
+            Bash: [
+                Command {
+                    shell_type: Bash,
+                    detections: [],
+                    command: "history",
+                    data: "history",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Bash,
+                    detections: [],
+                    command: "ls",
+                    data: "ls",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Bash,
+                    detections: [],
+                    command: "echo 'hello you'",
+                    data: "echo 'hello you'",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Bash,
+                    detections: [],
+                    command: "rm -f ./file.txt",
+                    data: "rm -f ./file.txt",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Bash,
+                    detections: [],
+                    command: "export FIND_ME=token",
+                    data: "export FIND_ME=token",
+                    secrets: [],
+                },
+            ],
+        },
+    },
 )

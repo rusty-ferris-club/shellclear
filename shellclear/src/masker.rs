@@ -1,6 +1,6 @@
 use mask_text::Kind;
 
-use crate::data::FindingSensitiveCommands;
+use crate::data::Command;
 
 const DEFAULT_PERCENTAGE: u8 = 80;
 const DEFAULT_MIN_CHARS: usize = 3;
@@ -14,16 +14,18 @@ pub struct Masker {
 
 impl Masker {
     pub fn new() -> Self {
-        Masker {
+        Self {
             percentage: DEFAULT_PERCENTAGE,
             min_chars: DEFAULT_MIN_CHARS,
             mask_chars: DEFAULT_MASK_CHARS.to_string(),
         }
     }
 
-    pub fn mask_sensitive_findings(&self, results: &mut [FindingSensitiveCommands]) {
-        for sensitive_command in results {
-            for secret in &sensitive_command.secrets {
+    pub fn mask_sensitive_findings(&self, results: &mut [Command]) {
+        let commands_with_detections = Masker::get_commands_with_detection(results);
+
+        for command in commands_with_detections {
+            let should_mask = command.secrets.iter().any(|secret| {
                 let replaced_secret = Kind::Percentage(
                     secret.clone(),
                     self.percentage,
@@ -32,10 +34,36 @@ impl Masker {
                 )
                 .mask();
 
-                sensitive_command.command =
-                    sensitive_command.command.replace(secret, &replaced_secret);
-                sensitive_command.data = sensitive_command.data.replace(secret, &replaced_secret);
+                // there can still be an false-positive here, if the text is all made up of asterisks
+                !command.command.contains(&replaced_secret)
+            });
+
+            if !should_mask {
+                // If all the secrets are already masked, set the detections to an empty vec, this represents that this command is already masked / no secrets detected
+                command.detections = vec![];
+                continue;
+            }
+
+            // Can be optimized, we can chose to not re-mask the secret, using a map, etc...
+            for secret in &command.secrets {
+                let replaced_secret = Kind::Percentage(
+                    secret.clone(),
+                    self.percentage,
+                    self.min_chars,
+                    self.mask_chars.clone(),
+                )
+                .mask();
+
+                command.command = command.command.replace(secret, &replaced_secret);
+                command.data = command.data.replace(secret, &replaced_secret);
             }
         }
+    }
+
+    fn get_commands_with_detection(commands: &mut [Command]) -> Vec<&mut Command> {
+        commands
+            .iter_mut()
+            .filter(|c| !c.detections.is_empty())
+            .collect::<Vec<_>>()
     }
 }

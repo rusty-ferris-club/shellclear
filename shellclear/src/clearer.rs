@@ -1,12 +1,10 @@
-use std::collections::HashMap;
 use std::fmt::Write;
 use std::fs::write;
 use std::time::Instant;
 
 use anyhow::Result;
 
-use crate::data::FindingSensitiveCommands;
-use crate::shell::Shell;
+use crate::engine::ShellCommands;
 use crate::ShellContext;
 
 pub struct Clearer {}
@@ -19,25 +17,23 @@ impl Clearer {
     /// Will return `Err` when the history file cannot be opened / written to
     pub fn write_findings(
         shells_context: &[ShellContext],
-        findings: &[FindingSensitiveCommands],
+        commands: &ShellCommands,
         remove: bool,
     ) -> Result<()> {
-        let findings_per_shell = Clearer::group_findings_by_shell(findings);
-
         for context in shells_context {
             let start = Instant::now();
             let mut cleared_history: String = String::new();
 
-            for &r in findings_per_shell
-                .get(&context.history.shell)
+            for command in commands
+                .get_commands_per_shell(&context.history.shell)
                 .unwrap_or(&vec![])
             {
                 if remove {
-                    if r.sensitive_findings.is_empty() {
-                        writeln!(&mut cleared_history, "{}", r.data)?;
+                    if command.detections.is_empty() {
+                        writeln!(&mut cleared_history, "{}", command.data)?;
                     }
                 } else {
-                    writeln!(&mut cleared_history, "{}", r.data)?;
+                    writeln!(&mut cleared_history, "{}", command.data)?;
                 }
             }
 
@@ -52,22 +48,6 @@ impl Clearer {
 
         Ok(())
     }
-
-    fn group_findings_by_shell(
-        findings: &[FindingSensitiveCommands],
-    ) -> HashMap<Shell, Vec<&FindingSensitiveCommands>> {
-        let mut findings_by_shell: HashMap<Shell, Vec<&FindingSensitiveCommands>> = HashMap::new();
-
-        for finding in findings {
-            if let Some(vec) = findings_by_shell.get_mut(&finding.shell_type) {
-                vec.push(finding);
-            } else {
-                findings_by_shell.insert(finding.shell_type.clone(), vec![finding]);
-            }
-        }
-
-        findings_by_shell
-    }
 }
 
 #[cfg(test)]
@@ -79,13 +59,13 @@ mod tests {
     use regex::Regex;
     use tempdir::TempDir;
 
-    use crate::data::{FindingSensitiveCommands, SensitiveCommands};
+    use crate::data::{Command, Detection};
     use crate::shell::History;
     use crate::shell::Shell::Zshrc;
 
     use super::*;
 
-    fn mock_state(dir: &Path) -> (Vec<FindingSensitiveCommands>, Vec<ShellContext>) {
+    fn mock_state(dir: &Path) -> (ShellCommands, Vec<ShellContext>) {
         let state_context = vec![ShellContext {
             app_folder_path: "mock".to_string(),
             history: History {
@@ -98,17 +78,17 @@ mod tests {
         // We test one finding with a secret and one without a secret
         // The secret should be filtered out when using remove = true param
         let findings = vec![
-            FindingSensitiveCommands {
+            Command {
                 command: "mock".to_string(),
                 data: "mock".to_string(),
-                sensitive_findings: vec![],
+                detections: vec![],
                 shell_type: Zshrc,
                 secrets: vec![],
             },
-            FindingSensitiveCommands {
+            Command {
                 command: "should be removed".to_string(),
                 data: "should be removed".to_string(),
-                sensitive_findings: vec![SensitiveCommands {
+                detections: vec![Detection {
                     name: "mock".to_string(),
                     secret_group: 0,
                     id: "mock-id".to_string(),
@@ -119,7 +99,11 @@ mod tests {
             },
         ];
 
-        (findings, state_context)
+        let mut commands = ShellCommands::default();
+
+        commands.add_commands(&Zshrc, findings);
+
+        (commands, state_context)
     }
 
     #[test]
@@ -127,9 +111,9 @@ mod tests {
         let dir = TempDir::new("clearer").unwrap();
         let history = dir.path().join("history");
 
-        let (findings, state_context) = mock_state(&history);
+        let (commands, state_context) = mock_state(&history);
 
-        Clearer::write_findings(&state_context, &findings, true).unwrap();
+        Clearer::write_findings(&state_context, &commands, true).unwrap();
 
         let content = fs::read_to_string(history).unwrap();
 
@@ -143,9 +127,9 @@ mod tests {
         let dir = TempDir::new("clearer").unwrap();
         let history = dir.path().join("history");
 
-        let (findings, state_context) = mock_state(&history);
+        let (commands, state_context) = mock_state(&history);
 
-        Clearer::write_findings(&state_context, &findings, false).unwrap();
+        Clearer::write_findings(&state_context, &commands, false).unwrap();
 
         let content = fs::read_to_string(history).unwrap();
 

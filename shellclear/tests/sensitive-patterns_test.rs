@@ -1,6 +1,6 @@
 use insta::assert_debug_snapshot;
 use serde_derive::Deserialize;
-use shellclear::{data::SensitiveCommands, engine::SENSITIVE_COMMANDS};
+use shellclear::{data::Detection, engine::SENSITIVE_COMMANDS};
 
 #[derive(Debug, Deserialize, Clone)]
 struct TestSensitivePatterns {
@@ -20,7 +20,7 @@ struct TestPatternResult {
 
 #[test]
 fn can_detect_regex_sensitive_patterns() {
-    let patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap();
+    let patterns: Vec<Detection> = serde_yaml::from_str(SENSITIVE_COMMANDS).unwrap();
 
     for pattern in &patterns {
         let pattern_id = pattern.id.to_lowercase().replace(" ", "_");

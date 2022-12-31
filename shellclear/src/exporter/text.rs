@@ -4,7 +4,7 @@ use anyhow::Result;
 use console::style;
 
 use crate::{
-    data::FindingSensitiveCommands,
+    data::Command,
     exporter::data::{chunk, extract_time, Exporter, LIMIT_COMMAND},
 };
 
@@ -12,15 +12,12 @@ use crate::{
 pub struct Text {}
 
 impl Text {
-    fn prepare_sensitive_data(
-        out: &mut Vec<u8>,
-        findings: &[FindingSensitiveCommands],
-    ) -> Result<()> {
+    fn prepare_sensitive_data(out: &mut Vec<u8>, findings: &[Command]) -> Result<()> {
         let mut count = 0;
         for f in findings.iter() {
             count += 1;
             let finding_names = f
-                .sensitive_findings
+                .detections
                 .iter()
                 .map(|f| f.name.clone())
                 .collect::<Vec<_>>()
@@ -43,7 +40,7 @@ impl Text {
 }
 
 impl Exporter for Text {
-    fn sensitive_data(&self, findings: &[FindingSensitiveCommands]) -> Result<()> {
+    fn sensitive_data(&self, findings: &[Command]) -> Result<()> {
         let mut out = Vec::new();
         Self::prepare_sensitive_data(&mut out, findings)?;
         print!("{}", str::from_utf8(&out)?);
@@ -59,22 +56,22 @@ mod test_exporter_text {
     use regex::Regex;
 
     use super::*;
-    use crate::{data::SensitiveCommands, shell::Shell};
+    use crate::{data::Detection, shell::Shell};
 
     #[test]
     fn can_prepare_sensitive_data() {
         let mut out = Vec::new();
 
-        let shell_finding = FindingSensitiveCommands {
+        let shell_finding = Command {
             shell_type: Shell::Zshrc,
-            sensitive_findings: vec![
-                SensitiveCommands {
+            detections: vec![
+                Detection {
                     test: Regex::new("test").unwrap(),
                     name: "test name".to_string(),
                     id: String::new(),
                     secret_group: 0,
                 },
-                SensitiveCommands {
+                Detection {
                     test: Regex::new("test2").unwrap(),
                     name: "test name2".to_string(),
                     id: String::new(),

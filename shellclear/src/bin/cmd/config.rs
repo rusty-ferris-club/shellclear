@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
-use shellclear::{config::Config, data::SensitiveCommands, dialog};
+use shellclear::{config::Config, data::Detection, dialog};
 
 use crate::engine::SENSITIVE_COMMANDS;
 
@@ -129,7 +129,7 @@ fn run_ignore(config: &Config) -> Result<shellclear::data::CmdExit> {
     }
 
     // get all sensitive commands
-    let sensitive_patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
+    let sensitive_patterns: Vec<Detection> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
 
     let (show_selections, show_ignores) =
         get_patter_ignore_multi_choice(config, &sensitive_patterns);
@@ -159,7 +159,7 @@ fn run_ignore(config: &Config) -> Result<shellclear::data::CmdExit> {
 
 fn get_patter_ignore_multi_choice(
     config: &Config,
-    sensitive_patterns: &[SensitiveCommands],
+    sensitive_patterns: &[Detection],
 ) -> (Vec<String>, Vec<String>) {
     // get current pattern ignores
     let ignore_patterns = config.get_ignore_patterns().unwrap_or_default();
@@ -247,20 +247,20 @@ mod test_cli_config {
         config.init().unwrap();
         config.save_ignores_patterns(&["id-3".to_string()]).unwrap();
 
-        let patterns: Vec<SensitiveCommands> = vec![
-            SensitiveCommands {
+        let patterns: Vec<Detection> = vec![
+            Detection {
                 test: Regex::new("test").unwrap(),
                 name: "test-1".to_string(),
                 id: "id-1".to_string(),
                 secret_group: 0,
             },
-            SensitiveCommands {
+            Detection {
                 test: Regex::new("test").unwrap(),
                 name: "test-2".to_string(),
                 id: "id-2".to_string(),
                 secret_group: 0,
             },
-            SensitiveCommands {
+            Detection {
                 test: Regex::new("test").unwrap(),
                 name: "test-3".to_string(),
                 id: "id-3".to_string(),

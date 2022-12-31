@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::{
     fs::File,
     io::{prelude::*, BufReader},
@@ -11,7 +12,7 @@ use rayon::prelude::*;
 use crate::shell::Shell;
 use crate::{
     config::Config,
-    data::{FindingSensitiveCommands, SensitiveCommands},
+    data::{Command, Detection},
     masker::Masker,
     shell,
     state::ShellContext,
@@ -20,8 +21,38 @@ use crate::{
 pub const SENSITIVE_COMMANDS: &str = include_str!("sensitive-patterns.yaml");
 
 pub struct PatternsEngine {
-    commands: Vec<SensitiveCommands>,
+    commands: Vec<Detection>,
     masker: Masker,
+}
+
+#[derive(Default, Debug)]
+pub struct ShellCommands {
+    engine_kind: HashMap<Shell, Vec<Command>>,
+}
+
+impl ShellCommands {
+    pub fn add_commands(&mut self, shell_type: &Shell, commands: Vec<Command>) {
+        if let Some(vec) = self.engine_kind.get_mut(shell_type) {
+            vec.extend(commands);
+        } else {
+            self.engine_kind.insert(shell_type.clone(), commands);
+        }
+    }
+
+    #[must_use]
+    pub fn get_commands_per_shell(&self, shell_type: &Shell) -> Option<&Vec<Command>> {
+        self.engine_kind.get(shell_type)
+    }
+
+    #[must_use]
+    pub fn get_commands_with_secrets(&self) -> Vec<Command> {
+        self.engine_kind
+            .values()
+            .flatten()
+            .filter(|&f| !f.detections.is_empty())
+            .cloned()
+            .collect::<Vec<_>>()
+    }
 }
 
 impl PatternsEngine {
@@ -32,7 +63,7 @@ impl PatternsEngine {
     /// Will return `Err` when could not load default sensitive commands
     pub fn with_config(config: &Config) -> Result<Self> {
         let sensitive_patterns = {
-            let mut patterns: Vec<SensitiveCommands> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
+            let mut patterns: Vec<Detection> = serde_yaml::from_str(SENSITIVE_COMMANDS)?;
 
             patterns = if config.is_app_path_exists() {
                 // load external patterns
@@ -77,22 +108,16 @@ impl PatternsEngine {
     pub fn find_history_commands_from_shell_list(
         &self,
         shells_context: &Vec<ShellContext>,
-    ) -> Result<(Vec<FindingSensitiveCommands>, Vec<FindingSensitiveCommands>)> {
-        let mut findings = Vec::new();
+    ) -> Result<ShellCommands> {
+        let mut commands = ShellCommands::default();
 
         for shell_context in shells_context {
             let history = self.find_history_commands(shell_context)?;
 
-            findings.extend(history);
+            commands.add_commands(&shell_context.history.shell, history);
         }
 
-        let sensitive_findings = findings
-            .iter()
-            .filter(|f| !f.sensitive_findings.is_empty())
-            .cloned()
-            .collect::<Vec<_>>();
-
-        Ok((findings, sensitive_findings))
+        Ok(commands)
     }
 
     /// Search sensitive command patterns
@@ -100,10 +125,7 @@ impl PatternsEngine {
     /// # Errors
     ///
     /// Will return `Err` if history file not exists/ couldn't open
-    pub fn find_history_commands(
-        &self,
-        state_context: &ShellContext,
-    ) -> Result<Vec<FindingSensitiveCommands>> {
+    pub fn find_history_commands(&self, state_context: &ShellContext) -> Result<Vec<Command>> {
         debug!(
             "clear history commands from path: {}",
             state_context.history.path
@@ -118,8 +140,8 @@ impl PatternsEngine {
     fn find_by_lines(
         &self,
         state_context: &ShellContext,
-        sensitive_commands: &[SensitiveCommands],
-    ) -> Result<Vec<FindingSensitiveCommands>> {
+        sensitive_commands: &[Detection],
+    ) -> Result<Vec<Command>> {
         let file = File::open(&state_context.history.path)?;
         let reader = BufReader::new(file);
 
@@ -145,9 +167,9 @@ impl PatternsEngine {
                     _ => command.clone(),
                 };
 
-                FindingSensitiveCommands {
+                Command {
                     shell_type: state_context.history.shell.clone(),
-                    sensitive_findings,
+                    detections: sensitive_findings,
                     command: only_command,
                     data: command.clone(),
                     secrets,
@@ -168,8 +190,8 @@ impl PatternsEngine {
     fn find_fish(
         &self,
         state_context: &ShellContext,
-        sensitive_commands: &[SensitiveCommands],
-    ) -> Result<Vec<FindingSensitiveCommands>> {
+        sensitive_commands: &[Detection],
+    ) -> Result<Vec<Command>> {
         let start = Instant::now();
         let history: Vec<shell::FishHistory> =
             serde_yaml::from_reader(File::open(&state_context.history.path)?)?;
@@ -180,9 +202,9 @@ impl PatternsEngine {
                 let (secrets, sensitive_findings) =
                     PatternsEngine::find_secrets(&h.cmd, sensitive_commands);
 
-                FindingSensitiveCommands {
+                Command {
                     shell_type: state_context.history.shell.clone(),
-                    sensitive_findings,
+                    detections: sensitive_findings,
                     command: h.cmd.clone(),
                     data: serde_yaml::to_string(&h).unwrap(),
                     secrets,
@@ -203,22 +225,21 @@ impl PatternsEngine {
 
     fn find_secrets(
         command: &str,
-        sensitive_commands: &[SensitiveCommands],
-    ) -> (Vec<String>, Vec<SensitiveCommands>) {
-        let (secrets, sensitive_findings): (Vec<String>, Vec<SensitiveCommands>) =
-            sensitive_commands
-                .par_iter()
-                .filter_map(|v| {
-                    Some((
-                        v.test
-                            .captures(command)?
-                            .get(v.secret_group as usize)?
-                            .as_str()
-                            .to_string(),
-                        v.clone(),
-                    ))
-                })
-                .unzip();
+        sensitive_commands: &[Detection],
+    ) -> (Vec<String>, Vec<Detection>) {
+        let (secrets, sensitive_findings): (Vec<String>, Vec<Detection>) = sensitive_commands
+            .par_iter()
+            .filter_map(|v| {
+                Some((
+                    v.test
+                        .captures(command)?
+                        .get(v.secret_group as usize)?
+                        .as_str()
+                        .to_string(),
+                    v.clone(),
+                ))
+            })
+            .unzip();
 
         (secrets, sensitive_findings)
     }

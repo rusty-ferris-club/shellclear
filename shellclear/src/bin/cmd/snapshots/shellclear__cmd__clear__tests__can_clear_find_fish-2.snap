@@ -1,6 +1,0 @@
----
-source: shellclear/src/bin/cmd/clear.rs
-assertion_line: 202
-expression: "fs::read_to_string(state_context.history.path).unwrap()"
----
-"---\ncmd: history\nwhen: \"1656438759\"\n\n---\ncmd: ls\nwhen: \"1656438760\"\n\n---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n\n---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n\n"

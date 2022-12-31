@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 
 use crate::{
-    data::FindingSensitiveCommands,
+    data::Command,
     shell::{FishHistory, Shell},
 };
 
@@ -17,7 +17,7 @@ pub trait Exporter {
     /// # Errors
     ///
     /// Will return `Err` export has an error
-    fn sensitive_data(&self, findings: &[FindingSensitiveCommands]) -> Result<()>;
+    fn sensitive_data(&self, findings: &[Command]) -> Result<()>;
 }
 
 lazy_static! {
@@ -38,7 +38,7 @@ pub fn chunk(text: &str, size: usize) -> String {
 /// # Errors
 ///
 /// Will return `Err` when conversion error
-pub fn extract_time(finding: &FindingSensitiveCommands) -> Result<String> {
+pub fn extract_time(finding: &Command) -> Result<String> {
     match finding.shell_type {
         Shell::Zshrc => {
             if let Some(c) = ZSHRC_CAPTURE_COMMAND_TIME.captures(&finding.data) {
@@ -78,9 +78,9 @@ mod test_exporter {
 
     #[test]
     fn can_extract_time_zshrc() {
-        let shell_finding = FindingSensitiveCommands {
+        let shell_finding = Command {
             shell_type: Shell::Zshrc,
-            sensitive_findings: vec![],
+            detections: vec![],
             command: "test command".to_string(),
             data: ": 1655110559:0;command data".to_string(),
             secrets: vec![],
@@ -93,9 +93,9 @@ mod test_exporter {
 
     #[test]
     fn can_extract_time_fish() {
-        let shell_finding = FindingSensitiveCommands {
+        let shell_finding = Command {
             shell_type: Shell::Fish,
-            sensitive_findings: vec![],
+            detections: vec![],
             command: "test command".to_string(),
             data: r#"{ cmd: "export test command", when: "1655110559" }"#.to_string(),
             secrets: vec![],

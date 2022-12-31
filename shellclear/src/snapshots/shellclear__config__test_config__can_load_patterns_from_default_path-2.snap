@@ -1,10 +1,11 @@
 ---
 source: shellclear/src/config.rs
+assertion_line: 285
 expression: config.load_patterns_from_default_path()
 ---
 Ok(
     [
-        SensitiveCommands {
+        Detection {
             test: <PATTERN REGEX>,
             name: "Pattern Name",
             secret_group: 0,

@@ -1,6 +1,0 @@
----
-source: shellclear/src/bin/cmd/clear.rs
-assertion_line: 171
-expression: result
----
-"  shellclear cleared 1 sensitive commands"

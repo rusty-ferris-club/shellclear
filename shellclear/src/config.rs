@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 
 use anyhow::Result;
 
-use crate::data::{SensitiveCommands, ROOT_APP_FOLDER};
+use crate::data::{Detection, ROOT_APP_FOLDER};
 
 const CONFIG_SENSITIVE_PATTERNS: &str = "sensitive-patterns.yaml";
 const CONFIG_IGNORES: &str = "ignores.yaml";
@@ -122,7 +122,7 @@ impl Config {
     /// # Errors
     ///
     /// Will return `Err` home directory not found or yaml is invalid
-    pub fn load_patterns_from_default_path(&self) -> Result<Vec<SensitiveCommands>> {
+    pub fn load_patterns_from_default_path(&self) -> Result<Vec<Detection>> {
         let f = std::fs::File::open(&self.sensitive_commands_path)?;
         let custom_patterns = serde_yaml::from_reader(f)?;
         log::debug!(
