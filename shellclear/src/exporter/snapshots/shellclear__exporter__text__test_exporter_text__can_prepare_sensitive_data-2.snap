@@ -1,5 +1,6 @@
 ---
 source: shellclear/src/exporter/text.rs
+assertion_line: 93
 expression: "str::from_utf8(&out).unwrap().replace(\"\\r\\n\",\n            \"\\n\").replace(\"\\u{1b}[1m\", \"\").replace(\"\\u{1b}[0m\", \"\")"
 ---
-"1. [zshrc] test name,test name2 2022-06-13 08:55:59\ntest command\n\n"
+"1. [zshrc] test name, test name2 2022-06-13 08:55:59\ntest command\n\n"

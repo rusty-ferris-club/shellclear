@@ -1,14 +1,22 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
+
+use shellclear::clearer::Clearer;
 use shellclear::{config::Config, engine, Emojis, ShellContext};
 
 pub fn command() -> Command<'static> {
     Command::new("clear")
-        .about("Clear the findings from shell history")
+        .about("Remove or mask the findings from shell history")
         .arg(
             Arg::new("backup")
                 .long("backup")
                 .help("Backup history file before delete commands")
+                .takes_value(false),
+        )
+        .arg(
+            Arg::new("remove")
+                .long("remove")
+                .help("Remove history that contains secrets")
                 .takes_value(false),
         )
 }
@@ -28,19 +36,22 @@ pub fn run(
                     return Ok(shellclear::data::CmdExit {
                         code: 1,
                         message: Some(format!(
-                            "could not backup shell {:?} history. err: {:?}",
-                            shell_context.history.shell, e
+                            "could not backup shell {:?} history. err: {e:?}",
+                            shell_context.history.shell,
                         )),
-                    })
+                    });
                 }
             }
         }
     }
 
-    let findings = en.find_history_commands_from_shall_list(shells_context, true)?;
+    let commands = en.find_history_commands_from_shell_list(shells_context)?;
 
-    let sensitive_commands = findings.get_sensitive_commands();
     let emojis = Emojis::default();
+
+    Clearer::write_findings(shells_context, &commands, matches.is_present("remove"))?;
+
+    let sensitive_commands = commands.get_commands_with_secrets();
 
     if sensitive_commands.is_empty() {
         return Ok(shellclear::data::CmdExit {

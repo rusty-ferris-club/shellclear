@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{Arg, ArgMatches, Command};
 use console::style;
+
 use shellclear::{
     config::Config,
     engine,
@@ -27,9 +28,10 @@ pub fn run(
 ) -> Result<shellclear::data::CmdExit> {
     let en = engine::PatternsEngine::with_config(config)?;
 
-    let findings = en.find_history_commands_from_shall_list(shells_context, false)?;
+    let sensitive_commands = en
+        .find_history_commands_from_shell_list(shells_context)?
+        .get_commands_with_secrets();
 
-    let sensitive_commands = findings.get_sensitive_commands();
     let emojis = Emojis::default();
 
     if sensitive_commands.is_empty() {
@@ -50,20 +52,23 @@ pub fn run(
     println!("\r\n{}\r\n", style(message).yellow());
 
     let exporter = match matches.value_of("format") {
-        Some("table") => Box::new(Table::default()) as Box<dyn Exporter>,
-        _ => Box::new(Text::default()) as Box<dyn Exporter>,
+        Some("table") => Box::<Table>::default() as Box<dyn Exporter>,
+        _ => Box::<Text>::default() as Box<dyn Exporter>,
     };
 
-    Ok(match exporter.sensitive_data(&sensitive_commands) {
-        Ok(()) => shellclear::data::CmdExit {
-            code: exitcode::OK,
-            message: Some(
-                "Run `shellclear clear` to clear command findings from your history".to_string(),
-            ),
+    Ok(
+        match exporter.sensitive_data(sensitive_commands.as_slice()) {
+            Ok(()) => shellclear::data::CmdExit {
+                code: exitcode::OK,
+                message: Some(
+                    "Run `shellclear clear` to clear command findings from your history"
+                        .to_string(),
+                ),
+            },
+            Err(e) => shellclear::data::CmdExit {
+                code: exitcode::OK,
+                message: Some(e.to_string()),
+            },
         },
-        Err(e) => shellclear::data::CmdExit {
-            code: exitcode::OK,
-            message: Some(e.to_string()),
-        },
-    })
+    )
 }

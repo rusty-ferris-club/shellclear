@@ -1,0 +1,6 @@
+---
+source: shellclear/src/clearer.rs
+assertion_line: 147
+expression: content
+---
+"mock\nshould be removed\n"

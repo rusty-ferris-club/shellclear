@@ -1,9 +1,11 @@
-mod cmd;
 use std::process::exit;
 
 use anyhow::anyhow;
 use console::{style, Style};
+
 use shellclear::{config::Config, dialog, engine, init, Emojis, ShellContext};
+
+mod cmd;
 
 const DEFAULT_ERR_EXIT_CODE: i32 = 1;
 
@@ -45,10 +47,11 @@ fn main() {
         match engine::PatternsEngine::with_config(&config) {
             Ok(engine) => {
                 let emojis = Emojis::default();
-                if let Ok(findings) =
-                    engine.find_history_commands_from_shall_list(&shells_context, false)
+                if let Ok(shell_commands) =
+                    engine.find_history_commands_from_shell_list(&shells_context)
                 {
-                    let sensitive_commands = findings.get_sensitive_commands();
+                    let sensitive_commands = shell_commands.get_commands_with_secrets();
+
                     if sensitive_commands.is_empty() {
                         eprintln!(
                             "{} Your shell is clean from sensitive data!",

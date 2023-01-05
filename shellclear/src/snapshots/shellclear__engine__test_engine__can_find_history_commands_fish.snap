@@ -1,47 +1,57 @@
 ---
 source: shellclear/src/engine.rs
+assertion_line: 331
 expression: result
 ---
 Ok(
-    Findings {
-        patterns: [
-            FindingSensitiveCommands {
-                shell_type: Fish,
-                sensitive_findings: [],
-                command: "history",
-                data: "---\ncmd: history\nwhen: \"1656438759\"\n",
-            },
-            FindingSensitiveCommands {
-                shell_type: Fish,
-                sensitive_findings: [],
-                command: "ls",
-                data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
-            },
-            FindingSensitiveCommands {
-                shell_type: Fish,
-                sensitive_findings: [],
-                command: "echo 'hello you'",
-                data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
-            },
-            FindingSensitiveCommands {
-                shell_type: Fish,
-                sensitive_findings: [],
-                command: "rm -f ./file.txt",
-                data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
-            },
-            FindingSensitiveCommands {
-                shell_type: Fish,
-                sensitive_findings: [
-                    SensitiveCommands {
-                        test: FIND_ME=,
-                        name: "Find me",
-                        secret_group: 0,
-                        id: "",
-                    },
-                ],
-                command: "export FIND_ME=token",
-                data: "---\ncmd: export FIND_ME=token\nwhen: \"1656438760\"\n",
-            },
-        ],
+    ShellCommands {
+        engine_kind: {
+            Fish: [
+                Command {
+                    shell_type: Fish,
+                    detections: [],
+                    command: "history",
+                    data: "---\ncmd: history\nwhen: \"1656438759\"\n",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Fish,
+                    detections: [],
+                    command: "ls",
+                    data: "---\ncmd: ls\nwhen: \"1656438760\"\n",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Fish,
+                    detections: [],
+                    command: "echo 'hello you'",
+                    data: "---\ncmd: \"echo 'hello you'\"\nwhen: \"1656438760\"\n",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Fish,
+                    detections: [],
+                    command: "rm -f ./file.txt",
+                    data: "---\ncmd: rm -f ./file.txt\nwhen: \"1656438760\"\n",
+                    secrets: [],
+                },
+                Command {
+                    shell_type: Fish,
+                    detections: [
+                        Detection {
+                            test: FIND_ME=,
+                            name: "Find me",
+                            secret_group: 0,
+                            id: "",
+                        },
+                    ],
+                    command: "export FI******token",
+                    data: "---\ncmd: export FI******token\nwhen: \"1656438760\"\n",
+                    secrets: [
+                        "FIND_ME=",
+                    ],
+                },
+            ],
+        },
     },
 )

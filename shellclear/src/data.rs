@@ -11,19 +11,20 @@ pub struct CmdExit {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct SensitiveCommands {
+pub struct Detection {
     #[serde(with = "serde_regex")]
     pub test: regex::Regex,
     pub name: String,
-    pub secret_group: i8,
+    pub secret_group: u8,
     #[serde(default)]
     pub id: String,
 }
 
-#[derive(Debug)]
-pub struct FindingSensitiveCommands {
+#[derive(Debug, Clone)]
+pub struct Command {
     pub shell_type: Shell,
-    pub sensitive_findings: Vec<SensitiveCommands>,
+    pub detections: Vec<Detection>,
     pub command: String,
     pub data: String,
+    pub secrets: Vec<String>,
 }
