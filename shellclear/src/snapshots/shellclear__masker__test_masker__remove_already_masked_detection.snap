@@ -1,0 +1,16 @@
+---
+source: shellclear/src/masker.rs
+assertion_line: 123
+expression: commands
+---
+[
+    Command {
+        shell_type: Zshrc,
+        detections: [],
+        command: "export MA*****",
+        data: "export MA*****",
+        secrets: [
+            "MASK_ME",
+        ],
+    },
+]

@@ -32,6 +32,7 @@ curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/ins
 ```
 
 Or via brew
+
 ```sh
 brew tap rusty-ferris-club/tap && brew install shellclear
 ```
@@ -41,7 +42,9 @@ brew tap rusty-ferris-club/tap && brew install shellclear
 <details>
 <summary>Linux</summary>
 
-You need to make sure that `apt install xz-utils` is install. There is an open issue [#52](https://github.com/rusty-ferris-club/shellclear/issues/52) to remove this dependencies.
+You need to make sure that `apt install xz-utils` is install. There is an open
+issue [#52](https://github.com/rusty-ferris-club/shellclear/issues/52) to remove this dependencies.
+
 ```sh
 curl -sS https://raw.githubusercontent.com/rusty-ferris-club/shellclear/main/install/install.sh | bash
 ```
@@ -70,6 +73,7 @@ Add the following to the end of ~/.bashrc:
 ```sh
 eval $(shellclear --init-shell)
 ```
+
 </details>
 
 <details>
@@ -79,6 +83,7 @@ Add the following to the end of ~/.zshrc:
 ```sh
 eval $(shellclear --init-shell)
 ```
+
 </details>
 
 <details>
@@ -88,6 +93,7 @@ Add the following to the end of your PowerShell configuration (find it by runnin
 ```powershell
 Invoke-Expression (&shellclear --init-shell)
 ```
+
 </details>
 
 <details>
@@ -97,6 +103,7 @@ Add the following to the end of ~/.config/fish/config.fish:
 ```sh
 shellclear --init-shell | source
 ```
+
 </details>
 
 
@@ -140,10 +147,16 @@ shellclear find --format table
 
 ![find](./media/find.png)
 
-### :broom: Clear findings :
+## :broom: Mask findings:
 
 ```sh
 shellclear clear
+```
+
+## :collision: Remove findings:
+
+```sh
+shellclear clear --remove
 ```
 
 ## :luggage: Backup shell history before clear
@@ -210,12 +223,13 @@ shellclear config ignores
 ```
 
 # Examples
-[All the examples here](./example/README.MD)
 
+[All the examples here](./example/README.MD)
 
 # Thanks
 
-To all [Contributors](https://github.com/rusty-ferris-club/shellclear/graphs/contributors) - you make this happen, thanks!
+To all [Contributors](https://github.com/rusty-ferris-club/shellclear/graphs/contributors) - you make this happen,
+thanks!
 
 # Copyright
 
