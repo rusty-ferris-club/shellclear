@@ -72,6 +72,7 @@ impl Masker {
 
 #[cfg(test)]
 mod test_masker {
+    use anyhow::Result;
     use insta::assert_debug_snapshot;
     use regex::Regex;
 
@@ -82,7 +83,7 @@ mod test_masker {
     };
 
     #[test]
-    fn mask_results() -> anyhow::Result<()> {
+    fn mask_results() -> Result<()> {
         let mut commands = vec![Command {
             shell_type: Zshrc,
             detections: vec![Detection {
@@ -104,7 +105,7 @@ mod test_masker {
     }
 
     #[test]
-    fn remove_already_masked_detection() -> anyhow::Result<()> {
+    fn remove_already_masked_detection() -> Result<()> {
         let mut commands = [Command {
             shell_type: Zshrc,
             detections: vec![Detection {
