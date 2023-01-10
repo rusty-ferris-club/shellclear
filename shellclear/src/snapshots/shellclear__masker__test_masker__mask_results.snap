@@ -1,0 +1,23 @@
+---
+source: shellclear/src/masker.rs
+assertion_line: 101
+expression: commands
+---
+[
+    Command {
+        shell_type: Zshrc,
+        detections: [
+            Detection {
+                test: export (MASK_ME),
+                name: "mask me mock",
+                secret_group: 1,
+                id: "",
+            },
+        ],
+        command: "export MA*****",
+        data: "export MA*****",
+        secrets: [
+            "MASK_ME",
+        ],
+    },
+]
