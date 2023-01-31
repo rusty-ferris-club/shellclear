@@ -50,7 +50,8 @@ pub fn extract_time(finding: &Command) -> Result<String> {
                     ));
                 }
             };
-            Ok(String::new())
+            Ok(finding.data.clone())
+            // Ok(String::new())
         }
         Shell::Fish => {
             let history: FishHistory = serde_yaml::from_str(&finding.data)?;

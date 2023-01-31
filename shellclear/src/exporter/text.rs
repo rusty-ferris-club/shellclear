@@ -32,7 +32,7 @@ impl Text {
             );
 
             writeln!(out, "{}", style(title).bold())?;
-            writeln!(out, "{}", chunk(&f.command, LIMIT_COMMAND).trim())?;
+            writeln!(out, "{}", chunk(&f.command, LIMIT_COMMAND))?;
             writeln!(out)?;
         }
         Ok(())

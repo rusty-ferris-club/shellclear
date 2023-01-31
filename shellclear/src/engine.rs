@@ -159,8 +159,7 @@ impl PatternsEngine {
         let mut results = lines
             .par_iter()
             .map(|command| {
-                let (secrets, sensitive_findings) =
-                    PatternsEngine::find_secrets(command, sensitive_commands);
+                let (secrets, sensitive_findings) = Self::find_secrets(command, sensitive_commands);
 
                 let only_command = match command.split_once(';') {
                     Some((_x, y)) => y.to_string(),
@@ -199,8 +198,7 @@ impl PatternsEngine {
         let mut results = history
             .par_iter()
             .map(|h| {
-                let (secrets, sensitive_findings) =
-                    PatternsEngine::find_secrets(&h.cmd, sensitive_commands);
+                let (secrets, sensitive_findings) = Self::find_secrets(&h.cmd, sensitive_commands);
 
                 Command {
                     shell_type: state_context.history.shell.clone(),
@@ -355,27 +353,23 @@ export FIND_ME=token
         temp_dir.close().unwrap();
     }
 
-    //     #[test]
-    //     fn can_ignore_patterns() {
-    //         let temp_dir = TempDir::new("engine").unwrap();
+    #[test]
+    fn can_ignore_patterns() {
+        let temp_dir = TempDir::new("engine").unwrap();
 
-    //         let config =
-    // Config::with_custom_path(&temp_dir.path().join("app"));
-    //         config.init().unwrap();
-    //         let custom_pattern = r###"
-    // - elad_ignore
-    // "###;
-    //         fs::write(&config.sensitive_commands_path,
-    // custom_pattern).unwrap();
+        let config = Config::with_custom_path(&temp_dir.path().join("app"));
+        config.init().unwrap();
+        let custom_pattern = r###"
+- elad_ignore
+"###;
+        fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
 
-    //         let en = PatternsEngine::with_config(&config).unwrap();
-    //         let state_context = create_mock_state(&temp_dir,
-    // TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
+        let en = PatternsEngine::with_config(&config).unwrap();
+        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
 
-    //         let result =
-    // en.find_history_commands_from_shell_list(&vec![state_context]);
+        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
 
-    //         assert_debug_snapshot!(result);
-    //         temp_dir.close().unwrap();
-    //     }
+        assert_debug_snapshot!(result);
+        temp_dir.close().unwrap();
+    }
 }
