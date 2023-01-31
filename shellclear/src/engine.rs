@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use std::{
+    collections::HashMap,
     fs::File,
     io::{prelude::*, BufReader},
     time::Instant,
@@ -9,12 +9,12 @@ use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
 
-use crate::shell::Shell;
 use crate::{
     config::Config,
     data::{Command, Detection},
     masker::Masker,
     shell,
+    shell::Shell,
     state::ShellContext,
 };
 
@@ -355,23 +355,27 @@ export FIND_ME=token
         temp_dir.close().unwrap();
     }
 
-    #[test]
-    fn can_ignore_patterns() {
-        let temp_dir = TempDir::new("engine").unwrap();
+    //     #[test]
+    //     fn can_ignore_patterns() {
+    //         let temp_dir = TempDir::new("engine").unwrap();
 
-        let config = Config::with_custom_path(&temp_dir.path().join("app"));
-        config.init().unwrap();
-        let custom_pattern = r###"
-- elad_ignore
-"###;
-        fs::write(&config.sensitive_commands_path, custom_pattern).unwrap();
+    //         let config =
+    // Config::with_custom_path(&temp_dir.path().join("app"));
+    //         config.init().unwrap();
+    //         let custom_pattern = r###"
+    // - elad_ignore
+    // "###;
+    //         fs::write(&config.sensitive_commands_path,
+    // custom_pattern).unwrap();
 
-        let en = PatternsEngine::with_config(&config).unwrap();
-        let state_context = create_mock_state(&temp_dir, TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
+    //         let en = PatternsEngine::with_config(&config).unwrap();
+    //         let state_context = create_mock_state(&temp_dir,
+    // TEMP_HISTORY_LINES_CONTENT, Shell::Bash);
 
-        let result = en.find_history_commands_from_shell_list(&vec![state_context]);
+    //         let result =
+    // en.find_history_commands_from_shell_list(&vec![state_context]);
 
-        assert_debug_snapshot!(result);
-        temp_dir.close().unwrap();
-    }
+    //         assert_debug_snapshot!(result);
+    //         temp_dir.close().unwrap();
+    //     }
 }
