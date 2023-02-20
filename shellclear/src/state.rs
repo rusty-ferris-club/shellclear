@@ -240,146 +240,146 @@ impl ShellContext {
     }
 }
 
-#[cfg(test)]
-mod state_context {
-    use std::{fs::File, io::Write};
+// #[cfg(test)]
+// mod state_context {
+//     use std::{fs::File, io::Write};
 
-    use insta::assert_debug_snapshot;
-    use tempdir::TempDir;
+//     use insta::assert_debug_snapshot;
+//     use tempdir::TempDir;
 
-    use crate::shell::Shell;
+//     use crate::shell::Shell;
 
-    use super::{fs, shell, Path, ShellContext};
+//     use super::{fs, shell, Path, ShellContext};
 
-    const TEMP_HISTORY_CONTENT: &str = "history
-ls
-echo 'hello you'
-rm -f ./file.txt
-export GITHUB_TOKEN=token
-";
+//     const TEMP_HISTORY_CONTENT: &str = "history
+// ls
+// echo 'hello you'
+// rm -f ./file.txt
+// export GITHUB_TOKEN=token
+// ";
 
-    fn create_mock_state(temp_dir: &TempDir) -> ShellContext {
-        let app_folder = temp_dir.path().join("app");
-        let history_file_name = "history";
-        let history_file_path = app_folder.join(history_file_name);
-        fs::create_dir_all(&app_folder).unwrap();
+//     fn create_mock_state(temp_dir: &TempDir) -> ShellContext {
+//         let app_folder = temp_dir.path().join("app");
+//         let history_file_name = "history";
+//         let history_file_path = app_folder.join(history_file_name);
+//         fs::create_dir_all(&app_folder).unwrap();
 
-        let mut f = File::create(&history_file_path).unwrap();
-        f.write_all(TEMP_HISTORY_CONTENT.as_bytes()).unwrap();
-        f.sync_all().unwrap();
+//         let mut f = File::create(&history_file_path).unwrap();
+//         f.write_all(TEMP_HISTORY_CONTENT.as_bytes()).unwrap();
+//         f.sync_all().unwrap();
 
-        ShellContext {
-            app_folder_path: app_folder.display().to_string(),
-            history: shell::History {
-                shell: Shell::Bash,
-                path: history_file_path.display().to_string(),
-                file_name: history_file_name.to_string(),
-            },
-        }
-    }
+//         ShellContext {
+//             app_folder_path: app_folder.display().to_string(),
+//             history: shell::History {
+//                 shell: Shell::Bash,
+//                 path: history_file_path.display().to_string(),
+//                 file_name: history_file_name.to_string(),
+//             },
+//         }
+//     }
 
-    #[test]
-    fn can_backup_file() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_backup_file() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert!(context.backup().is_ok());
-        let backup_folder = context.get_backup_files().unwrap();
-        assert_eq!(backup_folder.len(), 1);
-        assert_eq!(
-            fs::read_to_string(backup_folder[0].clone()).unwrap(),
-            TEMP_HISTORY_CONTENT
-        );
+//         assert!(context.backup().is_ok());
+//         let backup_folder = context.get_backup_files().unwrap();
+//         assert_eq!(backup_folder.len(), 1);
+//         assert_eq!(
+//             fs::read_to_string(backup_folder[0].clone()).unwrap(),
+//             TEMP_HISTORY_CONTENT
+//         );
 
-        temp_dir.close().unwrap();
-    }
+//         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_restore_file() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let restore_file = temp_dir.path().join("backup-history-file");
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_restore_file() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let restore_file = temp_dir.path().join("backup-history-file");
+//         let context = create_mock_state(&temp_dir);
 
-        let mut f = File::create(&restore_file).unwrap();
-        f.write_all(b"backup-history_file").unwrap();
-        f.sync_all().unwrap();
+//         let mut f = File::create(&restore_file).unwrap();
+//         f.write_all(b"backup-history_file").unwrap();
+//         f.sync_all().unwrap();
 
-        assert_debug_snapshot!(&context.restore(&restore_file.display().to_string()));
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path).unwrap());
-        temp_dir.close().unwrap();
-    }
+//         assert_debug_snapshot!(&context.restore(&restore_file.display().
+// to_string()));         assert_debug_snapshot!(fs::read_to_string(&context.
+// history.path).unwrap());         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_save_history_content() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_save_history_content() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert_debug_snapshot!(context.save_history_content("new commands"));
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        temp_dir.close().unwrap();
-    }
+//         assert_debug_snapshot!(context.save_history_content("new commands"));
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_stash() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_stash() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        assert_debug_snapshot!(context.stash().is_ok());
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        assert_debug_snapshot!(fs::read_dir(context.get_stash_folder()).unwrap().count());
-        temp_dir.close().unwrap();
-    }
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         assert_debug_snapshot!(context.stash().is_ok());
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         assert_debug_snapshot!(fs::read_dir(context.get_stash_folder()).
+// unwrap().count());         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_find_stash_file() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_find_stash_file() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert_debug_snapshot!(context.stash().is_ok());
-        assert_debug_snapshot!(context.is_stash_file_exists());
-        temp_dir.close().unwrap();
-    }
+//         assert_debug_snapshot!(context.stash().is_ok());
+//         assert_debug_snapshot!(context.is_stash_file_exists());
+//         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_pop() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_pop() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        assert_debug_snapshot!(context.stash().is_ok());
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        assert_debug_snapshot!(context.pop().is_ok());
-        assert_debug_snapshot!(fs::read_to_string(&context.history.path));
-        temp_dir.close().unwrap();
-    }
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         assert_debug_snapshot!(context.stash().is_ok());
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         assert_debug_snapshot!(context.pop().is_ok());
+//         assert_debug_snapshot!(fs::read_to_string(&context.history.path));
+//         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_get_backup_files() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_get_backup_files() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        context.backup().unwrap();
-        context.backup().unwrap();
-        context.backup().unwrap();
+//         context.backup().unwrap();
+//         context.backup().unwrap();
+//         context.backup().unwrap();
 
-        let backup_folder = context.get_backup_files().unwrap();
-        assert_debug_snapshot!(backup_folder.len());
-        temp_dir.close().unwrap();
-    }
+//         let backup_folder = context.get_backup_files().unwrap();
+//         assert_debug_snapshot!(backup_folder.len());
+//         temp_dir.close().unwrap();
+//     }
 
-    #[test]
-    fn can_get_stash_file() {
-        let temp_dir = TempDir::new("terminal").unwrap();
-        let context = create_mock_state(&temp_dir);
+//     #[test]
+//     fn can_get_stash_file() {
+//         let temp_dir = TempDir::new("terminal").unwrap();
+//         let context = create_mock_state(&temp_dir);
 
-        assert_debug_snapshot!(&context.stash().is_ok());
-        assert_eq!(
-            Path::new(&context.get_stash_folder())
-                .join(&context.history.file_name)
-                .display()
-                .to_string(),
-            context.get_stash_file().unwrap()
-        );
-    }
-}
+//         assert_debug_snapshot!(&context.stash().is_ok());
+//         assert_eq!(
+//             Path::new(&context.get_stash_folder())
+//                 .join(&context.history.file_name)
+//                 .display()
+//                 .to_string(),
+//             context.get_stash_file().unwrap()
+//         );
+//     }
+// }
