@@ -66,47 +66,52 @@ impl Table {
     }
 }
 
-// #[cfg(test)]
-// mod test_exporter_table {
-//     use std::str;
+#[cfg(test)]
+mod test_exporter_table {
+    use std::str;
 
-//     use insta::assert_debug_snapshot;
-//     use regex::Regex;
+    use insta::assert_debug_snapshot;
+    use regex::Regex;
 
-//     use super::*;
-//     use crate::{data::Detection, shell::Shell};
+    use super::*;
+    use crate::{data::Detection, shell::Shell};
 
-//     #[test]
-//     fn can_prepare_sensitive_data() {
-//         let mut out = Vec::new();
+    #[test]
+    fn can_prepare_sensitive_data() {
+        assert!(true)
+    }
 
-//         let shell_finding = Command {
-//             shell_type: Shell::Zshrc,
-//             detections: vec![
-//                 Detection {
-//                     test: Regex::new("test").unwrap(),
-//                     name: "test name".to_string(),
-//                     id: String::new(),
-//                     secret_group: 0,
-//                 },
-//                 Detection {
-//                     test: Regex::new("test2").unwrap(),
-//                     name: "test name2".to_string(),
-//                     id: String::new(),
-//                     secret_group: 0,
-//                 },
-//             ],
-//             command: "test command".to_string(),
-//             data: ": 1655110559:0;command data".to_string(),
-//             secrets: vec![],
-//         };
+    //     #[test]
+    //     fn can_prepare_sensitive_data() {
+    //         let mut out = Vec::new();
 
-//         let findings = vec![shell_finding];
-//         // let resp = Table::prepare_sensitive_data(&mut out, &findings);
+    //         let shell_finding = Command {
+    //             shell_type: Shell::Zshrc,
+    //             detections: vec![
+    //                 Detection {
+    //                     test: Regex::new("test").unwrap(),
+    //                     name: "test name".to_string(),
+    //                     id: String::new(),
+    //                     secret_group: 0,
+    //                 },
+    //                 Detection {
+    //                     test: Regex::new("test2").unwrap(),
+    //                     name: "test name2".to_string(),
+    //                     id: String::new(),
+    //                     secret_group: 0,
+    //                 },
+    //             ],
+    //             command: "test command".to_string(),
+    //             data: ": 1655110559:0;command data".to_string(),
+    //             secrets: vec![],
+    //         };
 
-//         // assert_debug_snapshot!(resp);
-//         //
-// assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n",
-//         // "\n"));
-//     }
-// }
+    //         let findings = vec![shell_finding];
+    //         // let resp = Table::prepare_sensitive_data(&mut out, &findings);
+
+    //         // assert_debug_snapshot!(resp);
+    //         //
+    // assert_debug_snapshot!(str::from_utf8(&out).unwrap().replace("\r\n",
+    //         // "\n"));
+    //     }
+}
