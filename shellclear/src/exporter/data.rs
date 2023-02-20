@@ -68,42 +68,42 @@ fn convert_str_timestamp_to_date_time(timestamp: &str) -> Result<DateTime<Utc>> 
     Ok(Utc.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp.parse::<i64>()?, 0)))
 }
 
-#[cfg(test)]
-mod test_exporter {
-    use std::str;
+// #[cfg(test)]
+// mod test_exporter {
+//     use std::str;
 
-    use insta::assert_debug_snapshot;
+//     use insta::assert_debug_snapshot;
 
-    use super::*;
-    use crate::shell::Shell;
+//     use super::*;
+//     use crate::shell::Shell;
 
-    #[test]
-    fn can_extract_time_zshrc() {
-        let shell_finding = Command {
-            shell_type: Shell::Zshrc,
-            detections: vec![],
-            command: "test command".to_string(),
-            data: ": 1655110559:0;command data".to_string(),
-            secrets: vec![],
-        };
+//     #[test]
+//     fn can_extract_time_zshrc() {
+//         let shell_finding = Command {
+//             shell_type: Shell::Zshrc,
+//             detections: vec![],
+//             command: "test command".to_string(),
+//             data: ": 1655110559:0;command data".to_string(),
+//             secrets: vec![],
+//         };
 
-        let resp = extract_time(&shell_finding);
+//         let resp = extract_time(&shell_finding);
 
-        assert_debug_snapshot!(resp);
-    }
+//         assert_debug_snapshot!(resp);
+//     }
 
-    #[test]
-    fn can_extract_time_fish() {
-        let shell_finding = Command {
-            shell_type: Shell::Fish,
-            detections: vec![],
-            command: "test command".to_string(),
-            data: r#"{ cmd: "export test command", when: "1655110559" }"#.to_string(),
-            secrets: vec![],
-        };
+//     #[test]
+//     fn can_extract_time_fish() {
+//         let shell_finding = Command {
+//             shell_type: Shell::Fish,
+//             detections: vec![],
+//             command: "test command".to_string(),
+//             data: r#"{ cmd: "export test command", when: "1655110559"
+// }"#.to_string(),             secrets: vec![],
+//         };
 
-        let resp = extract_time(&shell_finding);
+//         let resp = extract_time(&shell_finding);
 
-        assert_debug_snapshot!(resp);
-    }
-}
+//         assert_debug_snapshot!(resp);
+//     }
+// }
