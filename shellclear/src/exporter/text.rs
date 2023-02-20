@@ -11,6 +11,15 @@ use crate::{
 #[derive(Default)]
 pub struct Text {}
 
+impl Exporter for Text {
+    fn sensitive_data(&self, findings: &[Command]) -> Result<()> {
+        let mut out = Vec::new();
+        Self::prepare_sensitive_data(&mut out, findings)?;
+        print!("{}", str::from_utf8(&out)?);
+        Ok(())
+    }
+}
+
 impl Text {
     fn prepare_sensitive_data(out: &mut Vec<u8>, findings: &[Command]) -> Result<()> {
         let mut count = 0;
@@ -35,15 +44,6 @@ impl Text {
             writeln!(out, "{}", chunk(&f.command, LIMIT_COMMAND))?;
             writeln!(out)?;
         }
-        Ok(())
-    }
-}
-
-impl Exporter for Text {
-    fn sensitive_data(&self, findings: &[Command]) -> Result<()> {
-        let mut out = Vec::new();
-        Self::prepare_sensitive_data(&mut out, findings)?;
-        print!("{}", str::from_utf8(&out)?);
         Ok(())
     }
 }
