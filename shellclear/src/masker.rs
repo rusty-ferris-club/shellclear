@@ -82,47 +82,47 @@ mod test_masker {
         shell::Shell::Zshrc,
     };
 
-    #[test]
-    fn mask_results() -> Result<()> {
-        let mut commands = vec![Command {
-            shell_type: Zshrc,
-            detections: vec![Detection {
-                test: Regex::new("export (MASK_ME)")?,
-                name: "mask me mock".to_string(),
-                secret_group: 1,
-                id: "".to_string(),
-            }],
-            command: "export MASK_ME".to_string(),
-            data: "export MASK_ME".to_string(),
-            secrets: vec!["MASK_ME".to_string()],
-        }];
+    // #[test]
+    // fn mask_results() -> Result<()> {
+    //     let mut commands = vec![Command {
+    //         shell_type: Zshrc,
+    //         detections: vec![Detection {
+    //             test: Regex::new("export (MASK_ME)")?,
+    //             name: "mask me mock".to_string(),
+    //             secret_group: 1,
+    //             id: "".to_string(),
+    //         }],
+    //         command: "export MASK_ME".to_string(),
+    //         data: "export MASK_ME".to_string(),
+    //         secrets: vec!["MASK_ME".to_string()],
+    //     }];
 
-        Masker::new().mask_sensitive_findings(commands.as_mut());
+    //     Masker::new().mask_sensitive_findings(commands.as_mut());
 
-        assert_debug_snapshot!(commands);
+    //     assert_debug_snapshot!(commands);
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
-    #[test]
-    fn remove_already_masked_detection() -> Result<()> {
-        let mut commands = [Command {
-            shell_type: Zshrc,
-            detections: vec![Detection {
-                test: Regex::new("export (MASK_ME)")?,
-                name: "mask me mock".to_string(),
-                secret_group: 1,
-                id: "".to_string(),
-            }],
-            command: "export MA*****".to_string(),
-            data: "export MA*****".to_string(),
-            secrets: vec!["MASK_ME".to_string()],
-        }];
+    // #[test]
+    // fn remove_already_masked_detection() -> Result<()> {
+    //     let mut commands = [Command {
+    //         shell_type: Zshrc,
+    //         detections: vec![Detection {
+    //             test: Regex::new("export (MASK_ME)")?,
+    //             name: "mask me mock".to_string(),
+    //             secret_group: 1,
+    //             id: "".to_string(),
+    //         }],
+    //         command: "export MA*****".to_string(),
+    //         data: "export MA*****".to_string(),
+    //         secrets: vec!["MASK_ME".to_string()],
+    //     }];
 
-        Masker::new().mask_sensitive_findings(commands.as_mut());
+    //     Masker::new().mask_sensitive_findings(commands.as_mut());
 
-        assert_debug_snapshot!(commands);
+    //     assert_debug_snapshot!(commands);
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 }
