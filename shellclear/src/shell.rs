@@ -94,37 +94,34 @@ fn get_shell_history_path(shell_type: &Shell, homedir: &str) -> String {
     }
 }
 
-// #[cfg(test)]
-// mod state_shell {
-//     use std::{fs, fs::File};
+#[cfg(test)]
+mod state_shell {
+    use std::{fs, fs::File};
 
-//     use insta::{assert_debug_snapshot, with_settings};
-//     use tempdir::TempDir;
+    use insta::{assert_debug_snapshot, with_settings};
+    use tempdir::TempDir;
 
-//     use super::{
-//         get_all_history_files, BASH_HISTORY_FILE_PATH,
-// FISH_HISTORY_FILE_PATH,         ZSH_HISTORY_FILE_PATH,
-//     };
+    use super::{
+        get_all_history_files, BASH_HISTORY_FILE_PATH, FISH_HISTORY_FILE_PATH,
+        ZSH_HISTORY_FILE_PATH,
+    };
 
-//     #[test]
-//     fn can_get_all_history_files() {
-//         let temp_dir = TempDir::new("terminal").unwrap().path().join("app");
+    #[test]
+    fn can_get_all_history_files() {
+        let temp_dir = TempDir::new("terminal").unwrap().path().join("app");
 
-//         fs::create_dir_all(&temp_dir).unwrap();
-//         fs::create_dir_all(temp_dir.join(FISH_HISTORY_FILE_PATH).parent().
-// unwrap()).unwrap();
+        fs::create_dir_all(&temp_dir).unwrap();
+        fs::create_dir_all(temp_dir.join(FISH_HISTORY_FILE_PATH).parent().unwrap()).unwrap();
 
-//         File::create(temp_dir.join(ZSH_HISTORY_FILE_PATH)).expect("create
-// failed");         File::create(temp_dir.join(BASH_HISTORY_FILE_PATH)).
-// expect("create failed");         File::create(temp_dir.
-// join(FISH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(ZSH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(BASH_HISTORY_FILE_PATH)).expect("create failed");
+        File::create(temp_dir.join(FISH_HISTORY_FILE_PATH)).expect("create failed");
 
-//         with_settings!({filters => vec![
-//             (r"//*.+/(app)", "PATH"),
-//             (r"([C]?:\\.+app\\\\)", "PATH/")// for windows
-//         ]}, {
-//             
-// assert_debug_snapshot!(get_all_history_files(&temp_dir.display().
-// to_string()));         });
-//     }
-// }
+        with_settings!({filters => vec![
+            (r"//*.+/(app)", "PATH"),
+            (r"([C]?:\\.+app\\\\)", "PATH/")// for windows
+        ]}, {
+            assert_debug_snapshot!(get_all_history_files(&temp_dir.display().to_string()));
+        });
+    }
+}

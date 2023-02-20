@@ -102,35 +102,35 @@ mod tests {
         (commands, state_context)
     }
 
-    // #[test]
-    // fn remove_sensitive_commands() {
-    //     let dir = TempDir::new("clearer").unwrap();
-    //     let history = dir.path().join("history");
+    #[test]
+    fn remove_sensitive_commands() {
+        let dir = TempDir::new("clearer").unwrap();
+        let history = dir.path().join("history");
 
-    //     let (commands, state_context) = mock_state(&history);
+        let (commands, state_context) = mock_state(&history);
 
-    //     Clearer::write_findings(&state_context, &commands, true).unwrap();
+        Clearer::write_findings(&state_context, &commands, true).unwrap();
 
-    //     let content = fs::read_to_string(history).unwrap();
+        let content = fs::read_to_string(history).unwrap();
 
-    //     assert_debug_snapshot!(content);
+        assert_debug_snapshot!(content);
 
-    //     dir.close().unwrap();
-    // }
+        dir.close().unwrap();
+    }
 
-    // #[test]
-    // fn persist_sensitive_commands() {
-    //     let dir = TempDir::new("clearer").unwrap();
-    //     let history = dir.path().join("history");
+    #[test]
+    fn persist_sensitive_commands() {
+        let dir = TempDir::new("clearer").unwrap();
+        let history = dir.path().join("history");
 
-    //     let (commands, state_context) = mock_state(&history);
+        let (commands, state_context) = mock_state(&history);
 
-    //     Clearer::write_findings(&state_context, &commands, false).unwrap();
+        Clearer::write_findings(&state_context, &commands, false).unwrap();
 
-    //     let content = fs::read_to_string(history).unwrap();
+        let content = fs::read_to_string(history).unwrap();
 
-    //     assert_debug_snapshot!(content);
+        assert_debug_snapshot!(content);
 
-    //     dir.close().unwrap();
-    // }
+        dir.close().unwrap();
+    }
 }
