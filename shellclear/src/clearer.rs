@@ -1,11 +1,8 @@
-use std::fmt::Write;
-use std::fs::write;
-use std::time::Instant;
+use std::{fmt::Write, fs::write, time::Instant};
 
 use anyhow::Result;
 
-use crate::engine::ShellCommands;
-use crate::ShellContext;
+use crate::{engine::ShellCommands, ShellContext};
 
 pub struct Clearer {}
 
@@ -52,18 +49,17 @@ impl Clearer {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
-    use std::path::Path;
+    use std::{fs, path::Path};
 
     use insta::assert_debug_snapshot;
     use regex::Regex;
     use tempdir::TempDir;
 
-    use crate::data::{Command, Detection};
-    use crate::shell::History;
-    use crate::shell::Shell::Zshrc;
-
     use super::*;
+    use crate::{
+        data::{Command, Detection},
+        shell::{History, Shell::Zshrc},
+    };
 
     fn mock_state(dir: &Path) -> (ShellCommands, Vec<ShellContext>) {
         let state_context = vec![ShellContext {

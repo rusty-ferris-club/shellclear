@@ -51,6 +51,7 @@ pub fn extract_time(finding: &Command) -> Result<String> {
                 }
             };
             Ok(finding.data.clone())
+            // Ok(String::new())
         }
         Shell::Fish => {
             let history: FishHistory = serde_yaml::from_str(&finding.data)?;
@@ -97,7 +98,9 @@ mod test_exporter {
             shell_type: Shell::Fish,
             detections: vec![],
             command: "test command".to_string(),
-            data: r#"{ cmd: "export test command", when: "1655110559" }"#.to_string(),
+            data: r#"{ cmd: "export test command", when: "1655110559"
+}"#
+            .to_string(),
             secrets: vec![],
         };
 

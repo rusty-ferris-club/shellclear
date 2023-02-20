@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use std::{
+    collections::HashMap,
     fs::File,
     io::{prelude::*, BufReader},
     time::Instant,
@@ -9,12 +9,12 @@ use anyhow::Result;
 use log::debug;
 use rayon::prelude::*;
 
-use crate::shell::Shell;
 use crate::{
     config::Config,
     data::{Command, Detection},
     masker::Masker,
     shell,
+    shell::Shell,
     state::ShellContext,
 };
 
@@ -159,8 +159,7 @@ impl PatternsEngine {
         let mut results = lines
             .par_iter()
             .map(|command| {
-                let (secrets, sensitive_findings) =
-                    PatternsEngine::find_secrets(command, sensitive_commands);
+                let (secrets, sensitive_findings) = Self::find_secrets(command, sensitive_commands);
 
                 let only_command = match command.split_once(';') {
                     Some((_x, y)) => y.to_string(),
@@ -199,8 +198,7 @@ impl PatternsEngine {
         let mut results = history
             .par_iter()
             .map(|h| {
-                let (secrets, sensitive_findings) =
-                    PatternsEngine::find_secrets(&h.cmd, sensitive_commands);
+                let (secrets, sensitive_findings) = Self::find_secrets(&h.cmd, sensitive_commands);
 
                 Command {
                     shell_type: state_context.history.shell.clone(),

@@ -247,9 +247,8 @@ mod state_context {
     use insta::assert_debug_snapshot;
     use tempdir::TempDir;
 
-    use crate::shell::Shell;
-
     use super::{fs, shell, Path, ShellContext};
+    use crate::shell::Shell;
 
     const TEMP_HISTORY_CONTENT: &str = "history
 ls
