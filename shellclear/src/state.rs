@@ -33,13 +33,13 @@ pub struct ShellContext {
 ///
 /// Will return `Err` when has en create a dir problem
 pub fn init() -> Result<Vec<ShellContext>> {
-    let homedir = match dirs::home_dir() {
+    let state_dir_path = match dirs::cache_dir().or_else(dirs::home_dir) {
         Some(h) => h.display().to_string(),
         None => return Err(anyhow!("could not get directory path")),
     };
 
     // create a application folder to save all the temp data
-    let state_folder = Path::new(&homedir)
+    let state_folder = Path::new(&state_dir_path)
         .join(STATE_FOLDER_NAME)
         .display()
         .to_string();
@@ -53,7 +53,7 @@ pub fn init() -> Result<Vec<ShellContext>> {
         debug!("state created in path: {:?}", state_folder);
     }
 
-    Ok(shell::get_all_history_files(&homedir)
+    Ok(shell::get_all_history_files(&dirs::home_dir().unwrap().display().to_string())
         .iter()
         .map(|h| ShellContext {
             app_folder_path: state_folder.clone(),

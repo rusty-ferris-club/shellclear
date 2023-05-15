@@ -27,7 +27,12 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self::with_custom_path(&dirs::home_dir().unwrap())
+        let config = Self::with_custom_path(&dirs::home_dir().unwrap());
+        if Path::new(&config.sensitive_commands_path).exists() {
+            config
+        } else {
+            Self::with_custom_path(&dirs::config_dir().unwrap())
+        }
     }
 }
 
